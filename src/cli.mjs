@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+
+import { runBuild } from "./commands/build.mjs";
+import { runDoctor } from "./commands/doctor.mjs";
+import { runInit } from "./commands/init.mjs";
+import { runScan } from "./commands/scan.mjs";
+import { runValidate } from "./commands/validate.mjs";
+import { parseArgs } from "./core/args.mjs";
+
+const VERSION = "0.0.0";
+
+const help = `AgentRecord ${VERSION}
+
+Local-first, auditable AI work profiles from agent traces.
+
+Usage:
+  agentrecord --help
+  agentrecord --version
+  agentrecord doctor
+  agentrecord init [--dry-run] [--owner <name>] [--profiles-dir <dir>] [--output <dir>]
+  agentrecord scan [--config <file>] [--sessions-dir <dir>]
+  agentrecord build [--config <file>]
+  agentrecord validate [--config <file>]
+
+Commands:
+  agentrecord doctor     Check local runtime and source availability
+  agentrecord init       Create agentrecord.config.json
+  agentrecord scan       Discover local AI-agent trace sources
+  agentrecord build      Generate profile.json, evidence.jsonl, and HTML report
+  agentrecord validate   Check schema, privacy boundary, and report integrity
+`;
+
+const { options, positional } = parseArgs(process.argv.slice(2));
+const command = positional[0] ?? "help";
+
+if (options.help || command === "help") {
+  console.log(help);
+  process.exit(0);
+}
+
+if (options.version || command === "version") {
+  console.log(VERSION);
+  process.exit(0);
+}
+
+const commands = {
+  doctor: runDoctor,
+  init: runInit,
+  scan: runScan,
+  build: runBuild,
+  validate: runValidate
+};
+
+const handler = commands[command];
+
+if (handler) {
+  await handler({
+    version: VERSION,
+    options,
+    args: positional.slice(1)
+  });
+  process.exit(process.exitCode || 0);
+}
+
+console.error(`Unknown command: ${command}`);
+console.error("Run `agentrecord --help` for usage.");
+process.exit(1);

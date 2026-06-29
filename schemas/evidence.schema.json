@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentrecord.local/schemas/evidence.schema.json",
+  "title": "AgentRecord Evidence Card",
+  "type": "object",
+  "required": [
+    "id",
+    "level",
+    "title",
+    "summary",
+    "agent_clients",
+    "dimensions",
+    "role_signals",
+    "confidence",
+    "refs",
+    "privacy"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "level": { "type": "array", "items": { "type": "string" } },
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "agent_clients": { "type": "array", "items": { "type": "string" } },
+    "dimensions": { "type": "array", "items": { "type": "string" } },
+    "role_signals": { "type": "array", "items": { "type": "string" } },
+    "confidence": { "type": "string" },
+    "refs": { "type": "array" },
+    "privacy": { "type": "object", "required": ["public_safe"] }
+  }
+}

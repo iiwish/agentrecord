@@ -1,0 +1,983 @@
+{
+  "schema_version": "agentrecord.profile.v0",
+  "owner": {
+    "id": "test-owner",
+    "display_name": "test-owner"
+  },
+  "generated_at": "2026-06-29T13:18:59.175Z",
+  "report": {
+    "locale_requested": "auto",
+    "locale": "zh-CN",
+    "fallback_locale": "en-US",
+    "label_mode": "bilingual-compact",
+    "language_source": "agent_conversation_language",
+    "language_confidence": "high",
+    "schema_language": "en-US",
+    "audiences": [
+      "self",
+      "share"
+    ],
+    "default_audience": "self",
+    "supported_locales": [
+      "en-US",
+      "zh-CN"
+    ],
+    "agent_language_votes": {
+      "zh-CN": 278,
+      "en-US": 59
+    },
+    "agent_language_sample": {
+      "user_messages_seen": 500,
+      "sampled_characters": 223317
+    },
+    "generated_at": "2026-06-29T13:18:59.175Z"
+  },
+  "work_identity": {
+    "primary_label": "Evidence-bound AI work operator",
+    "localized_label": "证据约束的 AI 工作操作者",
+    "summary": "AgentRecord found 7 public-safe evidence cards for how this owner frames, delegates, reviews, verifies, and hands off AI-agent work.",
+    "strongest_claim": "The strongest current signal is 技术评审者 supported by 上下文打包 evidence.",
+    "confidence": "medium",
+    "evidence_ids": [
+      "EV-GENERIC-RELEASE-OPS",
+      "EV-GENERIC-EVIDENCE-GOVERNANCE",
+      "EV-GENERIC-RELIABILITY-RECOVERY",
+      "EV-GENERIC-PRODUCT-VALIDATION",
+      "EV-GENERIC-AGENT-WORKFLOW",
+      "EV-GENERIC-PLATFORM-CONTRACT"
+    ]
+  },
+  "work_role_signals": [
+    {
+      "role_id": "technical_reviewer",
+      "label": "技术评审者",
+      "score": 86,
+      "band": "strong",
+      "confidence": "high",
+      "why": "Supported by 5 public-safe evidence cards.",
+      "evidence_level_mix": {
+        "E1": 1,
+        "E2": 5,
+        "E3": 5,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELEASE-OPS",
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-RELIABILITY-RECOVERY",
+        "EV-GENERIC-PRODUCT-VALIDATION",
+        "EV-GENERIC-PLATFORM-CONTRACT"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "role_id": "agent_operator",
+      "label": "Agent 操作者",
+      "score": 86,
+      "band": "strong",
+      "confidence": "medium",
+      "why": "Supported by 3 public-safe evidence cards.",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 3,
+        "E3": 2,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-AGENT-WORKFLOW",
+        "EV-ACTIVITY-METADATA"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "role_id": "shipping_owner",
+      "label": "交付负责人",
+      "score": 86,
+      "band": "strong",
+      "confidence": "high",
+      "why": "Supported by 6 public-safe evidence cards.",
+      "evidence_level_mix": {
+        "E1": 1,
+        "E2": 6,
+        "E3": 6,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELEASE-OPS",
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-RELIABILITY-RECOVERY",
+        "EV-GENERIC-PRODUCT-VALIDATION",
+        "EV-GENERIC-AGENT-WORKFLOW",
+        "EV-GENERIC-PLATFORM-CONTRACT"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "role_id": "systems_thinker",
+      "label": "系统思考者",
+      "score": 86,
+      "band": "strong",
+      "confidence": "high",
+      "why": "Supported by 3 public-safe evidence cards.",
+      "evidence_level_mix": {
+        "E1": 1,
+        "E2": 3,
+        "E3": 3,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELEASE-OPS",
+        "EV-GENERIC-RELIABILITY-RECOVERY",
+        "EV-GENERIC-PLATFORM-CONTRACT"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "role_id": "product_builder",
+      "label": "产品建造者",
+      "score": 71,
+      "band": "solid",
+      "confidence": "medium",
+      "why": "Supported by 1 public-safe evidence card.",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 1,
+        "E3": 1,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-PRODUCT-VALIDATION"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "role_id": "collaboration_handoff",
+      "label": "协作交接者",
+      "score": 71,
+      "band": "solid",
+      "confidence": "medium",
+      "why": "Supported by 1 public-safe evidence card.",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 1,
+        "E3": 1,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-AGENT-WORKFLOW"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "role_id": "research_synthesizer",
+      "label": "研究综合者",
+      "score": 40,
+      "band": "emerging",
+      "confidence": "low",
+      "why": "No strong public-safe evidence card supports this role signal yet.",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 0,
+        "E3": 0,
+        "E4": 0
+      },
+      "evidence_ids": [],
+      "missing_evidence": [
+        "More non-volume work evidence is needed before making a stronger claim."
+      ]
+    }
+  ],
+  "ability_model": [
+    {
+      "dimension_id": "context_packaging",
+      "label": "上下文打包",
+      "score": 86,
+      "band": "strong",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 3,
+        "E3": 2,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-AGENT-WORKFLOW",
+        "EV-GENERIC-PLATFORM-CONTRACT",
+        "EV-ACTIVITY-METADATA"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "agent_delegation",
+      "label": "Agent 调度",
+      "score": 86,
+      "band": "strong",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 3,
+        "E3": 2,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-AGENT-WORKFLOW",
+        "EV-ACTIVITY-METADATA"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "verification_discipline",
+      "label": "验证纪律",
+      "score": 86,
+      "band": "strong",
+      "confidence": "high",
+      "evidence_level_mix": {
+        "E1": 1,
+        "E2": 5,
+        "E3": 5,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELEASE-OPS",
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-RELIABILITY-RECOVERY",
+        "EV-GENERIC-PRODUCT-VALIDATION",
+        "EV-GENERIC-PLATFORM-CONTRACT"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "scope_control",
+      "label": "范围控制",
+      "score": 86,
+      "band": "strong",
+      "confidence": "high",
+      "evidence_level_mix": {
+        "E1": 1,
+        "E2": 3,
+        "E3": 3,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELEASE-OPS",
+        "EV-GENERIC-RELIABILITY-RECOVERY",
+        "EV-GENERIC-PRODUCT-VALIDATION"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "shipping_hygiene",
+      "label": "交付卫生",
+      "score": 86,
+      "band": "strong",
+      "confidence": "high",
+      "evidence_level_mix": {
+        "E1": 1,
+        "E2": 2,
+        "E3": 2,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELEASE-OPS",
+        "EV-GENERIC-PLATFORM-CONTRACT"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "collaboration_handoff",
+      "label": "协作交接",
+      "score": 86,
+      "band": "strong",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 3,
+        "E3": 3,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-AGENT-WORKFLOW",
+        "EV-GENERIC-PLATFORM-CONTRACT"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "goal_framing",
+      "label": "目标定义",
+      "score": 84,
+      "band": "strong",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 2,
+        "E3": 2,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-PRODUCT-VALIDATION",
+        "EV-GENERIC-AGENT-WORKFLOW"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "review_judgment",
+      "label": "评审判断",
+      "score": 84,
+      "band": "strong",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 2,
+        "E3": 2,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-EVIDENCE-GOVERNANCE",
+        "EV-GENERIC-RELIABILITY-RECOVERY"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "failure_recovery",
+      "label": "故障恢复",
+      "score": 71,
+      "band": "solid",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 1,
+        "E3": 1,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-RELIABILITY-RECOVERY"
+      ],
+      "missing_evidence": []
+    },
+    {
+      "dimension_id": "product_judgment",
+      "label": "产品判断",
+      "score": 71,
+      "band": "solid",
+      "confidence": "medium",
+      "evidence_level_mix": {
+        "E1": 0,
+        "E2": 1,
+        "E3": 1,
+        "E4": 0
+      },
+      "evidence_ids": [
+        "EV-GENERIC-PRODUCT-VALIDATION"
+      ],
+      "missing_evidence": []
+    }
+  ],
+  "agent_ledger": {
+    "clients": [
+      {
+        "client_id": "codex",
+        "status": "measured",
+        "sessions": 434,
+        "token_sessions": 421,
+        "token_usage": {
+          "total_tokens": 10291599961,
+          "input_tokens": 10258215723,
+          "cached_input_tokens": 9697497856,
+          "output_tokens": 33384238,
+          "reasoning_output_tokens": 7919506
+        },
+        "trace_window": {
+          "start": "2026-05-19",
+          "end": "2026-06-29"
+        },
+        "top_projects": [
+          {
+            "project_ref": "project_ref_001",
+            "sessions": 62,
+            "total_tokens": 1064715633,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_002",
+            "sessions": 55,
+            "total_tokens": 2958812984,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_003",
+            "sessions": 50,
+            "total_tokens": 1218799340,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_004",
+            "sessions": 35,
+            "total_tokens": 597118426,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_005",
+            "sessions": 35,
+            "total_tokens": 646969228,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_006",
+            "sessions": 24,
+            "total_tokens": 249889311,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_007",
+            "sessions": 21,
+            "total_tokens": 363774974,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_008",
+            "sessions": 16,
+            "total_tokens": 270766304,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_009",
+            "sessions": 13,
+            "total_tokens": 476924473,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_010",
+            "sessions": 12,
+            "total_tokens": 340790678,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_011",
+            "sessions": 8,
+            "total_tokens": 228919573,
+            "public_project_path_included": false
+          },
+          {
+            "project_ref": "project_ref_012",
+            "sessions": 7,
+            "total_tokens": 276902816,
+            "public_project_path_included": false
+          }
+        ],
+        "evidence_count": 7
+      },
+      {
+        "client_id": "claude_code",
+        "status": "not_configured"
+      },
+      {
+        "client_id": "opencode",
+        "status": "not_configured"
+      },
+      {
+        "client_id": "openclaw",
+        "status": "not_configured"
+      },
+      {
+        "client_id": "hermes",
+        "status": "not_configured"
+      }
+    ]
+  },
+  "evidence_notes": [
+    {
+      "evidence_id": "EV-GENERIC-RELEASE-OPS",
+      "level": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "title": "Release and shipping verification discipline",
+      "summary": "Release and shipping work treats version, artifact, branch, package, deploy, or registry evidence as verifiable facts. Matched 40 curated memory task groups.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "verification_discipline",
+        "shipping_hygiene",
+        "scope_control"
+      ],
+      "role_signals": [
+        "technical_reviewer",
+        "shipping_owner",
+        "systems_thinker"
+      ],
+      "confidence": "high",
+      "refs": [
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 1,
+          "end_line": 60
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 61,
+          "end_line": 92
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 93,
+          "end_line": 124
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 125,
+          "end_line": 156
+        },
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "summary_only",
+        "redacted_fields": [
+          "raw prompts",
+          "raw responses",
+          "raw session ids",
+          "terminal bodies",
+          "source bodies"
+        ]
+      }
+    },
+    {
+      "evidence_id": "EV-GENERIC-EVIDENCE-GOVERNANCE",
+      "level": [
+        "E2",
+        "E3"
+      ],
+      "title": "Evidence hierarchy and audit-boundary discipline",
+      "summary": "Work separates system evidence, reproducible traces, summaries, self-report, review decisions, and acceptance boundaries. Matched 38 curated memory task groups.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "review_judgment",
+        "verification_discipline",
+        "agent_delegation",
+        "collaboration_handoff"
+      ],
+      "role_signals": [
+        "technical_reviewer",
+        "agent_operator",
+        "shipping_owner"
+      ],
+      "confidence": "medium",
+      "refs": [
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 1,
+          "end_line": 60
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 61,
+          "end_line": 92
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 93,
+          "end_line": 124
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 157,
+          "end_line": 299
+        },
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "summary_only",
+        "redacted_fields": [
+          "raw prompts",
+          "raw responses",
+          "raw session ids",
+          "terminal bodies",
+          "source bodies"
+        ]
+      }
+    },
+    {
+      "evidence_id": "EV-GENERIC-RELIABILITY-RECOVERY",
+      "level": [
+        "E2",
+        "E3"
+      ],
+      "title": "Reliability diagnosis and failure recovery",
+      "summary": "Reliability work uses staged diagnosis, failure isolation, smoke checks, benchmarks, retries, or recovery evidence. Matched 40 curated memory task groups.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "failure_recovery",
+        "verification_discipline",
+        "review_judgment",
+        "scope_control"
+      ],
+      "role_signals": [
+        "technical_reviewer",
+        "systems_thinker",
+        "shipping_owner"
+      ],
+      "confidence": "medium",
+      "refs": [
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 1,
+          "end_line": 60
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 61,
+          "end_line": 92
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 93,
+          "end_line": 124
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 125,
+          "end_line": 156
+        },
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "summary_only",
+        "redacted_fields": [
+          "raw prompts",
+          "raw responses",
+          "raw session ids",
+          "terminal bodies",
+          "source bodies"
+        ]
+      }
+    },
+    {
+      "evidence_id": "EV-GENERIC-PRODUCT-VALIDATION",
+      "level": [
+        "E2",
+        "E3"
+      ],
+      "title": "Product validation and launch-readiness judgment",
+      "summary": "Product judgment ties scope, readiness, positioning, or trial decisions to visible validation evidence. Matched 29 curated memory task groups.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "product_judgment",
+        "verification_discipline",
+        "goal_framing",
+        "scope_control"
+      ],
+      "role_signals": [
+        "product_builder",
+        "shipping_owner",
+        "technical_reviewer"
+      ],
+      "confidence": "medium",
+      "refs": [
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 61,
+          "end_line": 92
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 157,
+          "end_line": 299
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 328,
+          "end_line": 379
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 380,
+          "end_line": 471
+        },
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "summary_only",
+        "redacted_fields": [
+          "raw prompts",
+          "raw responses",
+          "raw session ids",
+          "terminal bodies",
+          "source bodies"
+        ]
+      }
+    },
+    {
+      "evidence_id": "EV-GENERIC-AGENT-WORKFLOW",
+      "level": [
+        "E2",
+        "E3"
+      ],
+      "title": "AI-agent delegation and review workflow design",
+      "summary": "AI-agent workflow work covers delegation, handoff, execution packets, review loops, or worker coordination. Matched 21 curated memory task groups.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "agent_delegation",
+        "context_packaging",
+        "collaboration_handoff",
+        "goal_framing"
+      ],
+      "role_signals": [
+        "agent_operator",
+        "shipping_owner",
+        "collaboration_handoff"
+      ],
+      "confidence": "medium",
+      "refs": [
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 61,
+          "end_line": 92
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 93,
+          "end_line": 124
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 157,
+          "end_line": 299
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 328,
+          "end_line": 379
+        },
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "summary_only",
+        "redacted_fields": [
+          "raw prompts",
+          "raw responses",
+          "raw session ids",
+          "terminal bodies",
+          "source bodies"
+        ]
+      }
+    },
+    {
+      "evidence_id": "EV-GENERIC-PLATFORM-CONTRACT",
+      "level": [
+        "E2",
+        "E3"
+      ],
+      "title": "Platform contract and schema discipline",
+      "summary": "Platform work aligns contracts, schemas, protocols, APIs, migrations, validation, or compatibility behavior. Matched 34 curated memory task groups.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "context_packaging",
+        "shipping_hygiene",
+        "collaboration_handoff",
+        "verification_discipline"
+      ],
+      "role_signals": [
+        "systems_thinker",
+        "shipping_owner",
+        "technical_reviewer"
+      ],
+      "confidence": "medium",
+      "refs": [
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 61,
+          "end_line": 92
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 93,
+          "end_line": 124
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 157,
+          "end_line": 299
+        },
+        {
+          "type": "memory",
+          "source": "MEMORY.md",
+          "start_line": 328,
+          "end_line": 379
+        },
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "summary_only",
+        "redacted_fields": [
+          "raw prompts",
+          "raw responses",
+          "raw session ids",
+          "terminal bodies",
+          "source bodies"
+        ]
+      }
+    },
+    {
+      "evidence_id": "EV-ACTIVITY-METADATA",
+      "level": [
+        "E2"
+      ],
+      "title": "Codex activity metadata baseline",
+      "summary": "Local Codex session metadata establishes the activity baseline when no curated memory rule matches are available. Scanned 434 Codex rollout files across 12 redacted project references.",
+      "agent_clients": [
+        "codex"
+      ],
+      "dimensions": [
+        "agent_delegation",
+        "context_packaging"
+      ],
+      "role_signals": [
+        "agent_operator"
+      ],
+      "confidence": "medium",
+      "refs": [
+        {
+          "type": "metadata",
+          "source": "codex_session_metadata"
+        }
+      ],
+      "privacy": {
+        "public_safe": true,
+        "mode": "aggregate_only",
+        "redacted_fields": [
+          "raw session ids",
+          "session file paths",
+          "private project paths"
+        ]
+      }
+    }
+  ],
+  "calibration_notes": [
+    {
+      "type": "privacy_boundary",
+      "severity": "high",
+      "summary": "Public artifacts are generated from aggregate metadata and curated summaries only; raw conversation payloads remain excluded."
+    },
+    {
+      "type": "activity_not_ability",
+      "severity": "medium",
+      "summary": "Token usage and session counts are activity-density context, not direct proof of ability."
+    },
+    {
+      "type": "adapter_coverage",
+      "severity": "medium",
+      "summary": "Codex is the only measured adapter in this run; 434 local rollout files were scanned."
+    },
+    {
+      "type": "missing_evidence",
+      "severity": "low",
+      "summary": "The profile still needs external outcomes before making stronger public claims."
+    }
+  ],
+  "privacy_boundary": {
+    "local_only_generation": true,
+    "raw_logs_included": false,
+    "public_session_ids_included": false,
+    "public_project_paths_included": false,
+    "public_artifacts": [
+      "profile.json",
+      "evidence.jsonl",
+      "index.html",
+      "profile.md",
+      "redaction-report.md",
+      "run-report.md"
+    ],
+    "excluded_from_public_artifacts": [
+      "raw prompts",
+      "raw assistant responses",
+      "raw session IDs",
+      "Codex session file paths",
+      "terminal bodies",
+      "source bodies",
+      "secret-like values"
+    ]
+  },
+  "run_metadata": {
+    "mode": "incremental",
+    "run_count": 4,
+    "generated_at": "2026-06-29T13:18:59.175Z",
+    "previous_generated_at": "2026-06-29T13:04:48.428Z",
+    "reset": false,
+    "new_sessions_this_run": 0,
+    "updated_sessions_this_run": 6,
+    "changed_sessions_this_run": 6,
+    "token_delta_this_run": {
+      "total_tokens": 9362267,
+      "input_tokens": 9358276,
+      "cached_input_tokens": 9509760,
+      "output_tokens": 17276,
+      "reasoning_output_tokens": 10561
+    },
+    "total_sessions_seen": 434,
+    "total_token_sessions_seen": 421,
+    "private_state_present": true,
+    "private_snapshot_created": true,
+    "public_session_ids_included": false
+  }
+}

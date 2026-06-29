@@ -1,0 +1,45 @@
+{
+  "schema_version": "agentrecord.locale.v0",
+  "locale": "en-US",
+  "html_lang": "en",
+  "ui": {
+    "title": "AgentRecord Profile",
+    "subtitle": "Local, evidence-backed AI work record",
+    "generated": "Generated",
+    "trace_window": "Trace Window",
+    "sessions": "Sessions",
+    "token_activity": "Token activity",
+    "evidence": "Evidence",
+    "identity": "Work Identity",
+    "role_signals": "Role Signals",
+    "ability_model": "Ability Model",
+    "agent_ledger": "Agent Ledger",
+    "calibration": "Calibration",
+    "privacy_boundary": "Privacy Boundary",
+    "run_metadata": "Run Metadata",
+    "public_safe": "Public-safe summary only. Raw prompts, raw responses, raw session IDs, terminal output, source code, and secrets are excluded.",
+    "not_hiring": "This is not a hiring score, market rank, or recruiting recommendation.",
+    "no_memory": "No curated memory evidence was available; this profile uses activity baseline evidence."
+  },
+  "roles": {
+    "product_builder": "Product Builder",
+    "technical_reviewer": "Technical Reviewer",
+    "agent_operator": "Agent Operator",
+    "shipping_owner": "Shipping Owner",
+    "systems_thinker": "Systems Thinker",
+    "research_synthesizer": "Research Synthesizer",
+    "collaboration_handoff": "Collaboration Handoff"
+  },
+  "abilities": {
+    "goal_framing": "Goal Framing",
+    "context_packaging": "Context Packaging",
+    "agent_delegation": "Agent Delegation",
+    "review_judgment": "Review Judgment",
+    "verification_discipline": "Verification Discipline",
+    "failure_recovery": "Failure Recovery",
+    "scope_control": "Scope Control",
+    "shipping_hygiene": "Shipping Hygiene",
+    "product_judgment": "Product Judgment",
+    "collaboration_handoff": "Collaboration Handoff"
+  }
+}

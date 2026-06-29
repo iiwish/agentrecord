@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>test-owner AgentRecord 画像</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f4ed;
+      --ink: #141414;
+      --muted: #626866;
+      --line: #1f2424;
+      --accent: #0b7f74;
+      --accent-soft: #d9eee9;
+      --warn: #b23b32;
+      --panel: #fffdf7;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); }
+    main { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 18px; align-items: stretch; min-height: 520px; }
+    .identity, .passport, section { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .identity { padding: clamp(28px, 5vw, 56px); background: #111716; color: #fffdf7; }
+    .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: 0; color: #8ce6d9; font-weight: 800; }
+    h1 { margin: 26px 0 0; max-width: 760px; font-size: clamp(46px, 8vw, 96px); line-height: .9; letter-spacing: 0; }
+    .summary { margin-top: 24px; max-width: 740px; font-size: 19px; line-height: 1.55; color: rgba(255,253,247,.78); }
+    .claim { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,253,247,.24); font-size: 22px; line-height: 1.35; font-weight: 800; }
+    .passport { padding: 24px; display: grid; align-content: space-between; }
+    .stamp { display: inline-flex; width: max-content; border: 2px solid var(--warn); color: var(--warn); border-radius: 999px; padding: 8px 14px; font-weight: 900; text-transform: uppercase; font-size: 12px; transform: rotate(3deg); }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 24px; }
+    .metric { border: 1px solid var(--line); padding: 16px; background: #fbf1df; min-height: 110px; }
+    .metric b { display: block; font-size: 30px; line-height: 1; overflow-wrap: anywhere; }
+    .metric span { display: block; margin-top: 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    section { margin-top: 20px; padding: 24px; }
+    h2 { margin: 0 0 16px; font-size: clamp(28px, 4vw, 46px); line-height: 1; letter-spacing: 0; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .item { border: 1px solid #d1cabe; border-radius: 8px; padding: 16px; background: #fffaf0; }
+    .item b { display: block; font-size: 18px; }
+    .item p { margin: 8px 0 0; color: var(--muted); line-height: 1.5; }
+    .bar { margin-top: 10px; height: 10px; border: 1px solid #b8b0a2; background: #ece4d7; }
+    .fill { height: 100%; background: linear-gradient(90deg, var(--warn), var(--accent)); }
+    .privacy { border-left: 5px solid var(--warn); color: var(--muted); line-height: 1.65; }
+    @media (max-width: 820px) { .hero, .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="hero">
+      <div class="identity">
+        <div class="eyebrow">AgentRecord v0.1</div>
+        <h1>test-owner<br>Evidence-bound AI work operator</h1>
+        <p class="summary">AgentRecord found 7 public-safe evidence cards for how this owner frames, delegates, reviews, verifies, and hands off AI-agent work.</p>
+        <p class="claim">The strongest current signal is 技术评审者 supported by 上下文打包 evidence.</p>
+      </div>
+      <aside class="passport">
+        <div>
+          <div class="stamp">Local proof</div>
+          <div class="metric-grid">
+            <div class="metric"><b>2026-05-19<br>2026-06-29</b><span>Trace 时间窗</span></div>
+            <div class="metric"><b>434</b><span>会话数</span></div>
+            <div class="metric"><b>102.9亿</b><span>Token 活跃度</span></div>
+            <div class="metric"><b>7</b><span>证据</span></div>
+          </div>
+        </div>
+        <p class="privacy">仅包含可公开摘要。原始 prompt、原始回复、原始 session ID、terminal output、source code 和 secrets 均不输出。 这不是招聘评分、市场排名或招聘建议。</p>
+      </aside>
+    </div>
+
+    <section>
+      <h2>角色信号</h2>
+      <div class="grid">
+        <article class="item"><b>技术评审者</b><p>strong · high</p><p>Supported by 5 public-safe evidence cards.</p></article>
+<article class="item"><b>Agent 操作者</b><p>strong · medium</p><p>Supported by 3 public-safe evidence cards.</p></article>
+<article class="item"><b>交付负责人</b><p>strong · high</p><p>Supported by 6 public-safe evidence cards.</p></article>
+<article class="item"><b>系统思考者</b><p>strong · high</p><p>Supported by 3 public-safe evidence cards.</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>能力模型</h2>
+      <div class="grid">
+        <article class="item"><b>上下文打包</b><p>strong · medium · 86</p><div class="bar"><div class="fill" style="width:86%"></div></div></article>
+<article class="item"><b>Agent 调度</b><p>strong · medium · 86</p><div class="bar"><div class="fill" style="width:86%"></div></div></article>
+<article class="item"><b>验证纪律</b><p>strong · high · 86</p><div class="bar"><div class="fill" style="width:86%"></div></div></article>
+<article class="item"><b>范围控制</b><p>strong · high · 86</p><div class="bar"><div class="fill" style="width:86%"></div></div></article>
+<article class="item"><b>交付卫生</b><p>strong · high · 86</p><div class="bar"><div class="fill" style="width:86%"></div></div></article>
+<article class="item"><b>协作交接</b><p>strong · medium · 86</p><div class="bar"><div class="fill" style="width:86%"></div></div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>证据</h2>
+      <div class="grid">
+        <article class="item"><b>Release and shipping verification discipline</b><p>E1 / E2 / E3 · high</p><p>Release and shipping work treats version, artifact, branch, package, deploy, or registry evidence as verifiable facts. Matched 40 curated memory task groups.</p><p>MEMORY.md:1-60 | MEMORY.md:61-92 | MEMORY.md:93-124 | MEMORY.md:125-156 | codex_session_metadata</p></article>
+<article class="item"><b>Evidence hierarchy and audit-boundary discipline</b><p>E2 / E3 · medium</p><p>Work separates system evidence, reproducible traces, summaries, self-report, review decisions, and acceptance boundaries. Matched 38 curated memory task groups.</p><p>MEMORY.md:1-60 | MEMORY.md:61-92 | MEMORY.md:93-124 | MEMORY.md:157-299 | codex_session_metadata</p></article>
+<article class="item"><b>Reliability diagnosis and failure recovery</b><p>E2 / E3 · medium</p><p>Reliability work uses staged diagnosis, failure isolation, smoke checks, benchmarks, retries, or recovery evidence. Matched 40 curated memory task groups.</p><p>MEMORY.md:1-60 | MEMORY.md:61-92 | MEMORY.md:93-124 | MEMORY.md:125-156 | codex_session_metadata</p></article>
+<article class="item"><b>Product validation and launch-readiness judgment</b><p>E2 / E3 · medium</p><p>Product judgment ties scope, readiness, positioning, or trial decisions to visible validation evidence. Matched 29 curated memory task groups.</p><p>MEMORY.md:61-92 | MEMORY.md:157-299 | MEMORY.md:328-379 | MEMORY.md:380-471 | codex_session_metadata</p></article>
+<article class="item"><b>AI-agent delegation and review workflow design</b><p>E2 / E3 · medium</p><p>AI-agent workflow work covers delegation, handoff, execution packets, review loops, or worker coordination. Matched 21 curated memory task groups.</p><p>MEMORY.md:61-92 | MEMORY.md:93-124 | MEMORY.md:157-299 | MEMORY.md:328-379 | codex_session_metadata</p></article>
+<article class="item"><b>Platform contract and schema discipline</b><p>E2 / E3 · medium</p><p>Platform work aligns contracts, schemas, protocols, APIs, migrations, validation, or compatibility behavior. Matched 34 curated memory task groups.</p><p>MEMORY.md:61-92 | MEMORY.md:93-124 | MEMORY.md:157-299 | MEMORY.md:328-379 | codex_session_metadata</p></article>
+<article class="item"><b>Codex activity metadata baseline</b><p>E2 · medium</p><p>Local Codex session metadata establishes the activity baseline when no curated memory rule matches are available. Scanned 434 Codex rollout files across 12 redacted project references.</p><p>codex_session_metadata</p></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>校准说明</h2>
+      <div class="grid">
+        <article class="item"><b>privacy_boundary</b><p>high</p><p>Public artifacts are generated from aggregate metadata and curated summaries only; raw conversation payloads remain excluded.</p></article>
+<article class="item"><b>activity_not_ability</b><p>medium</p><p>Token usage and session counts are activity-density context, not direct proof of ability.</p></article>
+<article class="item"><b>adapter_coverage</b><p>medium</p><p>Codex is the only measured adapter in this run; 434 local rollout files were scanned.</p></article>
+<article class="item"><b>missing_evidence</b><p>low</p><p>The profile still needs external outcomes before making stronger public claims.</p></article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

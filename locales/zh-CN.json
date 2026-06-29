@@ -1,0 +1,45 @@
+{
+  "schema_version": "agentrecord.locale.v0",
+  "locale": "zh-CN",
+  "html_lang": "zh-CN",
+  "ui": {
+    "title": "AgentRecord 画像",
+    "subtitle": "本地优先、证据支撑的 AI 工作记录",
+    "generated": "生成时间",
+    "trace_window": "Trace 时间窗",
+    "sessions": "会话数",
+    "token_activity": "Token 活跃度",
+    "evidence": "证据",
+    "identity": "工作身份",
+    "role_signals": "角色信号",
+    "ability_model": "能力模型",
+    "agent_ledger": "Agent 台账",
+    "calibration": "校准说明",
+    "privacy_boundary": "隐私边界",
+    "run_metadata": "运行元数据",
+    "public_safe": "仅包含可公开摘要。原始 prompt、原始回复、原始 session ID、terminal output、source code 和 secrets 均不输出。",
+    "not_hiring": "这不是招聘评分、市场排名或招聘建议。",
+    "no_memory": "未发现可用的 memory 证据，本画像使用活跃度基线证据。"
+  },
+  "roles": {
+    "product_builder": "产品建造者",
+    "technical_reviewer": "技术评审者",
+    "agent_operator": "Agent 操作者",
+    "shipping_owner": "交付负责人",
+    "systems_thinker": "系统思考者",
+    "research_synthesizer": "研究综合者",
+    "collaboration_handoff": "协作交接者"
+  },
+  "abilities": {
+    "goal_framing": "目标定义",
+    "context_packaging": "上下文打包",
+    "agent_delegation": "Agent 调度",
+    "review_judgment": "评审判断",
+    "verification_discipline": "验证纪律",
+    "failure_recovery": "故障恢复",
+    "scope_control": "范围控制",
+    "shipping_hygiene": "交付卫生",
+    "product_judgment": "产品判断",
+    "collaboration_handoff": "协作交接"
+  }
+}

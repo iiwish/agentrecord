@@ -1,0 +1,112 @@
+{
+  "schema_version": "agentrecord.evidence-rules.v0",
+  "scope": "generic",
+  "rules": [
+    {
+      "id": "EV-GENERIC-RELEASE-OPS",
+      "title": "Release and shipping verification discipline",
+      "category": "shipping_hygiene",
+      "evidence_level": ["E1", "E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["release", "published", "package", "registry", "CI", "tag", "version", "SHA", "deploy", "build verification"],
+        "exclude_any": ["wishlist", "someday"]
+      },
+      "signal_template": "Release and shipping work treats version, artifact, branch, package, deploy, or registry evidence as verifiable facts.",
+      "dimensions": ["Verification Discipline", "Shipping Hygiene", "Scope Control"],
+      "role_impacts": ["Technical Reviewer", "Shipping Owner", "Systems Thinker"],
+      "profile_impact": "Positive signal for turning AI-assisted work into reviewable release or delivery evidence instead of unsupported completion claims."
+    },
+    {
+      "id": "EV-GENERIC-EVIDENCE-GOVERNANCE",
+      "title": "Evidence hierarchy and audit-boundary discipline",
+      "category": "evidence_governance",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["evidence", "audit", "trace", "E1", "E2", "E3", "E4", "self-report", "review decision", "acceptance gate"],
+        "exclude_any": []
+      },
+      "signal_template": "Work separates system evidence, reproducible traces, summaries, self-report, review decisions, and acceptance boundaries.",
+      "dimensions": ["Review Judgment", "Verification Discipline", "Agent Delegation", "Collaboration Handoff"],
+      "role_impacts": ["Technical Reviewer", "Agent Operator", "Shipping Owner"],
+      "profile_impact": "Positive signal for making AI-agent output inspectable, accountable, and safe to hand off."
+    },
+    {
+      "id": "EV-GENERIC-RELIABILITY-RECOVERY",
+      "title": "Reliability diagnosis and failure recovery",
+      "category": "reliability_recovery",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["debug", "failure", "crash", "timeout", "locked", "recovery", "retry", "smoke", "benchmark", "diagnosis", "regression"],
+        "exclude_any": []
+      },
+      "signal_template": "Reliability work uses staged diagnosis, failure isolation, smoke checks, benchmarks, retries, or recovery evidence.",
+      "dimensions": ["Failure Recovery", "Verification Discipline", "Review Judgment", "Scope Control"],
+      "role_impacts": ["Technical Reviewer", "Systems Thinker", "Shipping Owner"],
+      "profile_impact": "Positive signal for recovering from complex failures without broad rewrites or false success claims."
+    },
+    {
+      "id": "EV-GENERIC-PRODUCT-VALIDATION",
+      "title": "Product validation and launch-readiness judgment",
+      "category": "product_validation",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["MVP", "trial", "launch", "onboarding", "user validation", "viability", "positioning", "beta", "acceptance", "readiness"],
+        "exclude_any": []
+      },
+      "signal_template": "Product judgment ties scope, readiness, positioning, or trial decisions to visible validation evidence.",
+      "dimensions": ["Product Judgment", "Verification Discipline", "Goal Framing", "Scope Control"],
+      "role_impacts": ["Product Builder", "Shipping Owner", "Technical Reviewer"],
+      "profile_impact": "Positive signal for deciding when AI-assisted work is ready for users, trials, launch, or further narrowing."
+    },
+    {
+      "id": "EV-GENERIC-AGENT-WORKFLOW",
+      "title": "AI-agent delegation and review workflow design",
+      "category": "agent_workflow",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["agent", "delegation", "handoff", "execution packet", "prompt", "worker", "review flow", "task graph", "next prompt"],
+        "exclude_any": []
+      },
+      "signal_template": "AI-agent workflow work covers delegation, handoff, execution packets, review loops, or worker coordination.",
+      "dimensions": ["Agent Delegation", "Context Packaging", "Collaboration Handoff", "Goal Framing"],
+      "role_impacts": ["Agent Operator", "Shipping Owner", "Collaboration Handoff"],
+      "profile_impact": "Positive signal for operating agents as reviewable collaborators rather than one-off chat tools."
+    },
+    {
+      "id": "EV-GENERIC-PLATFORM-CONTRACT",
+      "title": "Platform contract and schema discipline",
+      "category": "platform_contract",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["contract", "schema", "protocol", "API", "router", "validation", "type", "migration", "compatibility"],
+        "exclude_any": []
+      },
+      "signal_template": "Platform work aligns contracts, schemas, protocols, APIs, migrations, validation, or compatibility behavior.",
+      "dimensions": ["Context Packaging", "Shipping Hygiene", "Collaboration Handoff", "Verification Discipline"],
+      "role_impacts": ["Systems Thinker", "Shipping Owner", "Technical Reviewer"],
+      "profile_impact": "Positive signal for protocol-minded engineering and cross-surface behavior alignment."
+    },
+    {
+      "id": "EV-ACTIVITY-METADATA",
+      "title": "Codex activity metadata baseline",
+      "category": "agent_usage",
+      "evidence_level": ["E2"],
+      "match": {
+        "include_all": [],
+        "include_any": [],
+        "exclude_any": []
+      },
+      "fallback": true,
+      "signal_template": "Local Codex session metadata establishes the activity baseline when no curated memory rule matches are available.",
+      "dimensions": ["Agent Delegation", "Context Packaging"],
+      "role_impacts": ["Agent Operator"],
+      "profile_impact": "Useful baseline signal for repeated agent usage, but insufficient for strong ability claims without stronger work evidence."
+    }
+  ]
+}

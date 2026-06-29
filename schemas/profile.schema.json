@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentrecord.local/schemas/profile.schema.json",
+  "title": "AgentRecord Profile",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "owner",
+    "generated_at",
+    "report",
+    "work_identity",
+    "work_role_signals",
+    "ability_model",
+    "agent_ledger",
+    "evidence_notes",
+    "calibration_notes",
+    "privacy_boundary",
+    "run_metadata"
+  ],
+  "properties": {
+    "schema_version": { "const": "agentrecord.profile.v0" },
+    "owner": { "type": "object", "required": ["id", "display_name"] },
+    "generated_at": { "type": "string" },
+    "report": { "type": "object", "required": ["locale", "audiences", "schema_language"] },
+    "work_identity": { "type": "object", "required": ["primary_label", "summary", "confidence", "evidence_ids"] },
+    "work_role_signals": { "type": "array", "items": { "type": "object", "required": ["role_id", "label", "band", "confidence", "evidence_ids"] } },
+    "ability_model": { "type": "array", "items": { "type": "object", "required": ["dimension_id", "label", "score", "band", "confidence", "evidence_ids"] } },
+    "agent_ledger": { "type": "object", "required": ["clients"] },
+    "evidence_notes": { "type": "array", "items": { "type": "object", "required": ["evidence_id", "level", "title", "summary", "refs", "privacy"] } },
+    "calibration_notes": { "type": "array" },
+    "privacy_boundary": { "type": "object", "required": ["local_only_generation", "raw_logs_included", "public_session_ids_included"] },
+    "run_metadata": { "type": "object", "required": ["mode", "run_count", "generated_at"] }
+  }
+}

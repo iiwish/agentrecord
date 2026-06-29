@@ -1,0 +1,35 @@
+{
+  "name": "agentrecord",
+  "version": "0.0.0",
+  "description": "Local-first, auditable AI work profiles from agent traces.",
+  "type": "module",
+  "bin": {
+    "agentrecord": "./src/cli.mjs"
+  },
+  "files": [
+    "src",
+    "docs",
+    "locales",
+    "references",
+    "schemas",
+    "README.md",
+    "ROADMAP.md"
+  ],
+  "scripts": {
+    "check": "node --check src/cli.mjs && node src/cli.mjs --help",
+    "pack:dry": "npm pack --dry-run --json"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "ai-agent",
+    "codex",
+    "claude-code",
+    "opencode",
+    "local-first",
+    "work-profile",
+    "audit-log"
+  ],
+  "license": "UNLICENSED"
+}

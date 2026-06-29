@@ -1,0 +1,36 @@
+{
+  "schema_version": "agentrecord.config.v0",
+  "owner": "test-owner",
+  "profiles_dir": "profiles",
+  "output": {
+    "profile_dir": "profiles/test-owner"
+  },
+  "codex": {
+    "sessions_dir": "~/.codex/sessions",
+    "session_roots": [
+      "~/.codex/sessions"
+    ]
+  },
+  "memory": {
+    "enabled": true,
+    "registry_path": "~/.codex/memories/MEMORY.md"
+  },
+  "evidence_rules_paths": [
+    "references/evidence-rules.json"
+  ],
+  "report": {
+    "locale": "auto",
+    "fallback_locale": "en-US",
+    "label_mode": "bilingual-compact",
+    "schema_language": "en-US",
+    "audiences": [
+      "self",
+      "share"
+    ],
+    "default_audience": "self"
+  },
+  "privacy": {
+    "public_session_ids": false,
+    "public_project_paths": false
+  }
+}

@@ -1,14 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { CONFIG_FILE, createDefaultConfig, defaultOwner, safePathSegment, writeJson } from "../core/config.mjs";
+import { CONFIG_FILE, createDefaultConfig, defaultOwnerDisplayName, safePathSegment, writeJson } from "../core/config.mjs";
 
 export async function runInit({ options }) {
-  const owner = options.owner ? safePathSegment(options.owner) : defaultOwner();
+  const ownerDisplayName = options.owner || defaultOwnerDisplayName();
+  const owner = safePathSegment(ownerDisplayName);
   const profilesDir = options.profilesDir || "profiles";
   const profileDir = options.output || path.join(profilesDir, owner);
   const config = createDefaultConfig({
-    owner,
+    owner: ownerDisplayName,
     profilesDir,
     locale: options.locale || "auto"
   });
@@ -20,6 +21,9 @@ export async function runInit({ options }) {
     config.codex.sessions_dir = sessionsDir;
     config.codex.session_roots = [sessionsDir];
   }
+
+  if (typeof options.accountUsage === "boolean") config.codex.account_usage.enabled = options.accountUsage;
+  if (options.accountUsageTimeoutMs) config.codex.account_usage.timeout_ms = Number(options.accountUsageTimeoutMs);
 
   if (options.publicProjectPaths === true) config.privacy.public_project_paths = true;
   if (options.publicProjectPaths === false) config.privacy.public_project_paths = false;

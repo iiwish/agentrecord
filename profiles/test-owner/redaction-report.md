@@ -1,6 +1,6 @@
 # Redaction Report
 
-Generated: 2026-06-29T13:18:59.175Z
+Generated: 2026-06-30T04:48:20.160Z
 Owner: test-owner
 
 ## Included
@@ -25,4 +25,4 @@ Owner: test-owner
 
 仅包含可公开摘要。原始 prompt、原始回复、原始 session ID、terminal output、source code 和 secrets 均不输出。
 
-这不是招聘评分、市场排名或招聘建议。
+本记录不做录用决策、外部比较结论或未经校准的资历结论。

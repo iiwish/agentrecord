@@ -1,5 +1,43 @@
 # 实施任务拆解
 
+## 当前 v0.1 状态
+
+状态：本地 CLI 主循环和首发 npm release candidate 可用于发布前人工评审。
+
+当前能力：
+
+- `init` 创建本地配置。
+- `scan` 发现本地 Codex trace 来源。
+- `build` 生成 `profile.json`、`evidence.jsonl`、`index.html`、`profile.md`、`redaction-report.md`、`run-report.md`。
+- `validate` 检查必需产物、profile 结构、evidence 引用、locale parity、私有状态、公共产物隐私边界。
+- `open` 默认打开 `profiles/<owner>/index.html`。
+- `build --agent-context` 显式生成 `agent-context.md` 和 `agent-context.json`。
+
+当前产品边界：
+
+- npm 首发候选版本为 `0.0.1`，license 为 `MIT`。
+- npm package name 为 `@iiwish/agentrecord`，unscoped `agentrecord` 被 npm 判定与既有包名过近。
+- npm package binary 为 `agentrecord`，入口为 `src/cli.mjs`。
+- `index.html` 是第一产品产物，是可本地打开、可静态分享的单文件 AI work passport。
+- `profile.json` 和 `evidence.jsonl` 是结构化真相源。
+- `profile.md` 是辅助审计稿。
+- 默认 audience 为 `self` 和 `share`。
+- 默认不生成招聘、职位代理、录用决策、市场位置或未经校准的资历结论。
+- 私有 cursor、snapshots 和 state 位于 `profiles/<owner>/.agentrecord/`。
+- 公共产物不包含 raw prompt、raw response、raw session ID、Codex session path、terminal output、source body 或 secret-like pattern。
+
+当前发布前检查：
+
+- `npm run check`
+- `node src/cli.mjs build --config ./agentrecord.config.json`
+- `node src/cli.mjs validate --config ./agentrecord.config.json`
+- `npm run pack:dry`
+- `npm run smoke:install`
+- `npm publish --dry-run --access public --json`
+- `npm view @iiwish/agentrecord version`
+- `git diff --check`
+- `npm pack --dry-run --json` 输出不包含 `profiles/`、`.agentrecord/` 或 raw trace。
+
 ## Phase 0: 当前骨架
 
 状态：已完成。
@@ -157,18 +195,21 @@ npm run pack:dry
 
 目标：准备 npm/GitHub 首发。
 
+状态：实现已收口，等待最终发布前人工验收；不执行真实 npm publish、push 或远程 release。
+
 任务：
 
-- 决定 license。
+- 使用 `0.0.1` 作为保守首发版本。
+- 使用 `MIT` license。
 - 检查 npm package name。
-- 完善 README quickstart。
-- 添加 examples。
-- 添加 minimal tests。
-- 执行 `npm pack --dry-run --json`。
-- 决定是否发布 `0.1.0` 或先 `0.0.1` 占名。
+- 保持 README quickstart 同时覆盖 npm 安装后命令和源码运行方式。
+- 提供 privacy-safe basic example。
+- 提供安装后 smoke：`npm pack`、临时目录安装、binary/version/init/doctor 验证。
+- 执行 `npm pack --dry-run --json` 和 `npm publish --dry-run --access public --json`。
 
 验收：
 
 - 新用户按 README 能跑通。
 - 包内容不包含私有文件。
 - npm 安装后 binary 正常。
+- `profiles/`、`.agentrecord/`、raw trace、私有 session path 不进入 npm package。

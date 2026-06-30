@@ -1,0 +1,112 @@
+{
+  "schema_version": "agentrecord.evidence-rules.v0",
+  "scope": "generic",
+  "rules": [
+    {
+      "id": "EV-GENERIC-RELEASE-OPS",
+      "title": "发布与构建验证存证",
+      "category": "shipping_hygiene",
+      "evidence_level": ["E1", "E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["release", "published", "package", "registry", "CI", "tag", "version", "SHA", "deploy", "build verification"],
+        "exclude_any": ["wishlist", "someday"]
+      },
+      "signal_template": "发布与交付工作将版本、制品、分支、包、部署或注册表作为可审计验证的事实证据。",
+      "dimensions": ["Verification Discipline", "Shipping Hygiene", "Scope Control"],
+      "role_impacts": ["Technical Reviewer", "Shipping Owner", "Systems Thinker"],
+      "profile_impact": "高价值信号：表明能将 AI 辅助的工作输出，转化为有事实审计链保护的制品、分支与上线记录，而非口头上的“已写完”。"
+    },
+    {
+      "id": "EV-GENERIC-EVIDENCE-GOVERNANCE",
+      "title": "数据边界与审计合规存证",
+      "category": "evidence_governance",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["evidence", "audit", "trace", "E1", "E2", "E3", "E4", "self-report", "review decision", "acceptance gate"],
+        "exclude_any": []
+      },
+      "signal_template": "工作流程中清晰地划分系统事实级证据、可复现的追踪审计、汇总报告、自我陈述以及接收验收红线。",
+      "dimensions": ["Review Judgment", "Verification Discipline", "Agent Delegation", "Collaboration Handoff"],
+      "role_impacts": ["Technical Reviewer", "Agent Operator", "Shipping Owner"],
+      "profile_impact": "高价值信号：表明拥有清晰的主客体责任意识，使 AI 调度具备可审计、可追溯的安全交付合规属性。"
+    },
+    {
+      "id": "EV-GENERIC-RELIABILITY-RECOVERY",
+      "title": "高可靠性诊断与故障恢复存证",
+      "category": "reliability_recovery",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["debug", "failure", "crash", "timeout", "locked", "recovery", "retry", "smoke", "benchmark", "diagnosis", "regression"],
+        "exclude_any": []
+      },
+      "signal_template": "系统故障调试工作使用阶段式精准诊断、故障源头隔离、冒烟测试、基准基准测试、熔断重试等事实证据保障系统可靠性。",
+      "dimensions": ["Failure Recovery", "Verification Discipline", "Review Judgment", "Scope Control"],
+      "role_impacts": ["Technical Reviewer", "Systems Thinker", "Shipping Owner"],
+      "profile_impact": "高价值信号：表明在面对高难度异常、死锁和编译崩溃时，能用分步求证法配合测试验证精准修复，而非无头苍蝇式乱改。"
+    },
+    {
+      "id": "EV-GENERIC-PRODUCT-VALIDATION",
+      "title": "产品可行性验证与就绪判定存证",
+      "category": "product_validation",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["MVP", "trial", "launch", "onboarding", "user validation", "viability", "positioning", "beta", "acceptance", "readiness"],
+        "exclude_any": []
+      },
+      "signal_template": "产品就绪判定和业务落地深度绑定，将产品功能边界、灰度上线及用户可用性决策与公开事实证据链牢牢挂钩。",
+      "dimensions": ["Product Judgment", "Verification Discipline", "Goal Framing", "Scope Control"],
+      "role_impacts": ["Product Builder", "Shipping Owner", "Technical Reviewer"],
+      "profile_impact": "高价值信号：表明具有出色的业务敏感度，懂得何时叫 AI 快速停止无谓的过度设计，专注核心 MVP 验证。"
+    },
+    {
+      "id": "EV-GENERIC-AGENT-WORKFLOW",
+      "title": "智能体协同调度与工作流设计存证",
+      "category": "agent_workflow",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["agent", "delegation", "handoff", "execution packet", "prompt", "worker", "review flow", "task graph", "next prompt"],
+        "exclude_any": []
+      },
+      "signal_template": "AI 协同操作工作涵盖了任务分派、优雅交接、上下文数据打包、多轮评审反馈闭环以及多智能体协同调度。",
+      "dimensions": ["Agent Delegation", "Context Packaging", "Collaboration Handoff", "Goal Framing"],
+      "role_impacts": ["Agent Operator", "Shipping Owner", "Collaboration Handoff"],
+      "profile_impact": "高价值信号：表明不再将 AI 当作一锤子买卖的问答聊天框，而是将其作为可以被规范管理、调度并参与工程评审的协同下属。"
+    },
+    {
+      "id": "EV-GENERIC-PLATFORM-CONTRACT",
+      "title": "契约模式与 API 架构规约存证",
+      "category": "platform_contract",
+      "evidence_level": ["E2", "E3"],
+      "match": {
+        "include_all": [],
+        "include_any": ["contract", "schema", "protocol", "API", "router", "validation", "type", "migration", "compatibility"],
+        "exclude_any": []
+      },
+      "signal_template": "架构底层工作对准并对齐核心契约、数据 Schema、网络协议、API 路由规约、版本平滑迁移以及兼容性判定。",
+      "dimensions": ["Context Packaging", "Shipping Hygiene", "Collaboration Handoff", "Verification Discipline"],
+      "role_impacts": ["Systems Thinker", "Shipping Owner", "Technical Reviewer"],
+      "profile_impact": "高价值信号：表明具有敏锐的架构治理视野，擅长使用确定性的 Schema 和接口契约去约束 AI 从而保证大型系统的稳定性。"
+    },
+    {
+      "id": "EV-ACTIVITY-METADATA",
+      "title": "Codex 本地会话活动度基线",
+      "category": "agent_usage",
+      "evidence_level": ["E2"],
+      "match": {
+        "include_all": [],
+        "include_any": [],
+        "exclude_any": []
+      },
+      "fallback": true,
+      "signal_template": "在缺乏结构化调教文本证据时，使用本地 Codex 适配器累计的原始会话数据和 Token 活动度建立基础行为基线。",
+      "dimensions": ["Agent Delegation", "Context Packaging"],
+      "role_impacts": ["Agent Operator"],
+      "profile_impact": "基础级存证信号：能作为持续、高频使用 AI 进行本地开发的基本活动度证明，但在缺乏上层事实证据时，不直接代表工程交付水平。"
+    }
+  ]
+}

@@ -1,23 +1,24 @@
 {
-  "name": "agentrecord",
-  "version": "0.0.0",
+  "name": "@iiwish/agentrecord",
+  "version": "0.0.1",
   "description": "Local-first, auditable AI work profiles from agent traces.",
   "type": "module",
   "bin": {
-    "agentrecord": "./src/cli.mjs"
+    "agentrecord": "src/cli.mjs"
   },
   "files": [
     "src",
-    "docs",
+    "examples",
     "locales",
     "references",
     "schemas",
-    "README.md",
-    "ROADMAP.md"
+    "scripts",
+    "README.md"
   ],
   "scripts": {
     "check": "node --check src/cli.mjs && node src/cli.mjs --help",
-    "pack:dry": "npm pack --dry-run --json"
+    "pack:dry": "npm pack --dry-run --json",
+    "smoke:install": "node scripts/smoke-install.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -31,5 +32,5 @@
     "work-profile",
     "audit-log"
   ],
-  "license": "UNLICENSED"
+  "license": "MIT"
 }

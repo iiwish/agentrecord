@@ -4,7 +4,7 @@
     "id": "test-owner",
     "display_name": "test-owner"
   },
-  "generated_at": "2026-06-29T13:18:59.175Z",
+  "generated_at": "2026-06-30T04:48:20.160Z",
   "report": {
     "locale_requested": "auto",
     "locale": "zh-CN",
@@ -30,13 +30,51 @@
       "user_messages_seen": 500,
       "sampled_characters": 223317
     },
-    "generated_at": "2026-06-29T13:18:59.175Z"
+    "generated_at": "2026-06-30T04:48:20.160Z"
+  },
+  "archetype": {
+    "code": "SRVC",
+    "axes": {
+      "focus": "S",
+      "execution": "R",
+      "quality": "V",
+      "scope": "C"
+    },
+    "scores": {
+      "system": 86,
+      "product": 71,
+      "reviewer": 86,
+      "operator": 86,
+      "verify": 86,
+      "ship": 86,
+      "context": 86,
+      "goal": 84
+    },
+    "rigor": 92,
+    "control": 90,
+    "strategic": 87,
+    "closedLoop": 91,
+    "tags": [
+      "#代码质检委",
+      "#多核驯兽师",
+      "#无情测试监工"
+    ],
+    "traceDays": 42,
+    "activeStatus": "85% 默契协从",
+    "name": "AI 架构审查官",
+    "enName": "THE CHIEF JUSTICE",
+    "tagline": "“代码可以不跑，但测试必须全绿。”",
+    "enTagline": "No green test, no release.",
+    "talent": "像素级代码审计，把 AI 治得服服帖帖",
+    "quote": "“把证据拿出来，没跑过测试别跟我谈交付。”",
+    "weakness": "宁可在本地写 3 小时规范提示词，也不愿意自己动手改一行 JS。",
+    "status": "每天都在跟 AI 进行严密的法庭辩论，直至其乖乖跑通所有校验。"
   },
   "work_identity": {
     "primary_label": "Evidence-bound AI work operator",
     "localized_label": "证据约束的 AI 工作操作者",
     "summary": "AgentRecord found 7 public-safe evidence cards for how this owner frames, delegates, reviews, verifies, and hands off AI-agent work.",
-    "strongest_claim": "The strongest current signal is 技术评审者 supported by 上下文打包 evidence.",
+    "strongest_claim": "Strongest current signal: 技术评审者 with high confidence, supported by EV-GENERIC-RELEASE-OPS, EV-GENERIC-EVIDENCE-GOVERNANCE, EV-GENERIC-RELIABILITY-RECOVERY.",
     "confidence": "medium",
     "evidence_ids": [
       "EV-GENERIC-RELEASE-OPS",
@@ -54,7 +92,7 @@
       "score": 86,
       "band": "strong",
       "confidence": "high",
-      "why": "Supported by 5 public-safe evidence cards.",
+      "why": "Evidence mix E1:1 / E2:5 / E3:5 across 5 public-safe evidence cards.",
       "evidence_level_mix": {
         "E1": 1,
         "E2": 5,
@@ -76,7 +114,7 @@
       "score": 86,
       "band": "strong",
       "confidence": "medium",
-      "why": "Supported by 3 public-safe evidence cards.",
+      "why": "Evidence mix E2:3 / E3:2 across 3 public-safe evidence cards.",
       "evidence_level_mix": {
         "E1": 0,
         "E2": 3,
@@ -96,7 +134,7 @@
       "score": 86,
       "band": "strong",
       "confidence": "high",
-      "why": "Supported by 6 public-safe evidence cards.",
+      "why": "Evidence mix E1:1 / E2:6 / E3:6 across 6 public-safe evidence cards.",
       "evidence_level_mix": {
         "E1": 1,
         "E2": 6,
@@ -119,7 +157,7 @@
       "score": 86,
       "band": "strong",
       "confidence": "high",
-      "why": "Supported by 3 public-safe evidence cards.",
+      "why": "Evidence mix E1:1 / E2:3 / E3:3 across 3 public-safe evidence cards.",
       "evidence_level_mix": {
         "E1": 1,
         "E2": 3,
@@ -139,7 +177,7 @@
       "score": 71,
       "band": "solid",
       "confidence": "medium",
-      "why": "Supported by 1 public-safe evidence card.",
+      "why": "Evidence mix E2:1 / E3:1 across 1 public-safe evidence card.",
       "evidence_level_mix": {
         "E1": 0,
         "E2": 1,
@@ -157,7 +195,7 @@
       "score": 71,
       "band": "solid",
       "confidence": "medium",
-      "why": "Supported by 1 public-safe evidence card.",
+      "why": "Evidence mix E2:1 / E3:1 across 1 public-safe evidence card.",
       "evidence_level_mix": {
         "E1": 0,
         "E2": 1,
@@ -380,30 +418,30 @@
       {
         "client_id": "codex",
         "status": "measured",
-        "sessions": 434,
-        "token_sessions": 421,
+        "sessions": 458,
+        "token_sessions": 445,
         "token_usage": {
-          "total_tokens": 10291599961,
-          "input_tokens": 10258215723,
-          "cached_input_tokens": 9697497856,
-          "output_tokens": 33384238,
-          "reasoning_output_tokens": 7919506
+          "total_tokens": 10547501734,
+          "input_tokens": 10513196349,
+          "cached_input_tokens": 9933316608,
+          "output_tokens": 34305385,
+          "reasoning_output_tokens": 8216676
         },
         "trace_window": {
           "start": "2026-05-19",
-          "end": "2026-06-29"
+          "end": "2026-06-30"
         },
         "top_projects": [
           {
             "project_ref": "project_ref_001",
-            "sessions": 62,
-            "total_tokens": 1064715633,
+            "sessions": 67,
+            "total_tokens": 1134673484,
             "public_project_path_included": false
           },
           {
             "project_ref": "project_ref_002",
-            "sessions": 55,
-            "total_tokens": 2958812984,
+            "sessions": 57,
+            "total_tokens": 3003564927,
             "public_project_path_included": false
           },
           {
@@ -421,7 +459,7 @@
           {
             "project_ref": "project_ref_005",
             "sessions": 35,
-            "total_tokens": 646969228,
+            "total_tokens": 663872822,
             "public_project_path_included": false
           },
           {
@@ -432,8 +470,8 @@
           },
           {
             "project_ref": "project_ref_007",
-            "sessions": 21,
-            "total_tokens": 363774974,
+            "sessions": 24,
+            "total_tokens": 449000851,
             "public_project_path_included": false
           },
           {
@@ -456,8 +494,8 @@
           },
           {
             "project_ref": "project_ref_011",
-            "sessions": 8,
-            "total_tokens": 228919573,
+            "sessions": 9,
+            "total_tokens": 250483581,
             "public_project_path_included": false
           },
           {
@@ -495,8 +533,8 @@
         "E2",
         "E3"
       ],
-      "title": "Release and shipping verification discipline",
-      "summary": "Release and shipping work treats version, artifact, branch, package, deploy, or registry evidence as verifiable facts. Matched 40 curated memory task groups.",
+      "title": "发布与构建验证存证",
+      "summary": "发布与交付工作将版本、制品、分支、包、部署或注册表作为可审计验证的事实证据。 已匹配 43 个精选记忆任务组。",
       "agent_clients": [
         "codex"
       ],
@@ -559,8 +597,8 @@
         "E2",
         "E3"
       ],
-      "title": "Evidence hierarchy and audit-boundary discipline",
-      "summary": "Work separates system evidence, reproducible traces, summaries, self-report, review decisions, and acceptance boundaries. Matched 38 curated memory task groups.",
+      "title": "数据边界与审计合规存证",
+      "summary": "工作流程中清晰地划分系统事实级证据、可复现的追踪审计、汇总报告、自我陈述以及接收验收红线。 已匹配 41 个精选记忆任务组。",
       "agent_clients": [
         "codex"
       ],
@@ -599,7 +637,7 @@
           "type": "memory",
           "source": "MEMORY.md",
           "start_line": 157,
-          "end_line": 299
+          "end_line": 327
         },
         {
           "type": "metadata",
@@ -624,8 +662,8 @@
         "E2",
         "E3"
       ],
-      "title": "Reliability diagnosis and failure recovery",
-      "summary": "Reliability work uses staged diagnosis, failure isolation, smoke checks, benchmarks, retries, or recovery evidence. Matched 40 curated memory task groups.",
+      "title": "高可靠性诊断与故障恢复存证",
+      "summary": "系统故障调试工作使用阶段式精准诊断、故障源头隔离、冒烟测试、基准基准测试、熔断重试等事实证据保障系统可靠性。 已匹配 43 个精选记忆任务组。",
       "agent_clients": [
         "codex"
       ],
@@ -689,8 +727,8 @@
         "E2",
         "E3"
       ],
-      "title": "Product validation and launch-readiness judgment",
-      "summary": "Product judgment ties scope, readiness, positioning, or trial decisions to visible validation evidence. Matched 29 curated memory task groups.",
+      "title": "产品可行性验证与就绪判定存证",
+      "summary": "产品就绪判定和业务落地深度绑定，将产品功能边界、灰度上线及用户可用性决策与公开事实证据链牢牢挂钩。 已匹配 31 个精选记忆任务组。",
       "agent_clients": [
         "codex"
       ],
@@ -717,19 +755,19 @@
           "type": "memory",
           "source": "MEMORY.md",
           "start_line": 157,
-          "end_line": 299
+          "end_line": 327
         },
         {
           "type": "memory",
           "source": "MEMORY.md",
-          "start_line": 328,
-          "end_line": 379
+          "start_line": 356,
+          "end_line": 407
         },
         {
           "type": "memory",
           "source": "MEMORY.md",
-          "start_line": 380,
-          "end_line": 471
+          "start_line": 408,
+          "end_line": 499
         },
         {
           "type": "metadata",
@@ -754,8 +792,8 @@
         "E2",
         "E3"
       ],
-      "title": "AI-agent delegation and review workflow design",
-      "summary": "AI-agent workflow work covers delegation, handoff, execution packets, review loops, or worker coordination. Matched 21 curated memory task groups.",
+      "title": "智能体协同调度与工作流设计存证",
+      "summary": "AI 协同操作工作涵盖了任务分派、优雅交接、上下文数据打包、多轮评审反馈闭环以及多智能体协同调度。 已匹配 22 个精选记忆任务组。",
       "agent_clients": [
         "codex"
       ],
@@ -788,13 +826,13 @@
           "type": "memory",
           "source": "MEMORY.md",
           "start_line": 157,
-          "end_line": 299
+          "end_line": 327
         },
         {
           "type": "memory",
           "source": "MEMORY.md",
-          "start_line": 328,
-          "end_line": 379
+          "start_line": 356,
+          "end_line": 407
         },
         {
           "type": "metadata",
@@ -819,8 +857,8 @@
         "E2",
         "E3"
       ],
-      "title": "Platform contract and schema discipline",
-      "summary": "Platform work aligns contracts, schemas, protocols, APIs, migrations, validation, or compatibility behavior. Matched 34 curated memory task groups.",
+      "title": "契约模式与 API 架构规约存证",
+      "summary": "架构底层工作对准并对齐核心契约、数据 Schema、网络协议、API 路由规约、版本平滑迁移以及兼容性判定。 已匹配 37 个精选记忆任务组。",
       "agent_clients": [
         "codex"
       ],
@@ -853,13 +891,13 @@
           "type": "memory",
           "source": "MEMORY.md",
           "start_line": 157,
-          "end_line": 299
+          "end_line": 327
         },
         {
           "type": "memory",
           "source": "MEMORY.md",
-          "start_line": 328,
-          "end_line": 379
+          "start_line": 356,
+          "end_line": 407
         },
         {
           "type": "metadata",
@@ -883,8 +921,8 @@
       "level": [
         "E2"
       ],
-      "title": "Codex activity metadata baseline",
-      "summary": "Local Codex session metadata establishes the activity baseline when no curated memory rule matches are available. Scanned 434 Codex rollout files across 12 redacted project references.",
+      "title": "Codex 本地会话活动度基线",
+      "summary": "在缺乏结构化调教文本证据时，使用本地 Codex 适配器累计的原始会话数据和 Token 活动度建立基础行为基线。 已扫描 458 个 Codex 本地会话，涉及 12 个脱敏项目。",
       "agent_clients": [
         "codex"
       ],
@@ -927,7 +965,7 @@
     {
       "type": "adapter_coverage",
       "severity": "medium",
-      "summary": "Codex is the only measured adapter in this run; 434 local rollout files were scanned."
+      "summary": "Codex is the only measured adapter in this run; 458 local rollout files were scanned."
     },
     {
       "type": "missing_evidence",
@@ -960,22 +998,22 @@
   },
   "run_metadata": {
     "mode": "incremental",
-    "run_count": 4,
-    "generated_at": "2026-06-29T13:18:59.175Z",
-    "previous_generated_at": "2026-06-29T13:04:48.428Z",
+    "run_count": 20,
+    "generated_at": "2026-06-30T04:48:20.160Z",
+    "previous_generated_at": "2026-06-30T03:56:38.795Z",
     "reset": false,
-    "new_sessions_this_run": 0,
-    "updated_sessions_this_run": 6,
-    "changed_sessions_this_run": 6,
+    "new_sessions_this_run": 4,
+    "updated_sessions_this_run": 9,
+    "changed_sessions_this_run": 13,
     "token_delta_this_run": {
-      "total_tokens": 9362267,
-      "input_tokens": 9358276,
-      "cached_input_tokens": 9509760,
-      "output_tokens": 17276,
-      "reasoning_output_tokens": 10561
+      "total_tokens": 39496251,
+      "input_tokens": 39387078,
+      "cached_input_tokens": 36711168,
+      "output_tokens": 122458,
+      "reasoning_output_tokens": 39496
     },
-    "total_sessions_seen": 434,
-    "total_token_sessions_seen": 421,
+    "total_sessions_seen": 458,
+    "total_token_sessions_seen": 445,
     "private_state_present": true,
     "private_snapshot_created": true,
     "public_session_ids_included": false

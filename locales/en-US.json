@@ -18,7 +18,7 @@
     "privacy_boundary": "Privacy Boundary",
     "run_metadata": "Run Metadata",
     "public_safe": "Public-safe summary only. Raw prompts, raw responses, raw session IDs, terminal output, source code, and secrets are excluded.",
-    "not_hiring": "This is not a hiring score, market rank, or recruiting recommendation.",
+    "not_hiring": "This record does not make employment decisions, external comparison claims, or unsupported seniority claims.",
     "no_memory": "No curated memory evidence was available; this profile uses activity baseline evidence."
   },
   "roles": {

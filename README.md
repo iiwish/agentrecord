@@ -21,7 +21,40 @@ AgentRecord is a local-first record layer for AI-native work.
 - **Incremental runs:** repeated runs update the profile without rewriting history.
 - **No default hiring decision:** recruiter or hiring views are optional audience layers, not the core product.
 
-## CLI
+## Quickstart
+
+After npm install:
+
+```bash
+npm install -g @iiwish/agentrecord
+agentrecord init --owner <owner>
+agentrecord build --config ./agentrecord.config.json --no-account-usage
+agentrecord validate --config ./agentrecord.config.json
+agentrecord open --config ./agentrecord.config.json
+```
+
+From the source checkout:
+
+```bash
+node src/cli.mjs init --owner <owner>
+node src/cli.mjs build --config ./agentrecord.config.json --no-account-usage
+node src/cli.mjs validate --config ./agentrecord.config.json
+node src/cli.mjs open --config ./agentrecord.config.json
+```
+
+The primary product artifact is `profiles/<owner>/index.html`: a single-file, static AI work passport for local review or redacted sharing. `profile.json` and `evidence.jsonl` are the structured truth sources behind the page, and `profile.md` is a secondary audit draft.
+
+Agent context is opt-in:
+
+```bash
+node src/cli.mjs build --config ./agentrecord.config.json --agent-context
+```
+
+Default builds generate only the self/share artifacts and do not generate recruiter, job-agent, or employment-decision views.
+
+A privacy-safe starter example is available in `examples/basic/`.
+
+## Commands
 
 ```bash
 node src/cli.mjs init --dry-run
@@ -29,6 +62,7 @@ node src/cli.mjs init --owner <owner>
 node src/cli.mjs scan --config ./agentrecord.config.json
 node src/cli.mjs build --config ./agentrecord.config.json
 node src/cli.mjs validate --config ./agentrecord.config.json
+node src/cli.mjs open --config ./agentrecord.config.json
 ```
 
 Useful overrides:
@@ -38,6 +72,7 @@ node src/cli.mjs --help
 node src/cli.mjs doctor
 node src/cli.mjs scan --sessions-dir ~/.codex/sessions
 node src/cli.mjs build --owner <owner> --locale zh-CN
+node src/cli.mjs build --config ./agentrecord.config.json --agent-context
 ```
 
 ## Expected Outputs
@@ -53,6 +88,14 @@ profiles/<owner>/
   .agentrecord/         Private state, cursors, snapshots
 ```
 
+Optional explicit outputs:
+
+```text
+profiles/<owner>/
+  agent-context.md      Public-safe prompt context for future agents
+  agent-context.json    Machine-readable agent context pack
+```
+
 The default config file is `agentrecord.config.json`. Output defaults to `profiles/<owner>/`, and private state defaults to `profiles/<owner>/.agentrecord/`. AgentRecord is local-first by default; it does not upload, publish, or host generated artifacts.
 
 ## First Supported Adapter
@@ -61,4 +104,6 @@ The first supported adapter should be Codex local sessions, because it gives eno
 
 ## Status
 
-This repository is at planning skeleton stage. The existing prototype lives in `/Users/iiwish/self/runmark-profile` and should be migrated into this package in small steps.
+AgentRecord is in the v0.1 CLI baseline and uses package version `0.0.1` for the first conservative npm release candidate. The `build` and `validate` commands provide the minimum local loop: generate `profile.json`, `evidence.jsonl`, `index.html`, `profile.md`, `redaction-report.md`, and `run-report.md`, then verify required artifacts, profile shape, evidence references, locale parity, private state, and public-artifact privacy boundaries.
+
+HTML is the first product artifact. `profiles/<owner>/index.html` is the primary human-readable output for local review and sharing, backed by the machine-readable profile and evidence files.

@@ -16,6 +16,11 @@ const requiredArtifacts = [
   "run-report.md"
 ];
 
+const optionalPublicArtifacts = [
+  "agent-context.md",
+  "agent-context.json"
+];
+
 export async function runValidate({ options }) {
   const config = loadConfig(options);
   const errors = [];
@@ -134,8 +139,18 @@ function checkProfileStructure(profile, errors) {
   if (!profile.owner?.id || !profile.owner?.display_name) addError(errors, file, "profile_owner", "owner.id and owner.display_name are required.");
   if (!["en-US", "zh-CN"].includes(profile.report?.locale)) addError(errors, file, "profile_locale", "report.locale must be en-US or zh-CN.");
   if (profile.report?.schema_language !== "en-US") addError(errors, file, "profile_schema_language", "report.schema_language must remain en-US.");
-  if (!Array.isArray(profile.report?.audiences) || !profile.report.audiences.includes("self") || !profile.report.audiences.includes("share")) {
-    addError(errors, file, "profile_audiences", "report.audiences must include self and share.");
+  const audiences = profile.report?.audiences;
+  const allowedAudiences = new Set(["self", "share"]);
+  if (!Array.isArray(audiences)) {
+    addError(errors, file, "profile_audiences", "report.audiences must be exactly self and share.");
+  } else {
+    const audienceSet = new Set(audiences);
+    for (const audience of audiences) {
+      if (!allowedAudiences.has(audience)) addError(errors, file, "profile_audiences", `report.audiences contains unsupported audience: ${audience}`);
+    }
+    if (audiences.length !== 2 || audienceSet.size !== 2 || !audienceSet.has("self") || !audienceSet.has("share")) {
+      addError(errors, file, "profile_audiences", "report.audiences must be exactly self and share.");
+    }
   }
   for (const forbidden of ["role_fit", "seniority_signal", "evidence_briefs", "agent_prompt_profile", "hiring_score", "candidate_score", "market_rank"]) {
     if (Object.hasOwn(profile, forbidden)) addError(errors, file, "default_audience_boundary", `Default profile must not include ${forbidden}.`);
@@ -179,6 +194,10 @@ function checkEvidenceRefs(profile, evidence, config, errors) {
       addError(errors, "profile.json", "evidence_reference", `profile evidence_notes references missing evidence id: ${note.evidence_id}`);
     }
     for (const ref of note.refs || []) checkSingleEvidenceRef(ref, note.evidence_id, config, errors);
+  }
+
+  for (const id of profile.work_identity?.evidence_ids || []) {
+    if (!evidenceIds.has(id)) addError(errors, "profile.json", "evidence_reference", `work_identity references missing evidence id: ${id}`);
   }
 
   for (const role of profile.work_role_signals || []) {
@@ -269,7 +288,7 @@ function checkPrivateState(stateFile, profile, errors) {
 
 function checkPublicArtifactPrivacy(profileDir, profile, errors) {
   const locale = profile?.report?.locale;
-  const publicArtifacts = requiredArtifacts.filter((artifact) => fs.existsSync(path.join(profileDir, artifact)));
+  const publicArtifacts = [...requiredArtifacts, ...optionalPublicArtifacts].filter((artifact) => fs.existsSync(path.join(profileDir, artifact)));
   for (const artifact of publicArtifacts) {
     const file = path.join(profileDir, artifact);
     const content = fs.readFileSync(file, "utf8");

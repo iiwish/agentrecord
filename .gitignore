@@ -14,6 +14,9 @@ pnpm-debug.log*
 
 .agentrecord/
 .runmark/
+profiles/*
+!profiles/test-owner/
+!profiles/test-owner/**
 profiles/*/.agentrecord/
 profiles/*/.runmark/
 profiles/**/.agentrecord/

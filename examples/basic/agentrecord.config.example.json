@@ -1,0 +1,36 @@
+{
+  "schema_version": "agentrecord.config.v0",
+  "owner": "smoke-owner",
+  "owner_display_name": "Smoke Owner",
+  "profiles_dir": "profiles",
+  "output": {
+    "profile_dir": "profiles/smoke-owner"
+  },
+  "codex": {
+    "sessions_dir": "~/.codex/sessions",
+    "session_roots": ["~/.codex/sessions"],
+    "account_usage": {
+      "enabled": false,
+      "timeout_ms": 1500
+    }
+  },
+  "memory": {
+    "enabled": false
+  },
+  "evidence_rules_paths": [
+    "../../references/evidence-rules.json"
+  ],
+  "report": {
+    "locale": "en-US",
+    "fallback_locale": "en-US",
+    "label_mode": "bilingual-compact",
+    "schema_language": "en-US",
+    "audiences": ["self", "share"],
+    "default_audience": "self"
+  },
+  "privacy": {
+    "mode": "strict",
+    "public_session_ids": false,
+    "public_project_paths": false
+  }
+}

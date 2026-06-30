@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 export const CONFIG_FILE = "agentrecord.config.json";
 export const SUPPORTED_LOCALES = new Set(["en-US", "zh-CN", "auto"]);
@@ -67,22 +68,45 @@ export function writeJson(file, value) {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-export function defaultOwner() {
-  return safePathSegment(process.env.AGENTRECORD_OWNER || os.userInfo().username || "default");
+export function gitUserName(cwd = process.cwd()) {
+  try {
+    const value = execFileSync("git", ["config", "--get", "user.name"], {
+      cwd,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"]
+    }).trim();
+    return value || null;
+  } catch {
+    return null;
+  }
 }
 
-export function createDefaultConfig({ owner = defaultOwner(), profilesDir = "profiles", locale = "auto" } = {}) {
-  const safeOwner = safePathSegment(owner);
+export function defaultOwnerDisplayName() {
+  return process.env.AGENTRECORD_OWNER || gitUserName() || os.userInfo().username || "default";
+}
+
+export function defaultOwner() {
+  return safePathSegment(defaultOwnerDisplayName());
+}
+
+export function createDefaultConfig({ owner, profilesDir = "profiles", locale = "auto" } = {}) {
+  const ownerDisplayName = owner || defaultOwnerDisplayName();
+  const safeOwner = safePathSegment(ownerDisplayName);
   return {
     schema_version: "agentrecord.config.v0",
     owner: safeOwner,
+    owner_display_name: ownerDisplayName,
     profiles_dir: profilesDir,
     output: {
       profile_dir: `${profilesDir}/${safeOwner}`
     },
     codex: {
       sessions_dir: "~/.codex/sessions",
-      session_roots: ["~/.codex/sessions"]
+      session_roots: ["~/.codex/sessions"],
+      account_usage: {
+        enabled: true,
+        timeout_ms: 15000
+      }
     },
     memory: {
       enabled: true,
@@ -113,7 +137,9 @@ export function loadConfig(options = {}) {
   const envOwner = process.env.AGENTRECORD_OWNER;
   const hasOwnerOverride = Boolean(options.owner || envOwner);
   const hasProfilesDirOverride = Boolean(options.profilesDir || process.env.AGENTRECORD_PROFILES_DIR);
-  const owner = safePathSegment(options.owner || envOwner || rawConfig.owner || rawConfig.profile_owner || defaultOwner());
+  const ownerInput = options.owner || envOwner || rawConfig.owner || rawConfig.profile_owner || defaultOwnerDisplayName();
+  const owner = safePathSegment(rawConfig.owner_id || ownerInput);
+  const ownerDisplayName = rawConfig.owner_display_name || rawConfig.identity?.display_name || ownerInput;
   const profilesDirRaw = options.profilesDir || process.env.AGENTRECORD_PROFILES_DIR || rawConfig.profiles_dir || rawConfig.output?.profiles_dir || "profiles";
   const profileDirRaw = options.output
     || (hasOwnerOverride || hasProfilesDirOverride
@@ -130,6 +156,11 @@ export function loadConfig(options = {}) {
     : configuredSessionRoots
       ? Array.isArray(configuredSessionRoots) ? configuredSessionRoots : splitPathList(configuredSessionRoots)
       : [configuredSessionDir || "~/.codex/sessions"];
+  const accountUsageConfig = rawConfig.codex?.account_usage || {};
+  const accountUsageEnabled = typeof options.accountUsage === "boolean"
+    ? options.accountUsage
+    : accountUsageConfig.enabled !== false;
+  const accountUsageTimeoutMs = Number(options.accountUsageTimeoutMs || process.env.AGENTRECORD_CODEX_ACCOUNT_USAGE_TIMEOUT_MS || accountUsageConfig.timeout_ms || 15000);
   const privacyMode = options.privacy || rawConfig.privacy?.mode || "strict";
   const publicProjectPaths = typeof options.publicProjectPaths === "boolean"
     ? options.publicProjectPaths
@@ -156,11 +187,17 @@ export function loadConfig(options = {}) {
     raw: rawConfig,
     resolved: {
       owner,
+      ownerDisplayName,
       profilesDir,
       profileDir,
       privateStateDir,
       codex: {
-        sessionRoots: unique(sessionRootsRaw.map((item) => resolvePath(item, configDir)))
+        sessionRoots: unique(sessionRootsRaw.map((item) => resolvePath(item, configDir))),
+        accountUsage: {
+          enabled: accountUsageEnabled,
+          timeoutMs: Number.isFinite(accountUsageTimeoutMs) ? accountUsageTimeoutMs : 15000,
+          executable: process.env.AGENTRECORD_CODEX_BIN || accountUsageConfig.executable || "codex"
+        }
       },
       memory: {
         enabled: rawConfig.memory?.enabled !== false,

@@ -21,9 +21,9 @@ Usage:
   agentrecord --help
   agentrecord --version
   agentrecord doctor
-  agentrecord init [--dry-run] [--owner <name>] [--profiles-dir <dir>] [--output <dir>]
+  agentrecord init [--dry-run] [--owner <id>] [--display-name <name>] [--profiles-dir <dir>] [--output <dir>]
   agentrecord scan [--config <file>] [--sessions-dir <dir>]
-  agentrecord build [--config <file>] [--agent-context] [--no-account-usage]
+  agentrecord build [--config <file>] [--display-name <name>] [--agent-context] [--no-account-usage]
   agentrecord validate [--config <file>]
   agentrecord open [--config <file>] [--owner <owner>]
 
@@ -36,6 +36,7 @@ Commands:
   agentrecord open       Open profiles/<owner>/index.html
 
 Build options:
+  --display-name <name>                 Override owner display name without changing owner id/path
   --no-account-usage                    Skip Codex CLI account usage lookup
   --account-usage-timeout-ms <ms>       Timeout for Codex CLI account usage lookup
 `;

@@ -4,11 +4,11 @@
 
 AgentRecord 的报告不是普通 dashboard，也不是 AI 简历。
 
-它应该像一个 AI work passport：
+它的第一屏是一个可传播的 AI work identity share card，后续内容是可审计的 evidence dossier：
 
-- 第一眼知道这个人如何和 AI Agent 工作。
+- 第一眼知道这个人如何和 AI Agent 工作，并能截图分享。
 - 每个强结论都能追到证据。
-- 有传播性，但不夸张。
+- 有传播性，但不夸张、不做人格诊断、不做招聘判断。
 - 可以给人看，也可以给 Agent 看。
 
 ## 第一屏信息架构
@@ -16,26 +16,28 @@ AgentRecord 的报告不是普通 dashboard，也不是 AI 简历。
 第一屏必须包含：
 
 - Owner。
-- Work identity。
-- Strongest evidence-backed claim。
-- Trace window。
-- Agent clients measured。
-- Evidence count。
-- Privacy boundary。
-- Confidence label。
+- 静态展示名。
+- 展示名修正说明，指向 config 的 `owner_display_name` 或 CLI 的 `--display-name`。
+- Share card archetype。
+- Punchline、share subtitle、risk / blind spot sentence。
+- 3 个社交标签。
+- 轻量证据摘要，例如 evidence count、local sessions、trace days、variant badge。
+- 项目源码纯文本：`github.com/iiwish/agentrecord`。
+- 纯 CSS visual motif。
 
 建议结构：
 
 ```text
 AGENTRECORD
 Owner: iiwish
-AI Work Identity: AI-native product builder
-Strongest Claim: Turns ambiguous product ideas into agent-executable systems.
-
-Trace Window: 2026-06-01 -> 2026-06-29
-Agents: Codex measured, others pending
-Evidence: 24 cards
-Privacy: raw prompts and source code excluded
+Share Card Type: 代码判官 / Systems Proof Reviewer
+Punchline: 代码可以乱，但证据链必须闭环。
+Tags: #代码洁癖 #证据闭环 #脱敏存证
+Proof: 高置信画像 · 24 条证据 · 180 次会话 · 30 天 trace
+Subtitle: 把 role signal、能力维度和证据等级放在同一张图里校准。
+Calibration: 外部结果证据不足时，本地验证不能被解读为真实世界影响。
+Fix Display Name: node src/cli.mjs build --config ./agentrecord.config.json --display-name "Your Name"
+Project Source: github.com/iiwish/agentrecord
 ```
 
 ## 视觉方向
@@ -47,6 +49,9 @@ Privacy: raw prompts and source code excluded
 - proof record
 - local ledger
 - evidence case file
+- share card
+- CSS motif
+- evidence-backed identity
 
 避免：
 
@@ -56,11 +61,52 @@ Privacy: raw prompts and source code excluded
 - 纯招聘简历风格。
 - 排行榜风格。
 
+## Share Card Archetype
+
+Share card archetype 由 4 个二元轴组成，共 16 个基础类型：
+
+- focus: `systems` / `product`
+- execution: `reviewer` / `operator`
+- quality: `verification` / `delivery`
+- scope: `context` / `goal`
+
+每个基础类型包含：
+
+- `code`
+- 中文名称
+- 英文短名
+- punchline
+- 3 个社交标签
+- share subtitle
+- strength sentence
+- risk / blind spot sentence
+- visual theme id
+
+轻量变体来自证据和分数，不使用 LLM、不联网、不随机：
+
+- `confidence_ready`
+- `strong_verification`
+- `high_activity`
+- `low_external_outcome`
+
+文案风格可以有年度报告式传播感，但必须保持证据约束。它描述的是当前 evidence profile，不是人格类型、职业级别、候选人评分或市场排名。
+
+## Visual Variation
+
+第一屏卡片随 archetype 改变：
+
+- 主色、辅助色、底色和金属色。
+- 标签、title、punchline、share subtitle、risk。
+- 证据摘要 pill 的内容与顺序。
+- 纯 CSS visual motif，例如 proof seal、dossier、terminal ledger、release stamp、product lens、context map、goal compass、route map。
+
+HTML 不引入外部图片、`<script>`、`<link>`、`http://`、`https://`、CSS `url(...)` 或 `@import`。页面可以显示 `github.com/iiwish/agentrecord` 纯文本。所有视觉变化都由内联 CSS 和 profile 数据决定。
+
 ## 页面结构
 
 建议顺序：
 
-1. Identity hero。
+1. Share card hero。
 2. Trace and privacy stamp。
 3. Role signal spectrum。
 4. Ability map。

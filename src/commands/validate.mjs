@@ -167,12 +167,45 @@ function checkProfileStructure(profile, errors) {
   if (!Array.isArray(profile.evidence_notes) || profile.evidence_notes.length < 1) {
     addError(errors, file, "evidence_notes", "evidence_notes must contain at least one evidence note.");
   }
+  checkShareCardStructure(profile, errors);
   if (!Array.isArray(profile.agent_ledger?.clients) || !profile.agent_ledger.clients.some((client) => client.client_id === "codex")) {
     addError(errors, file, "agent_ledger", "agent_ledger.clients must include codex.");
   }
   if (profile.privacy_boundary?.raw_logs_included !== false) addError(errors, file, "privacy_boundary", "privacy_boundary.raw_logs_included must be false.");
   if (profile.privacy_boundary?.public_session_ids_included !== false) addError(errors, file, "privacy_boundary", "privacy_boundary.public_session_ids_included must be false.");
   if (profile.run_metadata?.public_session_ids_included !== false) addError(errors, file, "run_metadata", "run_metadata.public_session_ids_included must be false.");
+}
+
+function checkShareCardStructure(profile, errors) {
+  const file = "profile.json";
+  const shareCard = profile.share_card || profile.archetype;
+  if (!shareCard || typeof shareCard !== "object") {
+    addError(errors, file, "share_card", "share_card is required.");
+    return;
+  }
+  const requiredKeys = [
+    "code",
+    "chinese_name",
+    "english_short_name",
+    "punchline",
+    "social_tags",
+    "share_subtitle",
+    "strength_sentence",
+    "risk_sentence",
+    "visual_theme_id"
+  ];
+  for (const key of requiredKeys) {
+    if (!Object.hasOwn(shareCard, key)) addError(errors, file, "share_card", `share_card missing required key: ${key}`);
+  }
+  if (!/^[SP][RO][VD][CG]$/.test(shareCard.code || "")) {
+    addError(errors, file, "share_card", "share_card.code must encode focus/execution/quality/scope axes.");
+  }
+  if (!Array.isArray(shareCard.social_tags) || shareCard.social_tags.length < 3) {
+    addError(errors, file, "share_card", "share_card.social_tags must contain at least 3 tags.");
+  }
+  if (!Array.isArray(shareCard.stat_rows) || shareCard.stat_rows.length < 4) {
+    addError(errors, file, "share_card", "share_card.stat_rows must contain at least 4 rows.");
+  }
 }
 
 function checkEvidenceRefs(profile, evidence, config, errors) {
@@ -297,10 +330,35 @@ function checkPublicArtifactPrivacy(profileDir, profile, errors) {
     }
     const terminalIssue = detectTerminalOutput(content);
     if (terminalIssue) addError(errors, file, "suspected_terminal_output", terminalIssue);
+    if (artifact === "index.html") checkSingleFileHtmlBoundary(file, content, errors);
     if (locale && artifact === "index.html" && !content.includes(`lang="${locale === "zh-CN" ? "zh-CN" : "en"}"`)) {
       addError(errors, file, "html_locale", "index.html language attribute must match profile locale.");
     }
   }
+}
+
+function checkSingleFileHtmlBoundary(file, content, errors) {
+  const rules = [
+    { id: "html_no_script", pattern: /<script\b/i, message: "index.html must not include script tags." },
+    { id: "html_no_link", pattern: /<link\b/i, message: "index.html must not include link tags." },
+    { id: "html_no_http", pattern: /https?:\/\//i, message: "index.html must not include http or https URLs." },
+    { id: "html_no_css_url", pattern: /url\s*\(/i, message: "index.html must not include CSS url(...)." },
+    { id: "html_no_import", pattern: /@import\b/i, message: "index.html must not include CSS imports." },
+    { id: "html_no_contenteditable", pattern: /contenteditable\b/i, message: "index.html must not include inline-editable display-name controls." }
+  ];
+  for (const rule of rules) {
+    if (rule.pattern.test(content)) addError(errors, file, rule.id, rule.message);
+  }
+  if (!hasDisplayNameCorrectionGuidance(content)) {
+    addError(errors, file, "html_display_name_guidance", "index.html must explain how to correct the display name with owner_display_name or --display-name.");
+  }
+}
+
+function hasDisplayNameCorrectionGuidance(content) {
+  return (
+    /owner_display_name/.test(content)
+    || (/--display-name/.test(content) && /agentrecord\.config\.json/.test(content) && /Your Name/.test(content))
+  );
 }
 
 function privacyRules() {

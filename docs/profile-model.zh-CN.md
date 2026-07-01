@@ -16,6 +16,7 @@ AgentRecord 的画像模型要服务三个场景：
 {
   "schema_version": "0.1.0",
   "owner": {},
+  "share_card": {},
   "work_identity": {},
   "work_role_signals": [],
   "ability_model": {},
@@ -24,6 +25,21 @@ AgentRecord 的画像模型要服务三个场景：
   "calibration_notes": [],
   "privacy_boundary": {},
   "run_metadata": {}
+}
+```
+
+## Owner
+
+`owner.id` 是稳定 path/id，用于 `profiles/<owner>/`，只能包含安全路径字符。
+
+`owner.display_name` 是展示名，用于 HTML、Markdown、profile JSON 和可选 agent context。展示名可以通过 config 的 `owner_display_name` 或 CLI 的 `--display-name` 修正。展示名变化不改变 `owner.id` 和输出目录。HTML 只展示静态名称和修正说明，不提供会让用户误以为直接编辑即可保存的交互。
+
+配置示例：
+
+```json
+{
+  "owner": "iiwish",
+  "owner_display_name": "iiwish"
 }
 ```
 
@@ -49,6 +65,50 @@ AgentRecord 的画像模型要服务三个场景：
 - 不能写成夸张头衔。
 - 必须能被 evidence 支撑。
 - 要显示 confidence。
+
+## Share Card
+
+`share_card` 是首页第一屏的可传播身份卡模型。它由 evidence-driven profile 数据确定，不接 LLM、不联网、不随机。
+
+字段：
+
+```json
+{
+  "code": "SRVC",
+  "axes": {
+    "focus": "systems",
+    "execution": "reviewer",
+    "quality": "verification",
+    "scope": "context"
+  },
+  "chinese_name": "代码判官",
+  "english_short_name": "Systems Proof Reviewer",
+  "punchline": "代码可以乱，但证据链必须闭环。",
+  "social_tags": ["#代码洁癖", "#证据闭环", "#脱敏存证"],
+  "share_subtitle": "把 AI 写的每行代码都当成呈堂证供来严密复核。",
+  "strength_sentence": "强项是把 role signal、能力维度和证据等级放在同一张图里校准。",
+  "risk_sentence": "外部结果证据不足时，本地验证不能被解读为真实世界影响。",
+  "visual_theme_id": "proof_seal",
+  "variant_badges": ["证据已成型", "验证强信号"],
+  "stat_rows": []
+}
+```
+
+16 个基础类型来自 4 个轴：
+
+- focus: systems / product，由 `systems_thinker`、`product_builder`、`context_packaging`、`product_judgment`、`goal_framing` 等信号加权。
+- execution: reviewer / operator，由 `technical_reviewer`、`agent_operator`、`review_judgment`、`agent_delegation` 等信号加权。
+- quality: verification / delivery，由 `verification_discipline`、`failure_recovery`、`shipping_owner`、`shipping_hygiene` 等信号加权。
+- scope: context / goal，由 `context_packaging`、`collaboration_handoff`、`goal_framing`、`product_judgment` 等信号加权。
+
+变体来自证据和活动数据：
+
+- 高置信度证据卡生成 `confidence_ready`。
+- 验证分数或 E1 证据生成 `strong_verification`。
+- 高会话量或 token 活动生成 `high_activity`。
+- 缺少 E1 外部结果证据生成 `low_external_outcome`。
+
+Share card 文案只能解释当前 evidence profile，不能输出人格诊断、招聘评分、市场排名、资历断言或录用建议。
 
 ## Role Signals
 

@@ -8,7 +8,9 @@
   },
   "codex": {
     "sessions_dir": "~/.codex/sessions",
-    "session_roots": ["~/.codex/sessions"],
+    "session_roots": [
+      "~/.codex/sessions"
+    ],
     "account_usage": {
       "enabled": false,
       "timeout_ms": 1500
@@ -25,7 +27,10 @@
     "fallback_locale": "en-US",
     "label_mode": "bilingual-compact",
     "schema_language": "en-US",
-    "audiences": ["self", "share"],
+    "audiences": [
+      "self",
+      "share"
+    ],
     "default_audience": "self"
   },
   "privacy": {

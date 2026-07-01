@@ -8,6 +8,7 @@
     "owner",
     "generated_at",
     "report",
+    "share_card",
     "work_identity",
     "work_role_signals",
     "ability_model",
@@ -22,6 +23,20 @@
     "owner": { "type": "object", "required": ["id", "display_name"] },
     "generated_at": { "type": "string" },
     "report": { "type": "object", "required": ["locale", "audiences", "schema_language"] },
+    "share_card": {
+      "type": "object",
+      "required": [
+        "code",
+        "chinese_name",
+        "english_short_name",
+        "punchline",
+        "social_tags",
+        "share_subtitle",
+        "strength_sentence",
+        "risk_sentence",
+        "visual_theme_id"
+      ]
+    },
     "work_identity": { "type": "object", "required": ["primary_label", "summary", "confidence", "evidence_ids"] },
     "work_role_signals": { "type": "array", "items": { "type": "object", "required": ["role_id", "label", "band", "confidence", "evidence_ids"] } },
     "ability_model": { "type": "array", "items": { "type": "object", "required": ["dimension_id", "label", "score", "band", "confidence", "evidence_ids"] } },

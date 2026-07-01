@@ -69,62 +69,50 @@ export function renderHtml(profile, localeBundle) {
   const clients = profile.agent_ledger.clients || [];
   const measuredClients = clients.filter((client) => client.status === "measured").map((client) => client.client_id);
 
-  const archetype = profile.archetype || {
+  const archetype = profile.share_card || profile.archetype || {
     code: "SRVC",
-    name: "AI 架构审查官",
-    enName: "THE CHIEF JUSTICE",
-    tagline: "“代码可以不跑，但测试必须全绿。”",
-    talent: "像素级代码审计，把 AI 治得服服帖帖",
-    quote: "“把证据拿出来，没跑过测试别跟我谈交付。”",
-    weakness: "宁可在本地写 3 小时规范提示词，也不愿意自己动手改一行 JS。",
-    status: "每天都在跟 AI 进行严密的法庭辩论，直至其乖乖跑通所有校验。",
+    name: isZh ? "代码判官" : "Systems Proof Reviewer",
+    enName: "Systems Proof Reviewer",
+    tagline: isZh ? "代码可以乱，但证据链必须闭环。" : "Boundaries first, claims second, evidence always.",
+    enTagline: "Boundaries first, claims second, evidence always.",
+    share_subtitle: isZh ? "把 AI 写的每行代码都当成呈堂证供来严密复核。" : "Turns complex system work into a reviewable proof line.",
+    strength_sentence: isZh ? "强项是把 role signal、能力维度和证据等级放在同一张图里校准。" : "Strongest at aligning role signals, ability dimensions, and evidence levels.",
+    risk_sentence: isZh ? "外部结果证据不足时，本地验证不能被解读为真实世界影响。" : "Local proof should not be mistaken for external outcome evidence.",
     rigor: 92,
     control: 76,
     strategic: 85,
     closedLoop: 88,
-    tags: ["#代码质检委", "#无情测试监工", "#提示词洁癖"],
+    tags: isZh ? ["#代码洁癖", "#证据闭环", "#脱敏存证"] : ["#system-boundary", "#proof-review", "#context-map"],
+    variant_badges: isZh ? ["证据基线"] : ["Evidence baseline"],
+    stat_rows: [
+      { id: "verification", label: isZh ? "验证力" : "Verification", score: 92 },
+      { id: "reviewer", label: isZh ? "复核力" : "Review", score: 86 },
+      { id: "systems", label: isZh ? "系统感" : "Systems", score: 82 },
+      { id: "context", label: isZh ? "上下文" : "Context", score: 78 }
+    ],
     traceDays: 42,
-    activeStatus: "85% 默契协从"
+    activeStatus: isZh ? "证据基线" : "Evidence baseline",
+    visual_theme_id: "proof_seal"
   };
   const cardTheme = archetype.card_theme || {
-    id: "audit",
-    label: "审查型",
-    accent: "#0b695e",
-    accentSoft: "#e4f4f2",
-    field: "#e1ebd2",
-    page: "#f0f3ef",
-    gold: "#c28d2e",
+    id: "proof_seal",
+    label: "Proof seal",
+    motif: "proof-seal",
+    accent: "#145f54",
+    accentSoft: "#e4f3ef",
+    field: "#dfece6",
+    page: "#f2f5ef",
+    gold: "#b8872d",
     stripGradient: "linear-gradient(180deg, #153f39 0%, #0b695e 35%, #d09a2f 70%, #121816 100%)",
     chipGradient: "linear-gradient(135deg, #f4cc50 0%, #b88308 100%)",
     bannerPattern: "repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0 8px, transparent 8px 16px)"
   };
 
-  const formatChineseCompact = (value) => {
-    if (value >= 1e8) return `${(value / 1e8).toFixed(1)} 亿字`;
-    if (value >= 1e4) return `${(value / 1e4).toFixed(0)} 万字`;
-    return `${value} 字`;
-  };
-  const formatDuration = (seconds) => {
-    const totalSeconds = Math.max(0, Number(seconds) || 0);
-    if (!totalSeconds) return null;
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    if (isZh) return hours > 0 ? `${hours} 小时 ${minutes} 分` : `${minutes} 分`;
-    return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-  };
-  const displayUsage = codex.display_usage || {};
-  const displayTokenUsage = displayUsage.token_usage || {};
-  const displayTokens = displayTokenUsage.total_tokens || codex.token_usage?.total_tokens || 0;
-  const hasAccountUsage = displayUsage.source === "codex_account_usage";
-  const longestTask = formatDuration(displayTokenUsage.longest_running_turn_sec);
-  const currentStreakDays = displayTokenUsage.current_streak_days;
-  const longestStreakDays = displayTokenUsage.longest_streak_days;
-
   const copy = isZh ? {
-    productMark: "AGENTRECORD / 智能体协同数字身份证",
-    proofStamp: "本地加密生成",
-    identityLabel: "AI 协作身份",
-    strongestClaim: "最强事实存证结论",
+    productMark: "AGENTRECORD / AI 工作身份分享卡",
+    proofStamp: "本地脱敏生成",
+    identityLabel: "分享卡类型",
+    strongestClaim: "证据支撑结论",
     traceWindow: "Trace 活跃区间",
     agentClients: "Agent 客户端",
     evidenceCount: "证据卡片数",
@@ -138,11 +126,11 @@ export function renderHtml(profile, localeBundle) {
       calibration: "偏差校准说明",
       redaction: "数据安全隔离边界"
     },
-    roleIntro: "角色信号由真实行为证据链推导，表示在 AI 协作中的技术倾斜与团队定位。",
+    roleIntro: "角色信号由公开安全证据链推导，表示 AI 协作中的工作倾向。",
     abilityIntro: "能力模型呈现多维度的调度习惯。雷达排序分数仅用于组内加权，不构成外部评价。",
     ledgerIntro: "智能体台账客观记录会话规模与活跃度，属于行为密度，不直接等同于技术水平。",
-    evidenceIntro: "案卷仅保留可审计的轻量脱敏存证（Case File），绝不泄漏任何核心业务逻辑与隐私数据。",
-    redactionIntro: "公开报告可放心用于简历展示或社交分享，原始 Trace 和私有会话数据将永远锁在本地。",
+    evidenceIntro: "案卷仅保留可审计的轻量脱敏存证（Case File），不展示原始对话、终端输出或源码。",
+    redactionIntro: "公开报告用于本地查看或静态分享，原始 Trace 和私有会话数据保留在本地。",
     measured: "已接入测量",
     pending: "未配置适配器",
     sessions: "会话",
@@ -159,12 +147,23 @@ export function renderHtml(profile, localeBundle) {
     excluded: "数据脱敏：已被物理擦除的敏感内容",
     artifacts: "存证输出：生成的公开静态制品",
     generated: "生成日期",
+    shareAxes: "证据轴排序 / SHARE AXES",
+    shareSnapshot: "画像快照 / PROFILE SNAPSHOT",
+    strength: "强信号",
+    risk: "校准提示",
+    proofStrip: "证据摘要",
+    displayNameHelp: "修正展示名",
+    displayNameHelpBody: "展示名不会在 HTML 内直接保存。请更新 config 的 owner_display_name，或重新运行命令生成页面：",
+    displayNameSourceCommand: "node src/cli.mjs build --config ./agentrecord.config.json --display-name \"Your Name\"",
+    displayNamePackageCommand: "agentrecord build --config ./agentrecord.config.json --display-name \"Your Name\"",
+    sourceLabel: "项目源码",
+    sourceValue: "github.com/iiwish/agentrecord",
     noEvidence: "暂无直接证据支持",
     noMissing: "完美覆盖，暂无明确能力短板"
   } : {
-    productMark: "AGENTRECORD / AI WORKER BADGE",
-    proofStamp: "LOCAL PROOF STAMP",
-    identityLabel: "AI Work Identity",
+    productMark: "AGENTRECORD / AI WORK IDENTITY SHARE CARD",
+    proofStamp: "LOCAL REDACTED",
+    identityLabel: "Share Card Type",
     strongestClaim: "Strongest Claim",
     traceWindow: "Trace Active Window",
     agentClients: "Agent Clients",
@@ -179,8 +178,8 @@ export function renderHtml(profile, localeBundle) {
       calibration: "Calibration Notes",
       redaction: "Redaction Boundaries"
     },
-    roleIntro: "Role signals indicate your work tendencies derived from evidence, not standard seniority.",
-    abilityIntro: "Ability dimensions showcase operational precision. Internal scores are for relative ranking, not absolute scale.",
+    roleIntro: "Role signals indicate evidence-derived work tendencies, not an external rank.",
+    abilityIntro: "Ability dimensions show evidence-weighted tendencies. Internal scores are for relative ordering, not external ranking.",
     ledgerIntro: "Sessions and token activity show interaction density, not a direct proxy for competency.",
     evidenceIntro: "Each case file retains only safe, non-identifying trace references and abstract audit summaries.",
     redactionIntro: "Public artifacts are built for local review or static sharing. Raw conversation histories never leave your machine.",
@@ -200,6 +199,17 @@ export function renderHtml(profile, localeBundle) {
     excluded: "Redacted: Excluded from public artifacts",
     artifacts: "Artifacts: Generated public-safe files",
     generated: "Generated",
+    shareAxes: "SHARE AXES",
+    shareSnapshot: "PROFILE SNAPSHOT",
+    strength: "Strength",
+    risk: "Calibration",
+    proofStrip: "Proof Summary",
+    displayNameHelp: "Fix display name",
+    displayNameHelpBody: "The HTML page does not save inline edits. Update owner_display_name in config, or rebuild with:",
+    displayNameSourceCommand: "node src/cli.mjs build --config ./agentrecord.config.json --display-name \"Your Name\"",
+    displayNamePackageCommand: "agentrecord build --config ./agentrecord.config.json --display-name \"Your Name\"",
+    sourceLabel: "Project Source",
+    sourceValue: "github.com/iiwish/agentrecord",
     noEvidence: "No direct evidence yet",
     noMissing: "Pristine coverage, no explicit gap"
   };
@@ -209,9 +219,13 @@ export function renderHtml(profile, localeBundle) {
     : clients.map((client) => `${client.client_id}: ${client.status}`).join(" / ") || "none";
   const traceWindow = `${codex.trace_window?.start || "unknown"} -> ${codex.trace_window?.end || "unknown"}`;
   const heroEvidenceIds = profile.work_identity.evidence_ids?.slice(0, 4) || [];
-  const streakSource = hasAccountUsage && Number.isFinite(longestStreakDays)
-    ? `<em class="stats-source">${isZh ? `最长 ${longestStreakDays} 天` : `longest ${longestStreakDays}d`}</em>`
-    : "";
+  const traceDays = Number(archetype.traceDays);
+  const proofPills = [
+    (archetype.variant_badges || [])[0] || archetype.activeStatus || (isZh ? "本地证据" : "Local proof"),
+    `${formatNumber(profile.evidence_notes.length, profile.report.locale)} ${isZh ? "条证据" : "evidence"}`,
+    `${formatNumber(codex.sessions || 0, profile.report.locale)} ${isZh ? "次会话" : "sessions"}`,
+    Number.isFinite(traceDays) ? `${formatNumber(traceDays, profile.report.locale)} ${isZh ? "天 trace" : "trace days"}` : null
+  ].filter(Boolean).slice(0, 4);
 
   return `<!doctype html>
 <html lang="${esc(localeBundle.html_lang || profile.report.locale)}">
@@ -330,16 +344,58 @@ export function renderHtml(profile, localeBundle) {
     .holder-name {
       font-size: 34px;
       font-weight: 900;
-      margin: 0 0 8px 0;
-      letter-spacing: -1.5px;
+      margin: 0 0 12px 0;
+      letter-spacing: 0;
       color: var(--ink);
       line-height: 1.0;
+      overflow-wrap: anywhere;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      padding: 4px 6px;
+      margin-left: -6px;
+      min-width: 1.5em;
+    }
+    .display-name-help {
+      border: 1.5px dashed var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 8px 10px;
+      margin: -4px 0 12px -2px;
+      box-shadow: 2px 2px 0 rgba(10, 15, 13, 0.2);
+    }
+    .display-name-help summary {
+      cursor: pointer;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .display-name-help p {
+      margin: 8px 0 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: 700;
+    }
+    .display-name-help code {
+      display: block;
+      margin-top: 6px;
+      padding: 6px 7px;
+      border: 1px solid rgba(10, 15, 13, 0.22);
+      border-radius: 6px;
+      background: var(--case);
+      color: var(--steel);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10.5px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
     }
     .holder-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
     .holder-tag {
       background: var(--field);
@@ -350,6 +406,23 @@ export function renderHtml(profile, localeBundle) {
       font-weight: 800;
       color: var(--steel);
       box-shadow: 1px 1px 0 var(--line);
+    }
+    .proof-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 0 0 18px;
+    }
+    .proof-pill {
+      border: 1px solid rgba(10, 15, 13, 0.26);
+      border-radius: 999px;
+      padding: 4px 10px;
+      color: var(--accent);
+      background: #fff;
+      font-size: 10.5px;
+      font-weight: 850;
+      text-transform: uppercase;
+      line-height: 1.2;
     }
 
     /* Character Archetype Banner */
@@ -363,6 +436,7 @@ export function renderHtml(profile, localeBundle) {
       box-shadow: 3.5px 3.5px 0 var(--line);
       position: relative;
       overflow: hidden;
+      min-height: 116px;
     }
     .archetype-banner::after {
       content: "";
@@ -385,6 +459,132 @@ export function renderHtml(profile, localeBundle) {
       font-weight: 950;
       margin: 0;
       line-height: 1.2;
+      max-width: calc(100% - 86px);
+      overflow-wrap: anywhere;
+      position: relative;
+      z-index: 1;
+    }
+    .visual-motif {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 64px;
+      height: 64px;
+      z-index: 1;
+      opacity: 0.92;
+    }
+    .visual-motif::before,
+    .visual-motif::after {
+      content: "";
+      position: absolute;
+      border: 2px solid rgba(255,255,255,0.9);
+    }
+    .motif-proof-seal::before {
+      inset: 4px;
+      border-radius: 50%;
+      border-style: double;
+    }
+    .motif-proof-seal::after {
+      inset: 22px 8px;
+      border-left: 0;
+      border-right: 0;
+      transform: rotate(-12deg);
+    }
+    .motif-dossier::before {
+      inset: 10px 6px 6px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.14);
+    }
+    .motif-dossier::after {
+      top: 4px;
+      left: 6px;
+      width: 28px;
+      height: 12px;
+      border-bottom: 0;
+      border-radius: 4px 4px 0 0;
+    }
+    .motif-terminal::before {
+      inset: 7px;
+      border-radius: 5px;
+      background: repeating-linear-gradient(0deg, transparent 0 8px, rgba(255,255,255,0.2) 8px 10px);
+    }
+    .motif-terminal::after {
+      left: 17px;
+      top: 22px;
+      width: 28px;
+      height: 12px;
+      border-top: 0;
+      border-left: 0;
+      transform: skewX(-18deg);
+    }
+    .motif-release-stamp::before {
+      inset: 12px 4px;
+      border-style: double;
+      transform: rotate(-10deg);
+    }
+    .motif-release-stamp::after {
+      inset: 28px 10px;
+      border-left: 0;
+      border-right: 0;
+      transform: rotate(-10deg);
+    }
+    .motif-product-lens::before {
+      width: 34px;
+      height: 34px;
+      top: 7px;
+      left: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+    }
+    .motif-product-lens::after {
+      width: 24px;
+      height: 0;
+      top: 43px;
+      left: 38px;
+      transform: rotate(42deg);
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+    }
+    .motif-context-map::before {
+      inset: 10px;
+      border-style: dashed;
+    }
+    .motif-context-map::after {
+      width: 42px;
+      height: 22px;
+      top: 20px;
+      left: 10px;
+      border-left: 0;
+      border-right: 0;
+    }
+    .motif-goal-compass::before {
+      inset: 6px;
+      border-radius: 50%;
+    }
+    .motif-goal-compass::after {
+      left: 31px;
+      top: 8px;
+      width: 0;
+      height: 48px;
+      border-top: 0;
+      border-bottom: 0;
+      transform: rotate(45deg);
+    }
+    .motif-route-map::before {
+      inset: 12px;
+      border-radius: 50%;
+      border-style: dashed;
+    }
+    .motif-route-map::after {
+      left: 11px;
+      top: 32px;
+      width: 42px;
+      height: 0;
+      border-left: 0;
+      border-right: 0;
+      border-bottom: 0;
+      transform: rotate(-24deg);
     }
 
     /* Quote style */
@@ -404,7 +604,7 @@ export function renderHtml(profile, localeBundle) {
       background: var(--accent-soft);
       color: var(--steel);
       padding: 8px 11px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       box-shadow: 2px 2px 0 var(--line);
       display: grid;
       grid-template-columns: 74px minmax(0, 1fr);
@@ -424,159 +624,41 @@ export function renderHtml(profile, localeBundle) {
       line-height: 1.35;
       overflow-wrap: anywhere;
     }
-
-    /* RPG Attributes Panel */
-    .rpg-section-title {
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      border-bottom: 1.5px dashed rgba(10, 15, 13, 0.15);
-      padding-bottom: 4px;
-    }
-    .rpg-panel {
-      display: grid;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .rpg-row {
-      display: grid;
-      grid-template-columns: 85px 1fr 45px;
-      gap: 14px;
-      align-items: center;
-    }
-    .rpg-label {
-      font-size: 13.5px;
-      font-weight: 900;
-      color: var(--ink);
-    }
-    .rpg-track {
-      height: 12px;
-      border: 2px solid var(--line);
-      background: var(--page);
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-    }
-    .rpg-fill {
-      height: 100%;
-      background: repeating-linear-gradient(-45deg, var(--gold), var(--gold) 4px, #a37c22 4px, #a37c22 8px);
-      border-right: 1.5px solid var(--line);
-    }
-    .rpg-value {
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 13px;
-      font-weight: 900;
-      text-align: right;
-      color: var(--ink);
-    }
-
-    /* Battle Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 28px;
-    }
-    .stats-item {
+    .calibration-line,
+    .source-line {
       border: 1.5px solid var(--line);
       border-radius: 8px;
       background: var(--case);
-      padding: 10px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 68px;
-      box-shadow: 3px 3px 0 var(--line);
-    }
-    .stats-item span {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .stats-item b {
-      font-size: 17px;
-      font-weight: 900;
-      color: var(--ink);
-      margin-top: 4px;
-    }
-    .stats-source {
-      display: inline-flex;
+      padding: 9px 11px;
+      margin-bottom: 12px;
+      box-shadow: 2px 2px 0 var(--line);
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr);
+      gap: 10px;
       align-items: center;
-      width: fit-content;
-      max-width: 100%;
-      margin-top: 6px;
-      border: 1px solid rgba(10, 15, 13, 0.22);
-      border-radius: 5px;
-      padding: 1px 5px;
-      font-size: 8.5px;
-      line-height: 1.25;
+    }
+    .source-line {
+      margin-bottom: 0;
+      background: #fff;
+    }
+    .calibration-line span,
+    .source-line span {
+      font-size: 9px;
       font-weight: 900;
-      letter-spacing: 0.6px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--accent);
-      background: #fff;
+      white-space: nowrap;
+    }
+    .calibration-line b,
+    .source-line b {
+      color: var(--steel);
+      font-size: 12px;
+      line-height: 1.35;
       overflow-wrap: anywhere;
     }
-
-    /* Card stamp & Barcode */
-    .card-footer-strip {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      border-top: 2px dashed rgba(10, 15, 13, 0.15);
-      padding-top: 20px;
-    }
-    .card-stamp {
-      border: 3px double var(--stamp);
-      color: var(--stamp);
-      border-radius: 4px;
-      padding: 4px 10px;
-      transform: rotate(-3deg);
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      background: rgba(184, 45, 34, 0.02);
-      box-shadow: inset 0 0 0 1px var(--stamp);
-    }
-    .card-barcode-box {
-      text-align: right;
-    }
-    .card-barcode {
-      display: inline-block;
-      height: 26px;
-      width: 120px;
-      background: repeating-linear-gradient(90deg, var(--ink), var(--ink) 1.5px, transparent 1.5px, transparent 4.5px, var(--ink) 4.5px, var(--ink) 5.5px, transparent 5.5px, transparent 8.5px);
-      opacity: 0.85;
-    }
-    .card-serial {
+    .source-line b {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      margin-top: 2px;
-      text-transform: uppercase;
-    }
-
-    /* Card MRZ Zone */
-    .card-mrz {
-      background: var(--page);
-      border-top: 2.5px solid var(--line);
-      padding: 12px 12px 12px 24px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 10px;
-      line-height: 1.4;
-      letter-spacing: 2px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-transform: uppercase;
     }
 
     /* SCROLL DOWN PROMPT */
@@ -600,7 +682,7 @@ export function renderHtml(profile, localeBundle) {
     .dossier-section { margin-top: 24px; padding: clamp(20px, 4vw, 36px); background: var(--sheet); }
     .section-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, .36fr); gap: 24px; align-items: end; margin-bottom: 28px; border-bottom: 2px dashed #dce2dc; padding-bottom: 16px; }
     .kicker { color: var(--accent); margin-bottom: 6px; font-size: 13px; font-family: ui-monospace, monospace; }
-    h2 { margin: 0; font-size: clamp(24px, 4vw, 42px); line-height: 1.0; letter-spacing: -1px; overflow-wrap: anywhere; font-weight: 900; }
+    h2 { margin: 0; font-size: clamp(24px, 4vw, 42px); line-height: 1.0; letter-spacing: 0; overflow-wrap: anywhere; font-weight: 900; }
     .section-head p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 14px; font-weight: 600; }
 
     .signal-list, .ability-list, .ledger-list, .case-list, .note-list, .boundary-grid { display: grid; gap: 12px; }
@@ -667,6 +749,23 @@ export function renderHtml(profile, localeBundle) {
       .signal-row, .ability-row, .ledger-row { grid-template-columns: 1fr; gap: 14px; }
       h1 { font-size: clamp(32px, 8vw, 48px); }
     }
+    @media (max-width: 520px) {
+      body { padding: 0 10px; }
+      main { padding-bottom: 48px; }
+      .badge-card { border-width: 2.5px; border-radius: 12px; box-shadow: 6px 6px 0 var(--line); }
+      .holo-strip { width: 10px; }
+      .badge-body { padding: 22px 16px 20px 30px; }
+      .chip-container { gap: 12px; margin-bottom: 18px; }
+      .card-chip { width: 36px; height: 27px; flex: 0 0 auto; }
+      .card-header-meta { font-size: 9.5px; }
+      .holder-name { font-size: 28px; line-height: 1.08; }
+      .archetype-banner { min-height: 104px; padding: 14px; }
+      .archetype-title { max-width: calc(100% - 58px); font-size: 20px; }
+      .visual-motif { width: 48px; height: 48px; right: 10px; bottom: 10px; }
+      .proof-pill { font-size: 9.5px; padding: 3px 8px; }
+      .signature-line, .calibration-line, .source-line { grid-template-columns: 1fr; gap: 4px; }
+      .signature-line span, .calibration-line span, .source-line span { white-space: normal; }
+    }
 
     /* Clean CSS Tabs & Linear Aesthetic */
     .tab-input { display: none; }
@@ -732,14 +831,12 @@ export function renderHtml(profile, localeBundle) {
 </head>
 <body>
   <main>
-    <!-- GORGEOUS SHARABLE BADGE CARD -->
+    <!-- Shareable identity card -->
     <div class="share-container">
       <div class="badge-card variant-${esc(cardTheme.id)}">
-        <!-- Rainbow edge border decoration -->
         <div class="holo-strip"></div>
 
         <div class="badge-body">
-          <!-- Card top header -->
           <div class="chip-container">
             <div class="card-chip"></div>
             <div class="card-header-meta">
@@ -748,98 +845,49 @@ export function renderHtml(profile, localeBundle) {
             </div>
           </div>
 
-          <!-- Holder name -->
           <h1 class="holder-name">${esc(profile.owner.display_name)}</h1>
+          <details class="display-name-help">
+            <summary>${esc(copy.displayNameHelp)}</summary>
+            <p>${esc(copy.displayNameHelpBody)}</p>
+            <code>${esc(copy.displayNameSourceCommand)}</code>
+            <code>${esc(copy.displayNamePackageCommand)}</code>
+          </details>
 
-          <!-- Witty programmer-specific tags -->
           <div class="holder-tags">
             ${archetype.tags.map((tag) => `<span class="holder-tag">${esc(tag)}</span>`).join("\n")}
           </div>
-
-          <!-- Character Archetype Banner -->
-          <div class="archetype-banner">
-            <div class="archetype-label">${isZh ? "AI 协同职业倾向" : "COLLABORATION ARCHETYPE"}</div>
-            <h2 class="archetype-title">${esc(archetype.name)} / <span style="font-size:16px; opacity:0.85;">${esc(archetype.enName)}</span></h2>
+          <div class="proof-strip" aria-label="${esc(copy.proofStrip)}">
+            ${proofPills.map((pill) => `<span class="proof-pill">${esc(pill)}</span>`).join("\n")}
           </div>
 
-          <!-- Quote -->
+          <div class="archetype-banner">
+            <div class="archetype-label">${esc(copy.identityLabel)} / ${esc(archetype.code)}</div>
+            <h2 class="archetype-title">${esc(archetype.name)} / <span style="font-size:16px; opacity:0.85;">${esc(archetype.enName || archetype.english_short_name || archetype.code)}</span></h2>
+            <div class="visual-motif motif-${esc(cardTheme.motif || archetype.visual_theme_id || "proof-seal")}" aria-hidden="true"></div>
+          </div>
+
           <div class="badge-quote">
             ${esc(isZh ? archetype.tagline : archetype.enTagline)}
           </div>
           <div class="signature-line">
-            <span>${isZh ? "主导信号" : "Signal"}</span>
+            <span>${isZh ? "副标题" : "Subtitle"}</span>
             <b>${esc(archetype.signature || `${archetype.dominant?.role_label || archetype.name} · ${archetype.dominant?.ability_label || cardTheme.label}`)}</b>
           </div>
-
-          <!-- RPG Attributes Slider Panel -->
-          <div class="rpg-section-title">${isZh ? "驯化属性倾向 / OPERATOR STATS" : "OPERATOR ATRIBUTES"}</div>
-          <div class="rpg-panel">
-            <div class="rpg-row">
-              <div class="rpg-label">${isZh ? "防错严谨度" : "Audit Rigor"}</div>
-              <div class="rpg-track"><div class="rpg-fill" style="width:${archetype.rigor}%"></div></div>
-              <div class="rpg-value">${archetype.rigor}%</div>
-            </div>
-            <div class="rpg-row">
-              <div class="rpg-label">${isZh ? "高频操控欲" : "Control"}</div>
-              <div class="rpg-track"><div class="rpg-fill" style="width:${archetype.control}%"></div></div>
-              <div class="rpg-value">${archetype.control}%</div>
-            </div>
-            <div class="rpg-row">
-              <div class="rpg-label">${isZh ? "顶层大局观" : "Strategy"}</div>
-              <div class="rpg-track"><div class="rpg-fill" style="width:${archetype.strategic}%"></div></div>
-              <div class="rpg-value">${archetype.strategic}%</div>
-            </div>
-            <div class="rpg-row">
-              <div class="rpg-label">${isZh ? "冷血闭环值" : "Execution"}</div>
-              <div class="rpg-track"><div class="rpg-fill" style="width:${archetype.closedLoop}%"></div></div>
-              <div class="rpg-value">${archetype.closedLoop}%</div>
-            </div>
+          <div class="calibration-line">
+            <span>${esc(copy.risk)}</span>
+            <b>${esc(archetype.risk_sentence || profile.calibration_notes[0]?.summary || t("public_safe"))}</b>
           </div>
-
-          <!-- Battle Stats Grid -->
-          <div class="rpg-section-title">${isZh ? "调教战绩统计 / INTERACTION BATTLE RECORDS" : "BATTLE STATS"}</div>
-          <div class="stats-grid">
-            <div class="stats-item">
-              <span>${esc(copy.localThreads)}</span>
-              <b>${formatNumber(codex.sessions || 0, profile.report.locale)} 次</b>
-              <em class="stats-source">${esc(copy.localAudited)}</em>
-            </div>
-            <div class="stats-item">
-              <span>${esc(hasAccountUsage ? copy.accountTokens : copy.tokenActivity)}</span>
-              <b>${formatChineseCompact(displayTokens)}</b>
-              <em class="stats-source">${esc(hasAccountUsage ? copy.accountOverview : copy.localAudited)}</em>
-            </div>
-            <div class="stats-item">
-              <span>${esc(hasAccountUsage ? copy.longestTask : (isZh ? "驯化周期" : "Trace Active"))}</span>
-              <b>${esc(hasAccountUsage && longestTask ? longestTask : `${archetype.traceDays} 天`)}</b>
-            </div>
-            <div class="stats-item">
-              <span>${esc(hasAccountUsage ? copy.streakDays : (isZh ? "当前状态" : "Active Status"))}</span>
-              <b style="color:var(--accent);">${esc(hasAccountUsage && Number.isFinite(currentStreakDays) ? `${currentStreakDays} 天` : archetype.activeStatus)}</b>${streakSource}
-            </div>
+          <div class="source-line">
+            <span>${esc(copy.sourceLabel)}</span>
+            <b>${esc(copy.sourceValue)}</b>
           </div>
-
-          <!-- Card barcode and stamp -->
-          <div class="card-footer-strip">
-            <div class="card-stamp">${esc(copy.proofStamp)}</div>
-            <div class="card-barcode-box">
-              <div class="card-barcode"></div>
-              <div class="card-serial">AR-${esc(archetype.code)}-${esc(profile.owner.id.toUpperCase())}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Passport MRZ zone -->
-        <div class="card-mrz">
-          P&lt;CHN&lt;${esc(profile.owner.id.toUpperCase())}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
-          AR&lt;${esc(archetype.code)}&lt;${esc(formatCompactNumber(displayTokens, "en-US").toUpperCase())}&lt;${esc(codex.sessions || 0)}&lt;EVI&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
         </div>
       </div>
     </div>
 
     <!-- Bounce prompt to scroll -->
     <div class="scroll-prompt">
-      ▼ ${isZh ? "向下滚动解密：底层技术审计链 & 事实证据卷宗" : "Scroll to inspect: low-level audit trace & evidence dossiers"}
+      ${isZh ? "继续查看：角色信号、事实证据与隐私边界" : "Continue: role signals, evidence, and privacy boundary"}
     </div>
 
     <!-- Clean CSS Tabs for Progressive Disclosure -->
@@ -991,7 +1039,7 @@ export function renderHtml(profile, localeBundle) {
               : "";
             return `<article class="ledger-row" style="border-left: 5px solid ${isMeasured ? "var(--accent)" : "var(--field)"};">
               <div>
-                <div class="name" style="font-family:ui-monospace,monospace; letter-spacing:-0.5px; display:flex; align-items:center; gap:8px;">
+                <div class="name" style="font-family:ui-monospace,monospace; letter-spacing:0; display:flex; align-items:center; gap:8px;">
                   ${esc(client.client_id)}
                 </div>
                 <div class="meta" style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:11.5px; color:${isMeasured ? "var(--accent)" : "var(--muted)"};">

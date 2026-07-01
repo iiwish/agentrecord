@@ -1,15 +1,20 @@
 {
   "schema_version": "agentrecord.config.v0",
-  "owner": "test-owner",
+  "owner": "iiwish",
+  "owner_display_name": "iiwish",
   "profiles_dir": "profiles",
   "output": {
-    "profile_dir": "profiles/test-owner"
+    "profile_dir": "profiles/iiwish"
   },
   "codex": {
     "sessions_dir": "~/.codex/sessions",
     "session_roots": [
       "~/.codex/sessions"
-    ]
+    ],
+    "account_usage": {
+      "enabled": true,
+      "timeout_ms": 15000
+    }
   },
   "memory": {
     "enabled": true,

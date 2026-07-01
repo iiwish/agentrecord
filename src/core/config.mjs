@@ -89,13 +89,13 @@ export function defaultOwner() {
   return safePathSegment(defaultOwnerDisplayName());
 }
 
-export function createDefaultConfig({ owner, profilesDir = "profiles", locale = "auto" } = {}) {
-  const ownerDisplayName = owner || defaultOwnerDisplayName();
-  const safeOwner = safePathSegment(ownerDisplayName);
+export function createDefaultConfig({ owner, ownerDisplayName, profilesDir = "profiles", locale = "auto" } = {}) {
+  const safeOwner = safePathSegment(owner || defaultOwner());
+  const displayName = ownerDisplayName || owner || defaultOwnerDisplayName();
   return {
     schema_version: "agentrecord.config.v0",
     owner: safeOwner,
-    owner_display_name: ownerDisplayName,
+    owner_display_name: displayName,
     profiles_dir: profilesDir,
     output: {
       profile_dir: `${profilesDir}/${safeOwner}`
@@ -137,9 +137,10 @@ export function loadConfig(options = {}) {
   const envOwner = process.env.AGENTRECORD_OWNER;
   const hasOwnerOverride = Boolean(options.owner || envOwner);
   const hasProfilesDirOverride = Boolean(options.profilesDir || process.env.AGENTRECORD_PROFILES_DIR);
-  const ownerInput = options.owner || envOwner || rawConfig.owner || rawConfig.profile_owner || defaultOwnerDisplayName();
+  const ownerInput = options.owner || envOwner || rawConfig.owner || rawConfig.profile_owner || defaultOwner();
   const owner = safePathSegment(rawConfig.owner_id || ownerInput);
-  const ownerDisplayName = rawConfig.owner_display_name || rawConfig.identity?.display_name || ownerInput;
+  const ownerDisplayName = options.displayName
+    || (hasOwnerOverride ? ownerInput : rawConfig.owner_display_name || rawConfig.identity?.display_name || ownerInput);
   const profilesDirRaw = options.profilesDir || process.env.AGENTRECORD_PROFILES_DIR || rawConfig.profiles_dir || rawConfig.output?.profiles_dir || "profiles";
   const profileDirRaw = options.output
     || (hasOwnerOverride || hasProfilesDirOverride

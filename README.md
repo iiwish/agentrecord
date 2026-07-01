@@ -27,7 +27,7 @@ After npm install:
 
 ```bash
 npm install -g @iiwish/agentrecord
-agentrecord init --owner <owner>
+agentrecord init --owner <owner> --display-name "Your Name"
 agentrecord build --config ./agentrecord.config.json --no-account-usage
 agentrecord validate --config ./agentrecord.config.json
 agentrecord open --config ./agentrecord.config.json
@@ -36,13 +36,13 @@ agentrecord open --config ./agentrecord.config.json
 From the source checkout:
 
 ```bash
-node src/cli.mjs init --owner <owner>
+node src/cli.mjs init --owner <owner> --display-name "Your Name"
 node src/cli.mjs build --config ./agentrecord.config.json --no-account-usage
 node src/cli.mjs validate --config ./agentrecord.config.json
 node src/cli.mjs open --config ./agentrecord.config.json
 ```
 
-The primary product artifact is `profiles/<owner>/index.html`: a single-file, static AI work passport for local review or redacted sharing. `profile.json` and `evidence.jsonl` are the structured truth sources behind the page, and `profile.md` is a secondary audit draft.
+The primary product artifact is `profiles/<owner>/index.html`: a single-file, static AI work identity share card for local review or redacted sharing. The first screen highlights a deterministic archetype and share copy, while `profile.json` and `evidence.jsonl` remain the structured truth sources behind every public claim. `profile.md` is a secondary audit draft.
 
 Agent context is opt-in:
 
@@ -58,7 +58,7 @@ A privacy-safe starter example is available in `examples/basic/`.
 
 ```bash
 node src/cli.mjs init --dry-run
-node src/cli.mjs init --owner <owner>
+node src/cli.mjs init --owner <owner> --display-name "Your Name"
 node src/cli.mjs scan --config ./agentrecord.config.json
 node src/cli.mjs build --config ./agentrecord.config.json
 node src/cli.mjs validate --config ./agentrecord.config.json
@@ -72,8 +72,11 @@ node src/cli.mjs --help
 node src/cli.mjs doctor
 node src/cli.mjs scan --sessions-dir ~/.codex/sessions
 node src/cli.mjs build --owner <owner> --locale zh-CN
+node src/cli.mjs build --config ./agentrecord.config.json --display-name "Your Name"
 node src/cli.mjs build --config ./agentrecord.config.json --agent-context
 ```
+
+`owner` is the stable path/id used for `profiles/<owner>/`. `owner_display_name` is the visible name in `profile.json`, `index.html`, Markdown, and optional agent context. Use `--display-name` during `init` or `build` to correct the visible name without changing the output directory. The generated HTML shows static guidance for this correction and does not provide inline editing or in-page saving.
 
 ## Expected Outputs
 
@@ -106,4 +109,4 @@ The first supported adapter should be Codex local sessions, because it gives eno
 
 AgentRecord is in the v0.1 CLI baseline and uses package version `0.0.1` for the first conservative npm release candidate. The `build` and `validate` commands provide the minimum local loop: generate `profile.json`, `evidence.jsonl`, `index.html`, `profile.md`, `redaction-report.md`, and `run-report.md`, then verify required artifacts, profile shape, evidence references, locale parity, private state, and public-artifact privacy boundaries.
 
-HTML is the first product artifact. `profiles/<owner>/index.html` is the primary human-readable output for local review and sharing, backed by the machine-readable profile and evidence files.
+HTML is the first product artifact. `profiles/<owner>/index.html` opens with the share card and stays backed by the machine-readable profile and evidence files. The HTML remains a single static file with no external resources, no script, no link tag, no `http://` or `https://`, no CSS `url(...)`, and no `@import`. The AgentRecord project source may appear as plain text such as `github.com/iiwish/agentrecord`.

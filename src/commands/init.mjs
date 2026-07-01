@@ -1,15 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { CONFIG_FILE, createDefaultConfig, defaultOwnerDisplayName, safePathSegment, writeJson } from "../core/config.mjs";
+import { CONFIG_FILE, createDefaultConfig, defaultOwner, defaultOwnerDisplayName, safePathSegment, writeJson } from "../core/config.mjs";
 
 export async function runInit({ options }) {
-  const ownerDisplayName = options.owner || defaultOwnerDisplayName();
-  const owner = safePathSegment(ownerDisplayName);
+  const owner = safePathSegment(options.owner || defaultOwner());
+  const ownerDisplayName = options.displayName || options.owner || defaultOwnerDisplayName();
   const profilesDir = options.profilesDir || "profiles";
   const profileDir = options.output || path.join(profilesDir, owner);
   const config = createDefaultConfig({
-    owner: ownerDisplayName,
+    owner,
+    ownerDisplayName,
     profilesDir,
     locale: options.locale || "auto"
   });

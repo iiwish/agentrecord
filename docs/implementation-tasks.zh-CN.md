@@ -2,7 +2,7 @@
 
 ## 当前 v0.1 状态
 
-状态：本地 CLI 主循环和首发 npm release candidate 可用于发布前人工评审。
+状态：本地 CLI 主循环、HTML-first share card、展示名修正入口和首发 npm release candidate 可用于人工评审。
 
 当前能力：
 
@@ -12,29 +12,35 @@
 - `validate` 检查必需产物、profile 结构、evidence 引用、locale parity、私有状态、公共产物隐私边界。
 - `open` 默认打开 `profiles/<owner>/index.html`。
 - `build --agent-context` 显式生成 `agent-context.md` 和 `agent-context.json`。
+- `init --owner <id> --display-name <name>` 写入稳定 owner id 和展示名。
+- `build --display-name <name>` 修正本次输出展示名，不改变 `owner.id` 或输出目录。
+- `share_card` 由 role signals、ability model、evidence level mix、confidence、agent activity 和 trace window 确定性生成。
 
 当前产品边界：
 
 - npm 首发候选版本为 `0.0.1`，license 为 `MIT`。
 - npm package name 为 `@iiwish/agentrecord`，unscoped `agentrecord` 被 npm 判定与既有包名过近。
 - npm package binary 为 `agentrecord`，入口为 `src/cli.mjs`。
-- `index.html` 是第一产品产物，是可本地打开、可静态分享的单文件 AI work passport。
+- `index.html` 是第一产品产物，是可本地打开、可静态分享的单文件 AI work identity share card。
 - `profile.json` 和 `evidence.jsonl` 是结构化真相源。
 - `profile.md` 是辅助审计稿。
 - 默认 audience 为 `self` 和 `share`。
 - 默认不生成招聘、职位代理、录用决策、市场位置或未经校准的资历结论。
 - 私有 cursor、snapshots 和 state 位于 `profiles/<owner>/.agentrecord/`。
 - 公共产物不包含 raw prompt、raw response、raw session ID、Codex session path、terminal output、source body 或 secret-like pattern。
+- `index.html` 不包含 `<script>`、`<link>`、`http://`、`https://`、CSS `url(...)`、`@import` 或 `contenteditable`；AgentRecord GitHub 项目来源只能以纯文本展示。
 
 当前发布前检查：
 
 - `npm run check`
 - `node src/cli.mjs build --config ./agentrecord.config.json`
+- `node src/cli.mjs build --config ./agentrecord.config.json --display-name "iiwish" --no-account-usage`
 - `node src/cli.mjs validate --config ./agentrecord.config.json`
+- `node src/cli.mjs build --config ./examples/basic/agentrecord.config.example.json --output /tmp/agentrecord-example-profile --no-account-usage`
+- `node src/cli.mjs validate --config ./examples/basic/agentrecord.config.example.json --output /tmp/agentrecord-example-profile`
+- `npm run smoke:share-card`
 - `npm run pack:dry`
 - `npm run smoke:install`
-- `npm publish --dry-run --access public --json`
-- `npm view @iiwish/agentrecord version`
 - `git diff --check`
 - `npm pack --dry-run --json` 输出不包含 `profiles/`、`.agentrecord/` 或 raw trace。
 

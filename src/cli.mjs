@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 import { runBuild } from "./commands/build.mjs";
 import { runDoctor } from "./commands/doctor.mjs";
+import { runGenerate } from "./commands/generate.mjs";
 import { runInit } from "./commands/init.mjs";
 import { runOpen } from "./commands/open.mjs";
 import { runScan } from "./commands/scan.mjs";
@@ -21,6 +22,7 @@ Usage:
   agentrecord --help
   agentrecord --version
   agentrecord doctor
+  agentrecord generate [--open] [--config <file>] [--owner <id>] [--display-name <name>] [--no-account-usage]
   agentrecord init [--dry-run] [--owner <id>] [--display-name <name>] [--profiles-dir <dir>] [--output <dir>]
   agentrecord scan [--config <file>] [--sessions-dir <dir>] [--opencode-db <file>] [--claude-code-projects-dir <dir>]
   agentrecord build [--config <file>] [--owner <id>] [--locale <locale>] [--display-name <name>] [--agent-context] [--no-account-usage] [--account-usage-timeout-ms <ms>] [--sessions-dir <dir>] [--opencode-db <file>] [--opencode-data-dir <dir>] [--no-opencode] [--claude-code-projects-dir <dir>] [--no-claude-code]
@@ -29,6 +31,7 @@ Usage:
 
 Commands:
   agentrecord doctor     Check local runtime and source availability
+  agentrecord generate   Initialize if needed, build, validate, and optionally open
   agentrecord init       Create agentrecord.config.json
   agentrecord scan       Discover local AI-agent trace sources
   agentrecord build      Generate profile.json, evidence.jsonl, and HTML report
@@ -40,6 +43,7 @@ Build options:
   --owner <id>                          Override stable owner id and output path
   --locale <locale>                     Override report locale (en-US, zh-CN, auto)
   --display-name <name>                 Override owner display name without changing owner id/path
+  --open                                Open index.html after generate succeeds
   --agent-context                       Also write agent-context.md and agent-context.json
   --no-account-usage                    Skip Codex CLI account usage lookup
   --account-usage-timeout-ms <ms>       Timeout for Codex CLI account usage lookup
@@ -66,6 +70,7 @@ if (options.help || !command || command === "help") {
 
 const commands = {
   doctor: runDoctor,
+  generate: runGenerate,
   init: runInit,
   scan: runScan,
   build: runBuild,

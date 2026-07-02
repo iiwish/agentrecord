@@ -271,11 +271,73 @@ try {
   assert(/30-day span/i.test(proofStripMatch[0]), "HTML share-card proof strip must show usage span from the trace window.");
   assert(!/\d+\s+evidence/i.test(proofStripMatch[0]), "HTML share-card proof strip must not show evidence-count pills.");
   assert(!/\d+\s+sessions/i.test(proofStripMatch[0]), "HTML share-card proof strip must not show session-count pills.");
+  const toolStackMatch = html.match(/<div class="tool-stack"[\s\S]*?<\/div>/);
+  assert(toolStackMatch, "HTML share card must include a compact measured tool stack.");
+  assert(/Agent Stack/i.test(toolStackMatch[0]), "HTML tool stack must use the Agent Stack label in English reports.");
+  assert(/Codex/.test(toolStackMatch[0]), "HTML tool stack must show Codex when Codex traces are measured.");
+  assert(/opencode/.test(toolStackMatch[0]), "HTML tool stack must show opencode when opencode traces are measured.");
+  assert(/Claude Code/.test(toolStackMatch[0]), "HTML tool stack must show Claude Code when Claude Code traces are measured.");
+  assert(!/\d/.test(toolStackMatch[0]), "HTML tool stack must not turn tool identity into a numeric metric.");
+  assert(!/tokens?|sessions?|evidence/i.test(toolStackMatch[0]), "HTML tool stack must not include token, session, or evidence counts.");
   assert(!/<script\b/i.test(html), "index.html must not include script tags.");
   assert(!/<link\b/i.test(html), "index.html must not include link tags.");
   assert(!/https?:\/\//i.test(html), "index.html must not include http or https URLs.");
   assert(!/url\s*\(/i.test(html), "index.html must not include CSS url(...).");
   assert(!/@import\b/i.test(html), "index.html must not include CSS imports.");
+
+  const emptySessionsDir = path.join(tempRoot, "empty-sessions");
+  const noDataProfileDir = path.join(tempRoot, "profiles", "no-data-owner");
+  const noDataConfigPath = path.join(tempRoot, "agentrecord.no-data.config.json");
+  mkdirSync(emptySessionsDir, { recursive: true });
+  writeFileSync(noDataConfigPath, `${JSON.stringify({
+    schema_version: "agentrecord.config.v0",
+    owner: "no-data-owner",
+    owner_display_name: "No Data Owner",
+    profiles_dir: path.join(tempRoot, "profiles"),
+    output: {
+      profile_dir: noDataProfileDir
+    },
+    codex: {
+      sessions_dir: emptySessionsDir,
+      session_roots: [emptySessionsDir],
+      account_usage: {
+        enabled: false,
+        timeout_ms: 1500
+      }
+    },
+    opencode: {
+      enabled: false
+    },
+    claude_code: {
+      enabled: false
+    },
+    memory: {
+      enabled: false
+    },
+    evidence_rules_paths: [
+      path.join(repoRoot, "references", "evidence-rules.json")
+    ],
+    report: {
+      locale: "en-US",
+      fallback_locale: "en-US",
+      label_mode: "bilingual-compact",
+      schema_language: "en-US",
+      audiences: ["self", "share"],
+      default_audience: "self"
+    },
+    privacy: {
+      mode: "strict",
+      public_session_ids: false,
+      public_project_paths: false
+    }
+  }, null, 2)}\n`);
+  run(["build", "--config", noDataConfigPath, "--no-account-usage"]);
+  run(["validate", "--config", noDataConfigPath]);
+  const noDataProfile = JSON.parse(readFileSync(path.join(noDataProfileDir, "profile.json"), "utf8"));
+  const noDataHtml = readFileSync(path.join(noDataProfileDir, "index.html"), "utf8");
+  assert(noDataProfile.share_card?.state === "baseline/no_data", "zero-data HTML build must keep baseline/no_data state.");
+  assert(!/class="tool-stack"/.test(noDataHtml), "zero-data HTML share card must not show a measured tool stack.");
+  assert(!/Agent Stack|工具栈/i.test(noDataHtml), "zero-data HTML share card must not imply an agent tool stack.");
 
   const archetypeCodes = Object.keys(SHARE_CARD_ARCHETYPES);
   assert(archetypeCodes.length === 16, "share-card system must define 16 base archetypes.");

@@ -30,38 +30,36 @@ Get up and running locally in under 2 minutes.
 
 ### 🤖 Agent-Native Quickstart (Let Your Agent Do the Work!)
 
-Since you are using an AI agent right now (such as Claude Code, opencode, Codex, etc.), you don't need to type the commands yourself. Copy and paste the prompt below into your agent's chat window, and it will run the local setup, scan, build, validation, and open loop:
+Since you are using an AI agent right now (such as Claude Code, opencode, Codex, etc.), you can ask it to run one command:
 
 ```text
 You are an AI assistant with terminal command execution. Please generate my local AgentRecord work profile.
 
-Run these commands in order:
-1. `npx -y @iiwish/agentrecord@latest init`
-2. `npx -y @iiwish/agentrecord@latest scan`
-3. `npx -y @iiwish/agentrecord@latest build --no-account-usage`
-4. `npx -y @iiwish/agentrecord@latest validate`
-5. `npx -y @iiwish/agentrecord@latest open`
+Run this command:
+`npx -y @iiwish/agentrecord@latest generate --open --no-account-usage`
 
 Do not upload raw conversations, code, secrets, or local trace files. When finished, tell me whether validation passed and where the generated `index.html` file is.
 
-Optional: if I provide a display name, add `--display-name "<name>"` to the `init` command. Otherwise use the default display name.
+Optional: if I provide a display name, add `--display-name "<name>"` to the command. Otherwise use the default display name.
 ```
 
 ### Manual CLI Quickstart
 
-#### 1. Global NPM Installation
+#### 1. Generate Your Profile
 ```bash
-npm install -g @iiwish/agentrecord
+npx -y @iiwish/agentrecord@latest generate --open --no-account-usage
 ```
-*(Or run directly from the source repository by invoking `node src/cli.mjs`)*
+This initializes local config if needed, builds the profile, validates privacy/schema boundaries, and opens the generated HTML report.
 
-#### 2. Initialize Config
+*(Or install globally with `npm install -g @iiwish/agentrecord` and run `agentrecord generate --open --no-account-usage`.)*
+
+#### 2. Advanced: Initialize Config
 ```bash
 agentrecord init --owner <owner_id> --display-name "Your Name"
 ```
 This generates a baseline `agentrecord.config.json` containing output destinations, privacy options, and adapter setups.
 
-#### 3. Scan & Build
+#### 3. Advanced: Scan & Build
 ```bash
 # Scan for local agent data sources
 agentrecord scan --config ./agentrecord.config.json
@@ -70,7 +68,7 @@ agentrecord scan --config ./agentrecord.config.json
 agentrecord build --config ./agentrecord.config.json --no-account-usage
 ```
 
-#### 4. Validate & Open
+#### 4. Advanced: Validate & Open
 ```bash
 # Verify integrity, schema structure, and privacy boundaries
 agentrecord validate --config ./agentrecord.config.json
@@ -148,6 +146,7 @@ AgentRecord compiles and normalizes your private agent sessions (Codex, opencode
 
 | Command | Description | Key Overrides / Examples |
 | :--- | :--- | :--- |
+| `generate` | Initializes config if needed, builds, validates, and optionally opens the HTML profile. | `--open --config <file> --owner <id> --display-name "Name" --no-account-usage` |
 | `init` | Initializes the local configuration schema. | `--dry-run --owner <id> --display-name "Name" --profiles-dir <dir> --output <dir>` |
 | `scan` | Detects supported agent tools and local databases. | `--config <file> --sessions-dir <dir> --opencode-db <file> --claude-code-projects-dir <dir>` |
 | `build` | Generates structured JSON, MD, and HTML profiles. | `--config <file> --owner <id> --locale zh-CN --display-name "Name" --agent-context --no-account-usage --account-usage-timeout-ms <ms> --sessions-dir <dir> --opencode-db <file> --opencode-data-dir <dir> --no-opencode --claude-code-projects-dir <dir> --no-claude-code` |

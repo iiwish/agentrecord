@@ -19,6 +19,7 @@ function run(command, args, options = {}) {
     shell: false,
     env: {
       ...process.env,
+      ...(options.env || {}),
       npm_config_update_notifier: "false",
       npm_config_fund: "false",
       npm_config_audit: "false"
@@ -56,6 +57,19 @@ try {
 
   run(bin, ["init", "--dry-run", "--owner", "smoke-owner"], { cwd: installDir });
   run(bin, ["doctor"], { cwd: installDir });
+  run(bin, [
+    "generate",
+    "--config", path.join(tempRoot, "agentrecord.config.json"),
+    "--owner", "generated-owner",
+    "--profiles-dir", path.join(tempRoot, "profiles"),
+    "--no-account-usage"
+  ], {
+    cwd: installDir,
+    env: {
+      HOME: path.join(tempRoot, "home"),
+      XDG_DATA_HOME: path.join(tempRoot, "data")
+    }
+  });
 
   console.log(JSON.stringify({
     ok: true,
@@ -66,7 +80,8 @@ try {
       "agentrecord --version",
       "agentrecord version",
       "agentrecord init --dry-run --owner smoke-owner",
-      "agentrecord doctor"
+      "agentrecord doctor",
+      "agentrecord generate --no-account-usage"
     ]
   }, null, 2));
 } finally {

@@ -230,6 +230,9 @@ export function renderHtml(profile, localeBundle) {
     tokenPill,
     usageSpanPill
   ].filter(Boolean);
+  const toolStack = archetype.state === "baseline/no_data"
+    ? null
+    : buildToolStack(clients, isZh);
   const archetypeTitle = isZh
     ? archetype.name
     : `${archetype.name} / ${archetype.enName || archetype.english_short_name || archetype.code}`;
@@ -385,6 +388,34 @@ export function renderHtml(profile, localeBundle) {
       font-weight: 800;
       color: var(--steel);
       box-shadow: 1px 1px 0 var(--line);
+    }
+    .tool-stack {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: -3px 0 12px;
+    }
+    .tool-stack-label {
+      color: var(--accent);
+      font-size: 9.5px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+    .tool-chip {
+      background: var(--accent-soft);
+      border: 1.5px solid var(--line);
+      border-radius: 999px;
+      box-shadow: 1px 1px 0 var(--line);
+      color: var(--steel);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10.5px;
+      font-weight: 900;
+      line-height: 1.2;
+      padding: 3px 8px;
+      white-space: nowrap;
     }
     .proof-strip {
       display: flex;
@@ -829,6 +860,10 @@ export function renderHtml(profile, localeBundle) {
           <div class="holder-tags">
             ${archetype.tags.map((tag) => `<span class="holder-tag">${esc(tag)}</span>`).join("\n")}
           </div>
+          ${toolStack ? `<div class="tool-stack" aria-label="${esc(toolStack.ariaLabel)}">
+            <span class="tool-stack-label">${esc(toolStack.label)}</span>
+            ${toolStack.tools.map((tool) => `<span class="tool-chip">${esc(tool)}</span>`).join("\n")}
+          </div>` : ""}
           <div class="proof-strip" aria-label="${esc(copy.proofStrip)}">
             ${proofPills.map((pill) => `<span class="proof-pill">${esc(pill)}</span>`).join("\n")}
           </div>
@@ -1294,6 +1329,29 @@ function sumMeasuredDisplayTokens(clients = []) {
       const tokens = client.display_usage?.token_usage?.total_tokens || client.token_usage?.total_tokens || 0;
       return sum + Number(tokens || 0);
     }, 0);
+}
+
+function buildToolStack(clients = [], isZh = false) {
+  const tools = clients
+    .filter((client) => client.status === "measured" && Number(client.sessions || 0) > 0)
+    .map((client) => toolDisplayName(client.client_id))
+    .filter(Boolean)
+    .slice(0, 3);
+  if (!tools.length) return null;
+  return {
+    label: isZh ? "工具栈" : "Agent Stack",
+    ariaLabel: isZh ? "已测量的 Agent 工具栈" : "Measured agent tool stack",
+    tools
+  };
+}
+
+function toolDisplayName(clientId) {
+  const labels = {
+    codex: "Codex",
+    opencode: "opencode",
+    claude_code: "Claude Code"
+  };
+  return labels[clientId] || null;
 }
 
 function countClientTraceDays(clients = []) {

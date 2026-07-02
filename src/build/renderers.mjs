@@ -214,25 +214,20 @@ export function renderHtml(profile, localeBundle) {
   const traceWindow = `${codex.trace_window?.start || "unknown"} -> ${codex.trace_window?.end || "unknown"}`;
   const heroEvidenceIds = profile.work_identity.evidence_ids?.slice(0, 4) || [];
   const displayTokens = sumMeasuredDisplayTokens(clients);
-  const tokenPill = displayTokens
+  const tokenMeta = displayTokens
     ? `${formatCompactNumber(displayTokens, profile.report.locale)} ${isZh ? "TOKEN" : "tokens"}`
     : null;
   const traceDays = Number.isFinite(Number(archetype.traceDays))
     ? Number(archetype.traceDays)
     : countClientTraceDays(clients) || countTraceDays(codex.trace_window);
-  const usageSpanPill = Number.isFinite(traceDays) && traceDays > 0
+  const usageSpanMeta = Number.isFinite(traceDays) && traceDays > 0
     ? isZh
-      ? `使用 ${formatNumber(traceDays, profile.report.locale)} 天`
-      : `${formatNumber(traceDays, profile.report.locale)}-day span`
+      ? `${formatNumber(traceDays, profile.report.locale)} 天记录`
+      : `${formatNumber(traceDays, profile.report.locale)}-day record`
     : null;
-  const proofPills = [
-    (archetype.variant_badges || [])[0] || archetype.activeStatus || (isZh ? "本地证据" : "Local proof"),
-    tokenPill,
-    usageSpanPill
-  ].filter(Boolean);
-  const toolStack = archetype.state === "baseline/no_data"
+  const evidenceMeta = archetype.state === "baseline/no_data"
     ? null
-    : buildToolStack(clients, isZh);
+    : buildEvidenceMeta({ clients, tokenMeta, usageSpanMeta, isZh });
   const archetypeTitle = isZh
     ? archetype.name
     : `${archetype.name} / ${archetype.enName || archetype.english_short_name || archetype.code}`;
@@ -377,7 +372,7 @@ export function renderHtml(profile, localeBundle) {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .holder-tag {
       background: var(--field);
@@ -389,50 +384,32 @@ export function renderHtml(profile, localeBundle) {
       color: var(--steel);
       box-shadow: 1px 1px 0 var(--line);
     }
-    .tool-stack {
+    .evidence-meta {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 7px;
-      margin: -3px 0 12px;
-    }
-    .tool-stack-label {
-      color: var(--accent);
-      font-size: 9.5px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      line-height: 1.2;
-    }
-    .tool-chip {
-      background: var(--accent-soft);
-      border: 1.5px solid var(--line);
-      border-radius: 999px;
-      box-shadow: 1px 1px 0 var(--line);
-      color: var(--steel);
+      gap: 6px;
+      margin: -1px 0 18px;
+      color: var(--muted);
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 10.5px;
-      font-weight: 900;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0;
       line-height: 1.2;
-      padding: 3px 8px;
+    }
+    .evidence-meta-item {
       white-space: nowrap;
     }
-    .proof-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-      margin: 0 0 18px;
+    .evidence-meta-tools {
+      color: var(--steel);
     }
-    .proof-pill {
-      border: 1px solid rgba(10, 15, 13, 0.26);
-      border-radius: 999px;
-      padding: 4px 10px;
+    .evidence-meta-metric {
       color: var(--accent);
-      background: #fff;
-      font-size: 10.5px;
-      font-weight: 850;
-      text-transform: uppercase;
-      line-height: 1.2;
+      font-weight: 900;
+    }
+    .evidence-meta-separator {
+      color: rgba(10, 15, 13, 0.32);
+      font-weight: 900;
     }
 
     /* Character Archetype Banner */
@@ -670,6 +647,20 @@ export function renderHtml(profile, localeBundle) {
     .source-line b {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     }
+    html:lang(en) .signature-line,
+    html:lang(en) .calibration-line,
+    html:lang(en) .source-line {
+      grid-template-columns: 128px minmax(0, 1fr);
+      gap: 8px;
+    }
+    html:lang(en) .signature-line span,
+    html:lang(en) .calibration-line span,
+    html:lang(en) .source-line span {
+      font-size: 7.5px;
+      letter-spacing: 0.8px;
+      line-height: 1.25;
+      white-space: normal;
+    }
 
     /* SCROLL DOWN PROMPT */
     .scroll-prompt {
@@ -772,7 +763,7 @@ export function renderHtml(profile, localeBundle) {
       .archetype-banner { min-height: 104px; padding: 14px; }
       .archetype-title { max-width: calc(100% - 58px); font-size: 20px; }
       .visual-motif { width: 48px; height: 48px; right: 10px; bottom: 10px; }
-      .proof-pill { font-size: 9.5px; padding: 3px 8px; }
+      .evidence-meta { font-size: 9.5px; gap: 5px; }
       .signature-line, .calibration-line, .source-line { grid-template-columns: 1fr; gap: 4px; }
       .signature-line span, .calibration-line span, .source-line span { white-space: normal; }
     }
@@ -860,13 +851,9 @@ export function renderHtml(profile, localeBundle) {
           <div class="holder-tags">
             ${archetype.tags.map((tag) => `<span class="holder-tag">${esc(tag)}</span>`).join("\n")}
           </div>
-          ${toolStack ? `<div class="tool-stack" aria-label="${esc(toolStack.ariaLabel)}">
-            <span class="tool-stack-label">${esc(toolStack.label)}</span>
-            ${toolStack.tools.map((tool) => `<span class="tool-chip">${esc(tool)}</span>`).join("\n")}
+          ${evidenceMeta ? `<div class="evidence-meta" aria-label="${esc(evidenceMeta.ariaLabel)}">
+            ${evidenceMeta.items.map((item, index) => `${index ? `<span class="evidence-meta-separator">/</span>` : ""}<span class="evidence-meta-item evidence-meta-${esc(item.kind)}">${esc(item.text)}</span>`).join("\n")}
           </div>` : ""}
-          <div class="proof-strip" aria-label="${esc(copy.proofStrip)}">
-            ${proofPills.map((pill) => `<span class="proof-pill">${esc(pill)}</span>`).join("\n")}
-          </div>
 
           <div class="archetype-banner">
             <div class="archetype-label">${esc(copy.identityLabel)} / ${esc(archetype.code)}</div>
@@ -1331,17 +1318,21 @@ function sumMeasuredDisplayTokens(clients = []) {
     }, 0);
 }
 
-function buildToolStack(clients = [], isZh = false) {
+function buildEvidenceMeta({ clients = [], tokenMeta = null, usageSpanMeta = null, isZh = false } = {}) {
   const tools = clients
     .filter((client) => client.status === "measured" && Number(client.sessions || 0) > 0)
     .map((client) => toolDisplayName(client.client_id))
     .filter(Boolean)
     .slice(0, 3);
-  if (!tools.length) return null;
+  const items = [
+    tools.length ? { kind: "tools", text: tools.join(" · ") } : null,
+    usageSpanMeta ? { kind: "metric", text: usageSpanMeta } : null,
+    tokenMeta ? { kind: "metric", text: tokenMeta } : null
+  ].filter(Boolean);
+  if (!items.length) return null;
   return {
-    label: isZh ? "工具栈" : "Agent Stack",
-    ariaLabel: isZh ? "已测量的 Agent 工具栈" : "Measured agent tool stack",
-    tools
+    ariaLabel: isZh ? "已测量的 Agent 工具与证据规模" : "Measured agent tools and evidence scale",
+    items
   };
 }
 

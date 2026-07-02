@@ -36,22 +36,24 @@ Since you are using an AI agent right now (such as Claude Code, opencode, Codex,
 You are an AI assistant with terminal command execution. Please generate my local AgentRecord work profile.
 
 Run this command:
-`npx -y @iiwish/agentrecord@latest generate --open --no-account-usage`
+`npx -y @iiwish/agentrecord@latest generate --open`
 
 Do not upload raw conversations, code, secrets, or local trace files. When finished, tell me whether validation passed and where the generated `index.html` file is.
 
-Optional: if I provide a display name, add `--display-name "<name>"` to the command. Otherwise use the default display name.
+Optional: if I provide a display name, add `--display-name "<name>"` to the command. If Codex account usage is unavailable or I want a local-log-only run, add `--no-account-usage`.
 ```
 
 ### Manual CLI Quickstart
 
 #### 1. Generate Your Profile
 ```bash
-npx -y @iiwish/agentrecord@latest generate --open --no-account-usage
+npx -y @iiwish/agentrecord@latest generate --open
 ```
-This initializes local config if needed, builds the profile, validates privacy/schema boundaries, and opens the generated HTML report.
+This initializes local config if needed, builds the profile, validates privacy/schema boundaries, reads Codex account usage when available, and opens the generated HTML report.
 
-*(Or install globally with `npm install -g @iiwish/agentrecord` and run `agentrecord generate --open --no-account-usage`.)*
+For a local-log-only or offline run, add `--no-account-usage`.
+
+*(Or install globally with `npm install -g @iiwish/agentrecord` and run `agentrecord generate --open`.)*
 
 #### 2. Advanced: Initialize Config
 ```bash
@@ -146,7 +148,7 @@ AgentRecord compiles and normalizes your private agent sessions (Codex, opencode
 
 | Command | Description | Key Overrides / Examples |
 | :--- | :--- | :--- |
-| `generate` | Initializes config if needed, builds, validates, and optionally opens the HTML profile. | `--open --config <file> --owner <id> --display-name "Name" --no-account-usage` |
+| `generate` | Initializes config if needed, builds, validates, and optionally opens the HTML profile. | `--open --config <file> --owner <id> --display-name "Name" [--no-account-usage]` |
 | `init` | Initializes the local configuration schema. | `--dry-run --owner <id> --display-name "Name" --profiles-dir <dir> --output <dir>` |
 | `scan` | Detects supported agent tools and local databases. | `--config <file> --sessions-dir <dir> --opencode-db <file> --claude-code-projects-dir <dir>` |
 | `build` | Generates structured JSON, MD, and HTML profiles. | `--config <file> --owner <id> --locale zh-CN --display-name "Name" --agent-context --no-account-usage --account-usage-timeout-ms <ms> --sessions-dir <dir> --opencode-db <file> --opencode-data-dir <dir> --no-opencode --claude-code-projects-dir <dir> --no-claude-code` |

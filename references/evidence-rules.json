@@ -94,7 +94,7 @@
     },
     {
       "id": "EV-ACTIVITY-METADATA",
-      "title": "Codex activity metadata baseline",
+      "title": "Local AI-agent activity metadata baseline",
       "category": "agent_usage",
       "evidence_level": ["E2"],
       "match": {
@@ -103,7 +103,7 @@
         "exclude_any": []
       },
       "fallback": true,
-      "signal_template": "Local Codex session metadata establishes the activity baseline when no curated memory rule matches are available.",
+      "signal_template": "Local AI-agent session metadata establishes the activity baseline when no curated memory rule matches are available.",
       "dimensions": ["Agent Delegation", "Context Packaging"],
       "role_impacts": ["Agent Operator"],
       "profile_impact": "Useful baseline signal for repeated agent usage, but insufficient for strong ability claims without stronger work evidence."

@@ -16,12 +16,11 @@ AgentRecord 的报告不是普通 dashboard，也不是 AI 简历。
 第一屏必须包含：
 
 - Owner。
-- 静态展示名。
-- 展示名修正说明，指向 config 的 `owner_display_name` 或 CLI 的 `--display-name`。
+- 可直接点击临时编辑的展示名，用于改名后截图分享。
 - Share card archetype。
-- Punchline、share subtitle、risk / blind spot sentence。
+- Punchline、share subtitle、赛博吐槽。
 - 3 个社交标签。
-- 轻量证据摘要，例如 evidence count、local sessions、trace days、variant badge。
+- 轻量证据摘要显示状态、所有已测量智能体的聚合 Token 活跃度，以及基于所有已测量智能体 trace window 的使用跨度；evidence count 和 local sessions 放在后续详情区。
 - 项目源码纯文本：`github.com/iiwish/agentrecord`。
 - 纯 CSS visual motif。
 
@@ -30,13 +29,12 @@ AgentRecord 的报告不是普通 dashboard，也不是 AI 简历。
 ```text
 AGENTRECORD
 Owner: iiwish
-Share Card Type: 代码判官 / Systems Proof Reviewer
-Punchline: 代码可以乱，但证据链必须闭环。
-Tags: #代码洁癖 #证据闭环 #脱敏存证
-Proof: 高置信画像 · 24 条证据 · 180 次会话 · 30 天 trace
-Subtitle: 把 role signal、能力维度和证据等级放在同一张图里校准。
-Calibration: 外部结果证据不足时，本地验证不能被解读为真实世界影响。
-Fix Display Name: node src/cli.mjs build --config ./agentrecord.config.json --display-name "Your Name"
+Share Card Type: 代码判官
+Punchline: 口说无凭，把你和 AI 协作的证据链呈上来。
+Tags: #代码洁癖 #证据链闭环 #零信任玩家
+Proof: 高置信画像 · 127.4亿 TOKEN · 使用 44 天
+协作签名: 把 AI 写的每行代码都当成呈堂证供，绝不放过任何一个未核验的疑点。
+赛博吐槽: 本地验证无懈可击，但要是缺了真实世界反馈，完美闭环也只是一场高墙内的赛博自嗨。
 Project Source: github.com/iiwish/agentrecord
 ```
 
@@ -79,7 +77,7 @@ Share card archetype 由 4 个二元轴组成，共 16 个基础类型：
 - 3 个社交标签
 - share subtitle
 - strength sentence
-- risk / blind spot sentence
+- 赛博吐槽
 - visual theme id
 
 轻量变体来自证据和分数，不使用 LLM、不联网、不随机：
@@ -96,25 +94,21 @@ Share card archetype 由 4 个二元轴组成，共 16 个基础类型：
 第一屏卡片随 archetype 改变：
 
 - 主色、辅助色、底色和金属色。
-- 标签、title、punchline、share subtitle、risk。
-- 证据摘要 pill 的内容与顺序。
+- 标签、title、punchline、share subtitle、赛博吐槽。
+- 证据摘要 pill 保留状态、聚合 Token 活跃度和使用跨度。
 - 纯 CSS visual motif，例如 proof seal、dossier、terminal ledger、release stamp、product lens、context map、goal compass、route map。
 
-HTML 不引入外部图片、`<script>`、`<link>`、`http://`、`https://`、CSS `url(...)` 或 `@import`。页面可以显示 `github.com/iiwish/agentrecord` 纯文本。所有视觉变化都由内联 CSS 和 profile 数据决定。
+HTML 不引入外部图片、`<script>`、`<link>`、`http://`、`https://`、CSS `url(...)` 或 `@import`。页面可以显示 `github.com/iiwish/agentrecord` 纯文本。`contenteditable` 只用于展示名的截图前临时编辑。所有视觉变化都由内联 CSS 和 profile 数据决定。
 
 ## 页面结构
 
 建议顺序：
 
 1. Share card hero。
-2. Trace and privacy stamp。
-3. Role signal spectrum。
-4. Ability map。
-5. Agent ledger。
-6. Evidence case files。
-7. Calibration notes。
-8. Redaction report。
-9. Export/context links。
+2. 协作特长：role signal spectrum 和 ability map。
+3. 智能体台账：Codex、opencode、Claude Code 等客户端覆盖情况。
+4. 事实存证：evidence case files。
+5. 数据合规墙：calibration notes、redaction report 和公开产物边界。
 
 ## 文案原则
 

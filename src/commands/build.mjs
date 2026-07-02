@@ -7,7 +7,7 @@ import { buildEvidenceCards, extractMemoryBlocks, loadEvidenceRules } from "../b
 import { buildProfile } from "../build/profile.mjs";
 import { loadLocaleBundle, resolveReportSettings } from "../build/report.mjs";
 import { buildRunContext } from "../build/run-context.mjs";
-import { collectCodexStats } from "../build/stats.mjs";
+import { collectAgentStats } from "../build/stats.mjs";
 import { ensureDir, hashObject } from "../build/utils.mjs";
 
 export async function runBuild({ options }) {
@@ -17,7 +17,11 @@ export async function runBuild({ options }) {
   ensureDir(config.resolved.profileDir);
   ensureDir(config.resolved.privateStateDir);
 
-  const stats = collectCodexStats(config.resolved.codex.sessionRoots, {
+  const stats = collectAgentStats({
+    codexSessionRoots: config.resolved.codex.sessionRoots,
+    opencode: config.resolved.opencode,
+    claudeCode: config.resolved.claudeCode
+  }, {
     publicProjectPaths: config.resolved.privacy.publicProjectPaths
   });
   const codexAccountUsage = await readCodexAccountUsage(config.resolved.codex.accountUsage);
@@ -59,6 +63,7 @@ export async function runBuild({ options }) {
     owner: config.resolved.owner,
     schema_version: profile.schema_version,
     sessions_scanned: stats.files,
+    clients_measured: stats.measured_clients,
     codex_account_usage: codexAccountUsage.status,
     evidence_cards: evidenceCards.length,
     report_locale: report.locale,

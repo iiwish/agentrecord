@@ -11,12 +11,12 @@ Adapter 的职责是把各客户端本地数据转成统一事件模型，不负
 建议顺序：
 
 1. Codex
-2. Claude Code
-3. opencode
+2. opencode
+3. Claude Code
 4. OpenClaw
 5. Hermes
 
-Codex 先做，因为已有真实原型和用户数据。
+Codex、opencode 和 Claude Code 是当前本地 CLI 基线已接入的数据源。
 
 ## Adapter 接口
 
@@ -147,6 +147,36 @@ export function getCapabilities() {}
 - 上传 trace。
 - 对 terminal output 做语义分析。
 - 自动读取私有源码内容。
+
+## opencode Adapter v0.1 范围
+
+- 自动发现 `~/.local/share/opencode/opencode.db`。
+- 支持通过 config 的 `opencode.database_path`、环境变量 `AGENTRECORD_OPENCODE_DB` 或 CLI 的 `--opencode-db` 指定数据库。
+- 只读取 SQLite `session` 和 `project` 的聚合元数据，包括 session count、trace window、token usage、cost 和脱敏项目引用。
+- 不读取 `message.data`、`part.data`、`session_input.prompt` 或 tool output body。
+- 缺少 `sqlite3` 命令或 schema 不兼容时，adapter 返回 `unavailable`，不阻断 Codex 画像生成。
+
+暂不做：
+
+- opencode message/part 正文语义分析。
+- opencode tool 调用细节恢复。
+- opencode prompt 摘要公开展示。
+
+## Claude Code Adapter v0.1 范围
+
+- 自动发现 `~/.claude/projects`。
+- 支持通过 config 的 `claude_code.projects_dir`、环境变量 `AGENTRECORD_CLAUDE_CODE_PROJECTS_DIR` 或 CLI 的 `--claude-code-projects-dir` 指定项目会话目录。
+- 只读取项目 JSONL 的聚合元数据和 usage 字段，包括 session count、trace window、token usage 和脱敏项目引用。
+- 只从 `usage`、`usage_metadata`、`message.usage`、`message.usage_metadata` 读取 token 字段。
+- 不读取 `message.content`、attachment body、tool output body 或 raw transcript body。
+- 缺少项目目录时，adapter 返回 `not_found`，不阻断 Codex 或 opencode 画像生成。
+
+暂不做：
+
+- Claude Code 对话正文语义分析。
+- Claude Code tool 调用细节恢复。
+- Claude Code prompt 摘要公开展示。
+- 读取 `~/.claude/transcripts` 等非项目会话缓存。
 
 ## 多 Adapter 合并原则
 

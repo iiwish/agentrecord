@@ -94,7 +94,7 @@
     },
     {
       "id": "EV-ACTIVITY-METADATA",
-      "title": "Codex 本地会话活动度基线",
+      "title": "本地 AI Agent 活动度基线",
       "category": "agent_usage",
       "evidence_level": ["E2"],
       "match": {
@@ -103,7 +103,7 @@
         "exclude_any": []
       },
       "fallback": true,
-      "signal_template": "在缺乏结构化调教文本证据时，使用本地 Codex 适配器累计的原始会话数据和 Token 活动度建立基础行为基线。",
+      "signal_template": "在缺乏结构化调教文本证据时，使用本地 AI Agent 适配器累计的会话元数据和 Token 活动度建立基础行为基线。",
       "dimensions": ["Agent Delegation", "Context Packaging"],
       "role_impacts": ["Agent Operator"],
       "profile_impact": "基础级存证信号：能作为持续、高频使用 AI 进行本地开发的基本活动度证明，但在缺乏上层事实证据时，不直接代表工程交付水平。"

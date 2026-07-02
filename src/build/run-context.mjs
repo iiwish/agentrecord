@@ -70,6 +70,12 @@ export function buildRunContext({ config, stats, generatedAt, reset }) {
       run_count: runCount,
       reset,
       session_roots: config.resolved.codex.sessionRoots,
+      data_sources: {
+        codex_session_roots: config.resolved.codex.sessionRoots,
+        opencode_database_configured: Boolean(config.resolved.opencode?.databasePath),
+        claude_code_projects_configured: Boolean(config.resolved.claudeCode?.projectsDir),
+        measured_clients: stats.measured_clients || []
+      },
       trace_window: stats.trace_window,
       processed_sessions_count: stats.session_records.length,
       processed_session_ids: stats.session_records.map((record) => record.session_id).sort(),

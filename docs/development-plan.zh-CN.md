@@ -19,7 +19,7 @@ AgentRecord 应该先做 npm CLI，而不是先做 Web 产品。
 
 1. 改名和概念统一：Runmark -> AgentRecord。
 2. 抽出 CLI 命令结构。
-3. 保留现有 Codex 适配能力。
+3. 保留现有 Codex 适配能力，并接入 opencode 与 Claude Code 聚合元数据。
 4. 保留增量执行和隐私校验。
 5. 重做 HTML 首页，让它更像 AI work passport。
 6. 把 skill 改成薄封装，只调用 CLI。
@@ -163,9 +163,9 @@ HTML 报告达到可分享质量。
 
 ### v0.3
 
-第二个 agent adapter。
+多 agent adapter 硬化。
 
-优先考虑 Claude Code 或 opencode，取决于本地 trace 可得性。
+重点是 Codex、opencode、Claude Code 的 schema drift 检测、缺源降级、隐私扫描和 adapter capability 输出。
 
 ### v0.4
 

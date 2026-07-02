@@ -16,6 +16,16 @@
       "timeout_ms": 1500
     }
   },
+  "opencode": {
+    "enabled": true,
+    "data_dir": "~/.local/share/opencode",
+    "database_path": "~/.local/share/opencode/opencode.db",
+    "sqlite_executable": "sqlite3"
+  },
+  "claude_code": {
+    "enabled": true,
+    "projects_dir": "~/.claude/projects"
+  },
   "memory": {
     "enabled": false
   },

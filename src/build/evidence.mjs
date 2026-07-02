@@ -98,19 +98,24 @@ export function buildEvidenceCards({ stats, rules, memoryBlocks, locale }) {
 
   const fallbackRule = rules.find((rule) => rule.fallback);
   if (fallbackRule && (cards.length === 0 || stats.files > 0)) {
+    const measuredClients = stats.measured_clients?.length ? stats.measured_clients : ["codex"];
+    const metadataRefs = measuredClients.map((client) => ({
+      type: "metadata",
+      source: metadataSourceForClient(client)
+    }));
     cards.push({
       id: fallbackRule.id,
       level: fallbackRule.evidence_level || ["E2"],
       title: fallbackRule.title,
       category: fallbackRule.category,
       summary: locale === "zh-CN"
-        ? `${fallbackRule.signal_template} 已扫描 ${stats.files} 个 Codex 本地会话，涉及 ${stats.top_projects.length} 个脱敏项目。`
-        : `${fallbackRule.signal_template} Scanned ${stats.files} Codex rollout files across ${stats.top_projects.length} redacted project references.`,
-      agent_clients: ["codex"],
+        ? `${fallbackRule.signal_template} 已扫描 ${stats.files} 个本地 AI Agent 会话，覆盖 ${measuredClients.join("、")}，涉及 ${stats.top_projects.length} 个脱敏项目。`
+        : `${fallbackRule.signal_template} Scanned ${stats.files} local AI-agent sessions across ${measuredClients.join(", ")} and ${stats.top_projects.length} redacted project references.`,
+      agent_clients: measuredClients,
       dimensions: normalizeDimensionIds(fallbackRule.dimensions),
       role_signals: normalizeRoleIds(fallbackRule.role_impacts),
       confidence: stats.files > 0 ? "medium" : "low",
-      refs: [{ type: "metadata", source: "codex_session_metadata" }],
+      refs: metadataRefs.length ? metadataRefs : [{ type: "metadata", source: "agent_activity_metadata" }],
       extraction: {
         rule_id: fallbackRule.id,
         rule_source_path: fallbackRule.rule_source_path,
@@ -125,6 +130,12 @@ export function buildEvidenceCards({ stats, rules, memoryBlocks, locale }) {
   }
 
   return cards;
+}
+
+function metadataSourceForClient(client) {
+  if (client === "opencode") return "opencode_session_metadata";
+  if (client === "claude_code") return "claude_code_session_metadata";
+  return "codex_session_metadata";
 }
 
 function normalizeDimensionIds(values = []) {

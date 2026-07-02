@@ -8,6 +8,8 @@ The project should win by trust, portability, and usefulness to both humans and 
 
 ## Milestone 0: Repository Foundation
 
+Status: complete in the v0.1 baseline.
+
 Goal: create a clean package that can become the npm CLI without carrying prototype debt.
 
 - Create npm package skeleton with `agentrecord` binary.
@@ -22,6 +24,8 @@ Exit criteria:
 - Development plan names the first shippable loop.
 
 ## Milestone 1: Local Codex MVP
+
+Status: complete in the v0.1 baseline.
 
 Goal: generate a useful personal AI work profile from local Codex traces.
 
@@ -45,20 +49,22 @@ Scope:
 
 Exit criteria:
 
-- A new user can run `npx agentrecord build` and get a local report in under 2 minutes.
+- A new user can install `@iiwish/agentrecord`, run `agentrecord init`, `agentrecord build`, and get a local report in under 2 minutes.
 - Public artifacts pass privacy validation.
 - Re-running the CLI produces a stable incremental update instead of rewriting all evidence.
 
 ## Milestone 2: Shareable Proof Page
+
+Status: baseline complete; static-host export remains future work.
 
 Goal: make the local HTML report worth sharing without becoming unserious.
 
 Scope:
 
 - Redesign `index.html` as a screenshot-worthy AI work passport.
-- Lead with identity, trace window, evidence count, role spectrum, and calibration notes.
-- Add evidence drill-down without raw trace leakage.
-- Add exportable static bundle that can be pushed to GitHub Pages or any static host.
+- Lead with identity, aggregate token activity, trace span, role spectrum, and cyber-roast calibration copy.
+- Add tabbed evidence, agent ledger, and redaction sections without raw trace leakage.
+- Keep the HTML as a single-file, no-script, no-external-resource report.
 - Keep Chinese and English localization first-class.
 
 Exit criteria:
@@ -69,21 +75,24 @@ Exit criteria:
 
 ## Milestone 3: Cross-Agent Adapters
 
+Status: partially complete. Codex, opencode, and Claude Code aggregate metadata are supported; OpenClaw, Hermes, and deeper adapter capability reporting remain future work.
+
 Goal: make AgentRecord independent of any single agent vendor.
 
 Adapter order:
 
 1. Codex
-2. Claude Code
-3. opencode
+2. opencode
+3. Claude Code
 4. OpenClaw
 5. Hermes
 
 Scope:
 
-- Define `AgentEvent` and `EvidenceCard` schemas.
+- Normalize Codex local rollout logs, opencode SQLite metadata, and Claude Code project JSONL metadata into one agent ledger.
+- Keep adapter reads aggregate-only by default; raw prompts, raw responses, attachments, tool outputs, and private paths remain excluded.
 - Add adapter capability reports so unsupported fields are explicit.
-- Show per-agent usage, strengths, and blind spots in the report.
+- Show per-agent usage and status in the report.
 - Allow users to filter profile evidence by agent client.
 
 Exit criteria:
@@ -93,6 +102,8 @@ Exit criteria:
 - Missing or weak adapter evidence lowers confidence instead of inventing claims.
 
 ## Milestone 4: Agent Context Pack
+
+Status: baseline complete behind explicit `--agent-context`; richer redaction controls remain future work.
 
 Goal: turn the profile into a practical prompt asset for future agents.
 

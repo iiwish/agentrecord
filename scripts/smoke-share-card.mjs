@@ -11,6 +11,9 @@ import { buildShareCard, SHARE_CARD_ARCHETYPES } from "../src/build/share-card.m
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const tempRoot = mkdtempSync(path.join(tmpdir(), "agentrecord-share-card-"));
 const sessionsDir = path.join(tempRoot, "sessions");
+const opencodeDbPath = path.join(tempRoot, "opencode.db");
+const claudeProjectsDir = path.join(tempRoot, "claude", "projects");
+const claudeProjectDir = path.join(claudeProjectsDir, "-tmp-agentrecord-smoke");
 const profileDir = path.join(tempRoot, "profiles", "stable-owner");
 const configPath = path.join(tempRoot, "agentrecord.config.json");
 
@@ -31,6 +34,20 @@ function run(args) {
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function runSqlite(sql) {
+  const result = spawnSync("sqlite3", [opencodeDbPath, sql], {
+    cwd: repoRoot,
+    encoding: "utf8",
+    shell: false
+  });
+
+  if (result.status !== 0) {
+    const stdout = result.stdout ? `\n${result.stdout.trim()}` : "";
+    const stderr = result.stderr ? `\n${result.stderr.trim()}` : "";
+    throw new Error(`sqlite3 smoke setup failed with exit ${result.status}${stdout}${stderr}`);
+  }
 }
 
 function syntheticRoles(overrides) {
@@ -72,6 +89,103 @@ function syntheticAbilities(overrides) {
 
 try {
   mkdirSync(sessionsDir, { recursive: true });
+  mkdirSync(claudeProjectDir, { recursive: true });
+  runSqlite(`
+    CREATE TABLE project (
+      id TEXT PRIMARY KEY,
+      worktree TEXT NOT NULL,
+      time_created INTEGER NOT NULL,
+      time_updated INTEGER NOT NULL
+    );
+    CREATE TABLE session (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL,
+      directory TEXT NOT NULL,
+      title TEXT NOT NULL,
+      version TEXT NOT NULL,
+      time_created INTEGER NOT NULL,
+      time_updated INTEGER NOT NULL,
+      cost REAL DEFAULT 0 NOT NULL,
+      tokens_input INTEGER DEFAULT 0 NOT NULL,
+      tokens_output INTEGER DEFAULT 0 NOT NULL,
+      tokens_reasoning INTEGER DEFAULT 0 NOT NULL,
+      tokens_cache_read INTEGER DEFAULT 0 NOT NULL,
+      tokens_cache_write INTEGER DEFAULT 0 NOT NULL
+    );
+    INSERT INTO project (id, worktree, time_created, time_updated)
+      VALUES ('project-smoke', '${repoRoot.replaceAll("'", "''")}', 1780275600000, 1782787200000);
+    INSERT INTO session (
+      id, project_id, directory, title, version, time_created, time_updated, cost,
+      tokens_input, tokens_output, tokens_reasoning, tokens_cache_read, tokens_cache_write
+    ) VALUES
+      ('ses_smoke_001', 'project-smoke', '${repoRoot.replaceAll("'", "''")}', 'smoke metadata only', '1.17.12', 1780275600000, 1780362000000, 0.12, 1000000, 0, 0, 1000000, 0),
+      ('ses_smoke_002', 'project-smoke', '${repoRoot.replaceAll("'", "''")}', 'smoke metadata only 2', '1.17.12', 1782787200000, 1782787200000, 0.34, 800000, 100000, 100000, 0, 0);
+  `);
+  writeFileSync(path.join(sessionsDir, "rollout-smoke-start.jsonl"), [
+    JSON.stringify({
+      type: "session_meta",
+      payload: {
+        id: "smoke-start-session",
+        timestamp: "2026-06-01T09:00:00.000Z",
+        cwd: repoRoot,
+        source: "codex"
+      }
+    })
+  ].join("\n") + "\n");
+  writeFileSync(path.join(sessionsDir, "rollout-smoke-token.jsonl"), [
+    JSON.stringify({
+      type: "session_meta",
+      payload: {
+        id: "smoke-token-session",
+        timestamp: "2026-06-30T12:00:00.000Z",
+        cwd: repoRoot,
+        source: "codex"
+      }
+    }),
+    JSON.stringify({
+      type: "event_msg",
+      payload: {
+        type: "token_count",
+        info: {
+          total_token_usage: {
+            total_tokens: 12_000_000,
+            input_tokens: 11_500_000,
+            cached_input_tokens: 10_000_000,
+            output_tokens: 500_000,
+            reasoning_output_tokens: 120_000
+          }
+        }
+      }
+    })
+  ].join("\n") + "\n");
+  writeFileSync(path.join(claudeProjectDir, "claude-smoke.jsonl"), [
+    JSON.stringify({
+      type: "user",
+      sessionId: "claude-smoke-session",
+      timestamp: "2026-06-20T10:00:00.000Z",
+      cwd: repoRoot,
+      version: "2.1.178",
+      message: {
+        role: "user",
+        content: []
+      }
+    }),
+    JSON.stringify({
+      type: "assistant",
+      sessionId: "claude-smoke-session",
+      timestamp: "2026-06-20T10:05:00.000Z",
+      cwd: repoRoot,
+      version: "2.1.178",
+      message: {
+        role: "assistant",
+        usage: {
+          input_tokens: 100_000,
+          output_tokens: 50_000,
+          cache_read_input_tokens: 350_000
+        }
+      }
+    })
+  ].join("\n") + "\n");
   const initDryRun = JSON.parse(run(["init", "--dry-run", "--owner", "init-owner", "--display-name", "Init Name"]));
   assert(initDryRun.config.owner === "init-owner", "init --owner must write stable owner id.");
   assert(initDryRun.config.owner_display_name === "Init Name", "init --display-name must write owner_display_name.");
@@ -92,6 +206,15 @@ try {
         enabled: false,
         timeout_ms: 1500
       }
+    },
+    opencode: {
+      enabled: true,
+      database_path: opencodeDbPath,
+      sqlite_executable: "sqlite3"
+    },
+    claude_code: {
+      enabled: true,
+      projects_dir: claudeProjectsDir
     },
     memory: {
       enabled: false
@@ -122,13 +245,30 @@ try {
   assert(profile.owner.id === "stable-owner", "--display-name must not change owner id.");
   assert(profile.owner.display_name === "Visible Name", "--display-name must update profile owner display name.");
   assert(html.includes("Visible Name"), "--display-name must update HTML.");
-  assert(!/contenteditable\b/i.test(html), "HTML display name must not be directly editable.");
-  assert(html.includes("node src/cli.mjs build --config ./agentrecord.config.json --display-name &quot;Your Name&quot;"), "HTML must show the source-checkout display-name correction command.");
-  assert(html.includes("agentrecord build --config ./agentrecord.config.json --display-name &quot;Your Name&quot;"), "HTML must show the installed CLI display-name correction command.");
+  assert(/class="holder-name"[^>]*contenteditable="plaintext-only"/.test(html), "HTML display name must be directly editable for screenshot sharing.");
+  assert(!html.includes("node src/cli.mjs build --config ./agentrecord.config.json --display-name &quot;Your Name&quot;"), "HTML must not show a display-name correction module.");
+  assert(!html.includes("agentrecord build --config ./agentrecord.config.json --display-name &quot;Your Name&quot;"), "HTML must not show an installed CLI display-name correction module.");
   assert(html.includes("github.com/iiwish/agentrecord"), "HTML must show the GitHub project text.");
   assert(!html.includes("npm @iiwish/agentrecord"), "HTML share card must keep a single source entry.");
   assert(!existsSync(path.join(tempRoot, "profiles", "Visible-Name")), "--display-name must not create a display-name output path.");
   assert(profile.share_card?.code && profile.share_card?.share_subtitle, "profile.share_card must be generated.");
+  const opencodeClient = profile.agent_ledger?.clients?.find((client) => client.client_id === "opencode");
+  assert(opencodeClient?.status === "measured", "profile.agent_ledger must mark opencode as measured when a local opencode database is configured.");
+  assert(opencodeClient.sessions === 2, "opencode ledger must include local opencode session count.");
+  assert(opencodeClient.token_usage?.total_tokens === 3_000_000, "opencode ledger must aggregate opencode token metadata.");
+  assert(!html.includes(opencodeDbPath), "HTML must not expose the raw opencode database path.");
+  const claudeCodeClient = profile.agent_ledger?.clients?.find((client) => client.client_id === "claude_code");
+  assert(claudeCodeClient?.status === "measured", "profile.agent_ledger must mark Claude Code as measured when local project logs are configured.");
+  assert(claudeCodeClient.sessions === 1, "Claude Code ledger must include local project JSONL session count.");
+  assert(claudeCodeClient.token_usage?.total_tokens === 500_000, "Claude Code ledger must aggregate local usage metadata.");
+  assert(!html.includes(claudeProjectsDir), "HTML must not expose the raw Claude Code projects path.");
+  assert(!html.includes("claude-smoke-session"), "HTML must not expose the raw Claude Code session id.");
+  assert(/15\.5M\s+tokens/i.test(html), "HTML share card must surface aggregate measured-client token usage.");
+  const proofStripMatch = html.match(/<div class="proof-strip"[\s\S]*?<\/div>/);
+  assert(proofStripMatch, "HTML share card must include a proof strip.");
+  assert(/30-day span/i.test(proofStripMatch[0]), "HTML share-card proof strip must show usage span from the trace window.");
+  assert(!/\d+\s+evidence/i.test(proofStripMatch[0]), "HTML share-card proof strip must not show evidence-count pills.");
+  assert(!/\d+\s+sessions/i.test(proofStripMatch[0]), "HTML share-card proof strip must not show session-count pills.");
   assert(!/<script\b/i.test(html), "index.html must not include script tags.");
   assert(!/<link\b/i.test(html), "index.html must not include link tags.");
   assert(!/https?:\/\//i.test(html), "index.html must not include http or https URLs.");

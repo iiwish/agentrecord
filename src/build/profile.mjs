@@ -4,6 +4,9 @@ import { buildShareCard } from "./share-card.mjs";
 import { unique } from "./utils.mjs";
 
 export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, report, localeBundle, runMetadata, agentContextEnabled }) {
+  const codexStats = stats.clients?.codex || stats;
+  const opencodeStats = stats.clients?.opencode || null;
+  const claudeCodeStats = stats.clients?.claude_code || null;
   const evidenceIds = evidenceCards.map((card) => card.id);
   const roleSignals = buildRoleSignals(evidenceCards, localeBundle);
   const abilityModel = buildAbilityModel(evidenceCards, localeBundle);
@@ -36,7 +39,7 @@ export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, 
       localized_label: report.locale === "zh-CN" ? (hasCuratedEvidence ? "证据约束的 AI 工作操作者" : "本地 AI Agent 活跃度基线") : null,
       summary: hasCuratedEvidence
         ? `AgentRecord found ${evidenceCards.length} public-safe evidence cards for how this owner frames, delegates, reviews, verifies, and hands off AI-agent work.`
-        : `AgentRecord found local Codex activity and generated a conservative baseline profile without curated memory evidence.`,
+        : `AgentRecord found local AI-agent activity and generated a conservative baseline profile without curated memory evidence.`,
       strongest_claim: hasCuratedEvidence
         ? `Strongest current signal: ${topRole?.label || "agent operation"} with ${topRole?.confidence || identityConfidence} confidence, supported by ${topRoleEvidence.join(", ") || evidenceIds.slice(0, 2).join(", ")}.`
         : "The defensible claim is repeated local AI-agent usage, not calibrated work quality.",
@@ -47,29 +50,9 @@ export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, 
     ability_model: abilityModel,
     agent_ledger: {
       clients: [
-        {
-          client_id: "codex",
-          status: stats.files > 0 ? "measured" : "not_found",
-          sessions: stats.files,
-          token_sessions: stats.token_sessions,
-          token_usage: stats.total_token_usage,
-          usage_source: "local_codex_logs",
-          account_usage: codexAccountUsage || {
-            status: "unavailable",
-            source: "codex_app_server",
-            summary: null,
-            daily_usage_buckets: null
-          },
-          display_usage: buildCodexDisplayUsage(stats, codexAccountUsage),
-          trace_window: {
-            start: stats.trace_window.start,
-            end: stats.trace_window.end
-          },
-          top_projects: stats.top_projects,
-          evidence_count: evidenceCards.length
-        },
-        { client_id: "claude_code", status: "not_configured" },
-        { client_id: "opencode", status: "not_configured" },
+        buildCodexClient({ stats: codexStats, codexAccountUsage, evidenceCards }),
+        buildOpencodeClient({ stats: opencodeStats, evidenceCards }),
+        buildClaudeCodeClient({ stats: claudeCodeStats, evidenceCards }),
         { client_id: "openclaw", status: "not_configured" },
         { client_id: "hermes", status: "not_configured" }
       ]
@@ -106,12 +89,104 @@ export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, 
         "raw assistant responses",
         "raw session IDs",
         "Codex session file paths",
+        "opencode database path",
+        "Claude Code project transcript paths",
         "terminal bodies",
         "source bodies",
         "secret-like values"
       ]
     },
     run_metadata: runMetadata
+  };
+}
+
+function buildCodexClient({ stats, codexAccountUsage, evidenceCards }) {
+  return {
+    client_id: "codex",
+    status: stats.files > 0 ? "measured" : stats.status || "not_found",
+    sessions: stats.files,
+    token_sessions: stats.token_sessions,
+    token_usage: stats.total_token_usage,
+    usage_source: "local_codex_logs",
+    account_usage: codexAccountUsage || {
+      status: "unavailable",
+      source: "codex_app_server",
+      summary: null,
+      daily_usage_buckets: null
+    },
+    display_usage: buildCodexDisplayUsage(stats, codexAccountUsage),
+    trace_window: {
+      start: stats.trace_window.start,
+      end: stats.trace_window.end
+    },
+    top_projects: stats.top_projects,
+    evidence_count: evidenceCards.length
+  };
+}
+
+function buildOpencodeClient({ stats, evidenceCards }) {
+  if (!stats) return { client_id: "opencode", status: "not_configured" };
+  return {
+    client_id: "opencode",
+    status: stats.status || (stats.files > 0 ? "measured" : "not_found"),
+    status_reason: stats.status_reason || null,
+    sessions: stats.files || 0,
+    token_sessions: stats.token_sessions || 0,
+    token_usage: stats.total_token_usage,
+    usage_source: "local_opencode_sqlite",
+    display_usage: {
+      source: "local_opencode_sqlite",
+      source_label: "Local opencode SQLite",
+      token_usage: {
+        total_tokens: stats.total_token_usage?.total_tokens || 0,
+        peak_daily_tokens: null,
+        longest_running_turn_sec: null,
+        current_streak_days: null,
+        longest_streak_days: null
+      },
+      local_sessions: stats.files || 0,
+      local_token_usage: stats.total_token_usage,
+      cost_usd: Number(stats.cost_usd || 0)
+    },
+    trace_window: {
+      start: stats.trace_window?.start || "unknown",
+      end: stats.trace_window?.end || "unknown"
+    },
+    top_projects: stats.top_projects || [],
+    cost_usd: Number(stats.cost_usd || 0),
+    evidence_count: stats.files > 0 ? evidenceCards.length : 0
+  };
+}
+
+function buildClaudeCodeClient({ stats, evidenceCards }) {
+  if (!stats) return { client_id: "claude_code", status: "not_configured" };
+  return {
+    client_id: "claude_code",
+    status: stats.status || (stats.files > 0 ? "measured" : "not_found"),
+    status_reason: stats.status_reason || null,
+    sessions: stats.files || 0,
+    token_sessions: stats.token_sessions || 0,
+    token_usage: stats.total_token_usage,
+    usage_source: "local_claude_code_projects",
+    display_usage: {
+      source: "local_claude_code_projects",
+      source_label: "Local Claude Code projects",
+      token_usage: {
+        total_tokens: stats.total_token_usage?.total_tokens || 0,
+        peak_daily_tokens: null,
+        longest_running_turn_sec: null,
+        current_streak_days: null,
+        longest_streak_days: null
+      },
+      local_sessions: stats.files || 0,
+      local_token_usage: stats.total_token_usage
+    },
+    trace_window: {
+      start: stats.trace_window?.start || "unknown",
+      end: stats.trace_window?.end || "unknown"
+    },
+    top_projects: stats.top_projects || [],
+    evidence_count: stats.files > 0 ? evidenceCards.length : 0
   };
 }
 
@@ -234,6 +309,8 @@ function confidenceForCards(cards) {
 }
 
 function buildCalibrationNotes({ hasCuratedEvidence, stats, codexAccountUsage }) {
+  const measuredClients = stats.measured_clients || [];
+  const measuredLabel = measuredClients.length ? measuredClients.join(", ") : "none";
   const notes = [
     {
       type: "privacy_boundary",
@@ -248,7 +325,7 @@ function buildCalibrationNotes({ hasCuratedEvidence, stats, codexAccountUsage })
     {
       type: "adapter_coverage",
       severity: "medium",
-      summary: `Codex is the only measured adapter in this run; ${stats.files} local rollout files were scanned.`
+      summary: `Measured adapters in this run: ${measuredLabel}; ${stats.files} local agent sessions were scanned.`
     },
     {
       type: "missing_evidence",
@@ -265,5 +342,19 @@ function buildCalibrationNotes({ hasCuratedEvidence, stats, codexAccountUsage })
       ? "Codex account-level token usage was read through the local Codex CLI app-server; local session counts still come from auditable local traces."
       : "Codex account-level usage was unavailable, so public token totals fall back to auditable local traces."
   });
+  if (stats.clients?.opencode?.status === "measured") {
+    notes.push({
+      type: "opencode_boundary",
+      severity: "low",
+      summary: "opencode activity is read from local SQLite session metadata only; raw prompts, raw responses, and tool output bodies stay excluded."
+    });
+  }
+  if (stats.clients?.claude_code?.status === "measured") {
+    notes.push({
+      type: "claude_code_boundary",
+      severity: "low",
+      summary: "Claude Code activity is read from local project JSONL metadata and usage fields only; raw prompts, raw responses, attachments, and tool output bodies stay excluded."
+    });
+  }
   return notes;
 }

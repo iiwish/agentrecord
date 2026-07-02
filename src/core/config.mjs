@@ -108,6 +108,16 @@ export function createDefaultConfig({ owner, ownerDisplayName, profilesDir = "pr
         timeout_ms: 15000
       }
     },
+    opencode: {
+      enabled: true,
+      data_dir: "~/.local/share/opencode",
+      database_path: "~/.local/share/opencode/opencode.db",
+      sqlite_executable: "sqlite3"
+    },
+    claude_code: {
+      enabled: true,
+      projects_dir: "~/.claude/projects"
+    },
     memory: {
       enabled: true,
       registry_path: "~/.codex/memories/MEMORY.md"
@@ -162,6 +172,27 @@ export function loadConfig(options = {}) {
     ? options.accountUsage
     : accountUsageConfig.enabled !== false;
   const accountUsageTimeoutMs = Number(options.accountUsageTimeoutMs || process.env.AGENTRECORD_CODEX_ACCOUNT_USAGE_TIMEOUT_MS || accountUsageConfig.timeout_ms || 15000);
+  const opencodeConfig = rawConfig.opencode || {};
+  const opencodeEnabled = typeof options.opencode === "boolean"
+    ? options.opencode
+    : opencodeConfig.enabled !== false;
+  const opencodeDataDirRaw = options.opencodeDataDir || process.env.AGENTRECORD_OPENCODE_DATA_DIR || opencodeConfig.data_dir || "~/.local/share/opencode";
+  const opencodeDatabaseRaw = options.opencodeDb
+    || options.opencodeDatabase
+    || process.env.AGENTRECORD_OPENCODE_DB
+    || opencodeConfig.database_path
+    || opencodeConfig.db_path
+    || path.join(opencodeDataDirRaw, "opencode.db");
+  const claudeCodeConfig = rawConfig.claude_code || rawConfig.claudeCode || {};
+  const claudeCodeEnabled = typeof options.claudeCode === "boolean"
+    ? options.claudeCode
+    : claudeCodeConfig.enabled !== false;
+  const claudeCodeProjectsDirRaw = options.claudeCodeProjectsDir
+    || options.claudeProjectsDir
+    || process.env.AGENTRECORD_CLAUDE_CODE_PROJECTS_DIR
+    || claudeCodeConfig.projects_dir
+    || claudeCodeConfig.projectsDir
+    || "~/.claude/projects";
   const privacyMode = options.privacy || rawConfig.privacy?.mode || "strict";
   const publicProjectPaths = typeof options.publicProjectPaths === "boolean"
     ? options.publicProjectPaths
@@ -199,6 +230,16 @@ export function loadConfig(options = {}) {
           timeoutMs: Number.isFinite(accountUsageTimeoutMs) ? accountUsageTimeoutMs : 15000,
           executable: process.env.AGENTRECORD_CODEX_BIN || accountUsageConfig.executable || "codex"
         }
+      },
+      opencode: {
+        enabled: opencodeEnabled,
+        dataDir: resolvePath(opencodeDataDirRaw, configDir),
+        databasePath: resolvePath(opencodeDatabaseRaw, configDir),
+        sqliteExecutable: process.env.AGENTRECORD_SQLITE_BIN || opencodeConfig.sqlite_executable || "sqlite3"
+      },
+      claudeCode: {
+        enabled: claudeCodeEnabled,
+        projectsDir: resolvePath(claudeCodeProjectsDirRaw, configDir)
       },
       memory: {
         enabled: rawConfig.memory?.enabled !== false,

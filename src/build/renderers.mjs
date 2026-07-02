@@ -73,16 +73,16 @@ export function renderHtml(profile, localeBundle) {
     code: "SRVC",
     name: isZh ? "代码判官" : "Systems Proof Reviewer",
     enName: "Systems Proof Reviewer",
-    tagline: isZh ? "代码可以乱，但证据链必须闭环。" : "Boundaries first, claims second, evidence always.",
+    tagline: isZh ? "口说无凭，把你和 AI 协作的证据链呈上来。" : "Boundaries first, claims second, evidence always.",
     enTagline: "Boundaries first, claims second, evidence always.",
-    share_subtitle: isZh ? "把 AI 写的每行代码都当成呈堂证供来严密复核。" : "Turns complex system work into a reviewable proof line.",
+    share_subtitle: isZh ? "把 AI 写的每行代码都当成呈堂证供，绝不放过任何一个未核验的疑点。" : "Turns complex system work into a reviewable proof line.",
     strength_sentence: isZh ? "强项是把 role signal、能力维度和证据等级放在同一张图里校准。" : "Strongest at aligning role signals, ability dimensions, and evidence levels.",
-    risk_sentence: isZh ? "外部结果证据不足时，本地验证不能被解读为真实世界影响。" : "Local proof should not be mistaken for external outcome evidence.",
+    risk_sentence: isZh ? "本地验证无懈可击，但要是缺了真实世界反馈，完美闭环也只是一场高墙内的赛博自嗨。" : "Local proof should not be mistaken for external outcome evidence.",
     rigor: 92,
     control: 76,
     strategic: 85,
     closedLoop: 88,
-    tags: isZh ? ["#代码洁癖", "#证据闭环", "#脱敏存证"] : ["#system-boundary", "#proof-review", "#context-map"],
+    tags: isZh ? ["#代码洁癖", "#证据链闭环", "#零信任玩家"] : ["#system-boundary", "#proof-review", "#context-map"],
     variant_badges: isZh ? ["证据基线"] : ["Evidence baseline"],
     stat_rows: [
       { id: "verification", label: isZh ? "验证力" : "Verification", score: 92 },
@@ -150,12 +150,9 @@ export function renderHtml(profile, localeBundle) {
     shareAxes: "证据轴排序 / SHARE AXES",
     shareSnapshot: "画像快照 / PROFILE SNAPSHOT",
     strength: "强信号",
-    risk: "校准提示",
+    risk: "赛博吐槽",
     proofStrip: "证据摘要",
-    displayNameHelp: "修正展示名",
-    displayNameHelpBody: "展示名不会在 HTML 内直接保存。请更新 config 的 owner_display_name，或重新运行命令生成页面：",
-    displayNameSourceCommand: "node src/cli.mjs build --config ./agentrecord.config.json --display-name \"Your Name\"",
-    displayNamePackageCommand: "agentrecord build --config ./agentrecord.config.json --display-name \"Your Name\"",
+    displayNameEdit: "点击可临时修改展示名，便于截图分享。",
     sourceLabel: "项目源码",
     sourceValue: "github.com/iiwish/agentrecord",
     noEvidence: "暂无直接证据支持",
@@ -204,10 +201,7 @@ export function renderHtml(profile, localeBundle) {
     strength: "Strength",
     risk: "Calibration",
     proofStrip: "Proof Summary",
-    displayNameHelp: "Fix display name",
-    displayNameHelpBody: "The HTML page does not save inline edits. Update owner_display_name in config, or rebuild with:",
-    displayNameSourceCommand: "node src/cli.mjs build --config ./agentrecord.config.json --display-name \"Your Name\"",
-    displayNamePackageCommand: "agentrecord build --config ./agentrecord.config.json --display-name \"Your Name\"",
+    displayNameEdit: "Click to edit the display name for a screenshot.",
     sourceLabel: "Project Source",
     sourceValue: "github.com/iiwish/agentrecord",
     noEvidence: "No direct evidence yet",
@@ -219,13 +213,26 @@ export function renderHtml(profile, localeBundle) {
     : clients.map((client) => `${client.client_id}: ${client.status}`).join(" / ") || "none";
   const traceWindow = `${codex.trace_window?.start || "unknown"} -> ${codex.trace_window?.end || "unknown"}`;
   const heroEvidenceIds = profile.work_identity.evidence_ids?.slice(0, 4) || [];
-  const traceDays = Number(archetype.traceDays);
+  const displayTokens = sumMeasuredDisplayTokens(clients);
+  const tokenPill = displayTokens
+    ? `${formatCompactNumber(displayTokens, profile.report.locale)} ${isZh ? "TOKEN" : "tokens"}`
+    : null;
+  const traceDays = Number.isFinite(Number(archetype.traceDays))
+    ? Number(archetype.traceDays)
+    : countClientTraceDays(clients) || countTraceDays(codex.trace_window);
+  const usageSpanPill = Number.isFinite(traceDays) && traceDays > 0
+    ? isZh
+      ? `使用 ${formatNumber(traceDays, profile.report.locale)} 天`
+      : `${formatNumber(traceDays, profile.report.locale)}-day span`
+    : null;
   const proofPills = [
     (archetype.variant_badges || [])[0] || archetype.activeStatus || (isZh ? "本地证据" : "Local proof"),
-    `${formatNumber(profile.evidence_notes.length, profile.report.locale)} ${isZh ? "条证据" : "evidence"}`,
-    `${formatNumber(codex.sessions || 0, profile.report.locale)} ${isZh ? "次会话" : "sessions"}`,
-    Number.isFinite(traceDays) ? `${formatNumber(traceDays, profile.report.locale)} ${isZh ? "天 trace" : "trace days"}` : null
-  ].filter(Boolean).slice(0, 4);
+    tokenPill,
+    usageSpanPill
+  ].filter(Boolean);
+  const archetypeTitle = isZh
+    ? archetype.name
+    : `${archetype.name} / ${archetype.enName || archetype.english_short_name || archetype.code}`;
 
   return `<!doctype html>
 <html lang="${esc(localeBundle.html_lang || profile.report.locale)}">
@@ -355,41 +362,13 @@ export function renderHtml(profile, localeBundle) {
       margin-left: -6px;
       min-width: 1.5em;
     }
-    .display-name-help {
-      border: 1.5px dashed var(--line);
-      border-radius: 8px;
-      background: #fff;
-      padding: 8px 10px;
-      margin: -4px 0 12px -2px;
-      box-shadow: 2px 2px 0 rgba(10, 15, 13, 0.2);
+    .holder-name[contenteditable] {
+      cursor: text;
+      caret-color: var(--accent);
     }
-    .display-name-help summary {
-      cursor: pointer;
-      color: var(--accent);
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .display-name-help p {
-      margin: 8px 0 6px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-      font-weight: 700;
-    }
-    .display-name-help code {
-      display: block;
-      margin-top: 6px;
-      padding: 6px 7px;
-      border: 1px solid rgba(10, 15, 13, 0.22);
-      border-radius: 6px;
-      background: var(--case);
-      color: var(--steel);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 10.5px;
-      line-height: 1.35;
-      overflow-wrap: anywhere;
+    .holder-name[contenteditable]:focus {
+      outline: none;
+      background: transparent;
     }
     .holder-tags {
       display: flex;
@@ -845,13 +824,7 @@ export function renderHtml(profile, localeBundle) {
             </div>
           </div>
 
-          <h1 class="holder-name">${esc(profile.owner.display_name)}</h1>
-          <details class="display-name-help">
-            <summary>${esc(copy.displayNameHelp)}</summary>
-            <p>${esc(copy.displayNameHelpBody)}</p>
-            <code>${esc(copy.displayNameSourceCommand)}</code>
-            <code>${esc(copy.displayNamePackageCommand)}</code>
-          </details>
+          <h1 class="holder-name" contenteditable="plaintext-only" spellcheck="false" aria-label="${esc(copy.displayNameEdit)}" title="${esc(copy.displayNameEdit)}">${esc(profile.owner.display_name)}</h1>
 
           <div class="holder-tags">
             ${archetype.tags.map((tag) => `<span class="holder-tag">${esc(tag)}</span>`).join("\n")}
@@ -862,7 +835,7 @@ export function renderHtml(profile, localeBundle) {
 
           <div class="archetype-banner">
             <div class="archetype-label">${esc(copy.identityLabel)} / ${esc(archetype.code)}</div>
-            <h2 class="archetype-title">${esc(archetype.name)} / <span style="font-size:16px; opacity:0.85;">${esc(archetype.enName || archetype.english_short_name || archetype.code)}</span></h2>
+            <h2 class="archetype-title">${esc(archetypeTitle)}</h2>
             <div class="visual-motif motif-${esc(cardTheme.motif || archetype.visual_theme_id || "proof-seal")}" aria-hidden="true"></div>
           </div>
 
@@ -870,7 +843,7 @@ export function renderHtml(profile, localeBundle) {
             ${esc(isZh ? archetype.tagline : archetype.enTagline)}
           </div>
           <div class="signature-line">
-            <span>${isZh ? "副标题" : "Subtitle"}</span>
+            <span>${isZh ? "协作签名" : "Collaboration Signature"}</span>
             <b>${esc(archetype.signature || `${archetype.dominant?.role_label || archetype.name} · ${archetype.dominant?.ability_label || cardTheme.label}`)}</b>
           </div>
           <div class="calibration-line">
@@ -887,19 +860,19 @@ export function renderHtml(profile, localeBundle) {
 
     <!-- Bounce prompt to scroll -->
     <div class="scroll-prompt">
-      ${isZh ? "继续查看：角色信号、事实证据与隐私边界" : "Continue: role signals, evidence, and privacy boundary"}
+      ${isZh ? "继续查看：角色信号、智能体台账、事实证据与隐私边界" : "Continue: role signals, agent ledger, evidence, and privacy boundary"}
     </div>
 
     <!-- Clean CSS Tabs for Progressive Disclosure -->
     <input type="radio" name="tabs" id="tab-specialties" checked class="tab-input">
-    <input type="radio" name="tabs" id="tab-evidence" class="tab-input">
     <input type="radio" name="tabs" id="tab-ledger" class="tab-input">
+    <input type="radio" name="tabs" id="tab-evidence" class="tab-input">
     <input type="radio" name="tabs" id="tab-redaction" class="tab-input">
 
     <div class="tab-nav-wrapper">
       <label for="tab-specialties" class="tab-label">${isZh ? "🌟 协作特长" : "Specialties"}</label>
-      <label for="tab-evidence" class="tab-label">${isZh ? "📁 事实存证" : "Evidence"}</label>
       <label for="tab-ledger" class="tab-label">${isZh ? "🔌 智能体台账" : "Ledger"}</label>
+      <label for="tab-evidence" class="tab-label">${isZh ? "📁 事实存证" : "Evidence"}</label>
       <label for="tab-redaction" class="tab-label">${isZh ? "🛡️ 数据合规墙" : "Redaction"}</label>
     </div>
 
@@ -981,42 +954,11 @@ export function renderHtml(profile, localeBundle) {
       </div>
     </div>
 
-    <!-- TAB CONTENT 2: EVIDENCE -->
-    <div class="tab-content" id="content-evidence">
-      <section class="dossier-section" style="margin-top:0;">
-        <div class="section-head">
-          <div><div class="kicker">03 / ${esc(copy.sections.evidence)}</div><h2>脱敏存证事实卷宗</h2></div>
-          <p>${esc(copy.evidenceIntro)}</p>
-        </div>
-        <div class="case-list">
-          ${profile.evidence_notes.slice(0, 3).map((card) => `<div class="case-card-wrapper" style="margin-top:10px;">
-            <div class="case-tab" style="display:inline-block; background:var(--field); border:2px solid var(--line); border-bottom:none; border-radius:6px 6px 0 0; padding:4px 12px; font-family:ui-monospace,monospace; font-size:11px; font-weight:900; color:var(--steel); margin-bottom:-2px; position:relative; z-index:2; box-shadow: 2px 0 0 rgba(0,0,0,0.05);">${esc(card.evidence_id)}</div>
-
-            <article class="case-file" style="margin-top:0; border-top-left-radius:0; z-index:1; position:relative; padding: 20px;">
-              <div class="case-title">
-                <b style="font-size:17.5px;">${esc(card.title)}</b>
-              </div>
-              <div class="pill-line" style="margin-top:8px;">
-                <span class="pill" style="background:#fff; font-family:ui-monospace,monospace;">等级: ${esc(card.level.join(" / "))}</span>
-                <span class="pill" style="background:#fff; color:var(--accent); border-color:var(--accent); font-weight:800;">${isZh ? `置信度: ${card.confidence === "high" ? "高" : card.confidence === "medium" ? "中" : "低"}` : `${esc(card.confidence).toUpperCase()} CONFIDENCE`}</span>
-                ${card.agent_clients.map((client) => `<span class="pill" style="background:#fff; font-family:ui-monospace,monospace;">${esc(client)}</span>`).join("")}
-              </div>
-              <p style="margin-top:12px; line-height:1.6; font-size:13.5px; color:var(--muted); font-weight:600;">${esc(card.summary)}</p>
-
-              <p style="font-size:12.5px; margin-top:16px; font-family:ui-monospace,monospace; background:rgba(0,0,0,0.02); border:1px dashed rgba(0,0,0,0.1); padding:8px 12px; border-radius:6px;">
-                <b style="color:var(--accent); font-family:ui-sans-serif,sans-serif;">${esc(copy.refs)}:</b> <span style="color:var(--muted); font-weight:700;">$ cat trace.log | grep "${esc(card.refs.map(formatPublicRef).join(" | "))}"</span>
-              </p>
-            </article>
-          </div>`).join("\n")}
-        </div>
-      </section>
-    </div>
-
-    <!-- TAB CONTENT 3: LEDGER -->
+    <!-- TAB CONTENT 2: LEDGER -->
     <div class="tab-content" id="content-ledger">
       <section class="dossier-section" style="margin-top:0;">
         <div class="section-head">
-          <div><div class="kicker">04 / ${esc(copy.sections.ledger)}</div><h2>${esc(copy.sections.ledger)}</h2></div>
+          <div><div class="kicker">03 / ${esc(copy.sections.ledger)}</div><h2>${esc(copy.sections.ledger)}</h2></div>
           <p>${esc(copy.ledgerIntro)}</p>
         </div>
         <div class="ledger-list">
@@ -1053,6 +995,37 @@ export function renderHtml(profile, localeBundle) {
               <div class="small" style="font-family:ui-monospace,monospace; font-weight:800; text-align:right;">${evidenceText}${tokenText}</div>
             </article>`;
           }).join("\n")}
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB CONTENT 3: EVIDENCE -->
+    <div class="tab-content" id="content-evidence">
+      <section class="dossier-section" style="margin-top:0;">
+        <div class="section-head">
+          <div><div class="kicker">04 / ${esc(copy.sections.evidence)}</div><h2>脱敏存证事实卷宗</h2></div>
+          <p>${esc(copy.evidenceIntro)}</p>
+        </div>
+        <div class="case-list">
+          ${profile.evidence_notes.slice(0, 3).map((card) => `<div class="case-card-wrapper" style="margin-top:10px;">
+            <div class="case-tab" style="display:inline-block; background:var(--field); border:2px solid var(--line); border-bottom:none; border-radius:6px 6px 0 0; padding:4px 12px; font-family:ui-monospace,monospace; font-size:11px; font-weight:900; color:var(--steel); margin-bottom:-2px; position:relative; z-index:2; box-shadow: 2px 0 0 rgba(0,0,0,0.05);">${esc(card.evidence_id)}</div>
+
+            <article class="case-file" style="margin-top:0; border-top-left-radius:0; z-index:1; position:relative; padding: 20px;">
+              <div class="case-title">
+                <b style="font-size:17.5px;">${esc(card.title)}</b>
+              </div>
+              <div class="pill-line" style="margin-top:8px;">
+                <span class="pill" style="background:#fff; font-family:ui-monospace,monospace;">等级: ${esc(card.level.join(" / "))}</span>
+                <span class="pill" style="background:#fff; color:var(--accent); border-color:var(--accent); font-weight:800;">${isZh ? `置信度: ${card.confidence === "high" ? "高" : card.confidence === "medium" ? "中" : "低"}` : `${esc(card.confidence).toUpperCase()} CONFIDENCE`}</span>
+                ${card.agent_clients.map((client) => `<span class="pill" style="background:#fff; font-family:ui-monospace,monospace;">${esc(client)}</span>`).join("")}
+              </div>
+              <p style="margin-top:12px; line-height:1.6; font-size:13.5px; color:var(--muted); font-weight:600;">${esc(card.summary)}</p>
+
+              <p style="font-size:12.5px; margin-top:16px; font-family:ui-monospace,monospace; background:rgba(0,0,0,0.02); border:1px dashed rgba(0,0,0,0.1); padding:8px 12px; border-radius:6px;">
+                <b style="color:var(--accent); font-family:ui-sans-serif,sans-serif;">${esc(copy.refs)}:</b> <span style="color:var(--muted); font-weight:700;">$ cat trace.log | grep "${esc(card.refs.map(formatPublicRef).join(" | "))}"</span>
+              </p>
+            </article>
+          </div>`).join("\n")}
         </div>
       </section>
     </div>
@@ -1312,4 +1285,31 @@ Public artifacts do not include raw session IDs or raw local trace paths.
 function formatPublicRef(ref) {
   if (ref.type === "memory") return `${ref.source}:${ref.start_line}-${ref.end_line}`;
   return ref.source || ref.type || "ref";
+}
+
+function sumMeasuredDisplayTokens(clients = []) {
+  return clients
+    .filter((client) => client.status === "measured")
+    .reduce((sum, client) => {
+      const tokens = client.display_usage?.token_usage?.total_tokens || client.token_usage?.total_tokens || 0;
+      return sum + Number(tokens || 0);
+    }, 0);
+}
+
+function countClientTraceDays(clients = []) {
+  const timestamps = clients
+    .filter((client) => client.status === "measured")
+    .flatMap((client) => [client.trace_window?.start, client.trace_window?.end])
+    .filter(Boolean)
+    .map((value) => Date.parse(value))
+    .filter(Number.isFinite);
+  if (!timestamps.length) return null;
+  return Math.max(1, Math.round((Math.max(...timestamps) - Math.min(...timestamps)) / 86_400_000) + 1);
+}
+
+function countTraceDays(traceWindow = {}) {
+  const start = Date.parse(traceWindow.start);
+  const end = Date.parse(traceWindow.end);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return null;
+  return Math.max(1, Math.round((end - start) / 86_400_000) + 1);
 }

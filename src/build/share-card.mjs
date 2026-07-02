@@ -119,11 +119,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "代码判官",
       english_short_name: "Systems Proof Reviewer",
-      punchline: "代码可以乱，但证据链必须闭环。",
-      tags: ["#代码洁癖", "#证据闭环", "#脱敏存证"],
-      share_subtitle: "把 AI 写的每行代码都当成呈堂证供来严密复核。",
+      punchline: "口说无凭，把你和 AI 协作的证据链呈上来。",
+      tags: ["#代码洁癖", "#证据链闭环", "#零信任玩家"],
+      share_subtitle: "把 AI 写的每行代码都当成呈堂证供，绝不放过任何一个未核验的疑点。",
       strength_sentence: "强项是把 role signal、能力维度和证据等级放在同一张图里校准。",
-      risk_sentence: "外部结果证据不足时，本地验证不能被解读为真实世界影响。"
+      risk_sentence: "本地验证无懈可击，但要是缺了真实世界反馈，完美闭环也只是一场高墙内的赛博自嗨。"
     },
     copy_en: {
       name: "Systems Proof Reviewer",
@@ -141,11 +141,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "赛博刹车手",
       english_short_name: "Systems Goal Reviewer",
-      punchline: "在想清楚怎么死之前，别让 Agent 瞎跑。",
-      tags: ["#防幻觉先锋", "#系统刹车", "#冷酷校准"],
-      share_subtitle: "在狂热的 Agent 堆砌中保持绝对冷静，是幻觉的头号克星。",
+      punchline: "在想清楚怎么死之前，先别急着让 Agent 裸奔。",
+      tags: ["#防幻觉先锋", "#无情刹车片", "#冷酷校准器"],
+      share_subtitle: "在狂热的 Agent 堆砌中保持绝对冷静，用最硬的测试底线卡死大模型的幻觉。",
       strength_sentence: "强项是把目标、失败条件和验证口径写清楚再进入执行。",
-      risk_sentence: "可能在目标校准上花较多时间，外部交付节奏需要单独观察。"
+      risk_sentence: "刹车踩得太满容易追尾。过度校准风险，小心被隔壁‘跑起来再说’的草台班子在交付速度上无情超车。"
     },
     copy_en: {
       name: "Systems Goal Reviewer",
@@ -163,11 +163,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "大模型驯兽师",
       english_short_name: "Systems Verification Operator",
-      punchline: "上下文给足，Agent 别想在我面前装傻。",
-      tags: ["#上下文重度依赖", "#驯兽大师", "#Token狂魔"],
-      share_subtitle: "用严丝合缝的上下文打包，把多轮 Agent 强行拉回预定轨道。",
+      punchline: "只要上下文打包给得足，Agent 别想在我面前装傻。",
+      tags: ["#大模型克星", "#上下文重度依赖", "#Token燃烧艺术家"],
+      share_subtitle: "用严丝合缝的上下文和高频调度，把狂野的大模型驯化成最听话的流水线小弟。",
       strength_sentence: "强项是把会话密度、上下文包和验证节点连接成稳定工作流。",
-      risk_sentence: "高活动量只说明协作密度，不直接证明交付质量。"
+      risk_sentence: "Token 烧得比香火还旺，但小心陷入‘疯狂对话却没写出半个可用功能’的赛博内卷。"
     },
     copy_en: {
       name: "Systems Verification Operator",
@@ -183,13 +183,13 @@ const BASE_ARCHETYPES = {
     code: "SOVG",
     theme_id: "route_map",
     copy_zh: {
-      name: "赛博副驾驶",
+      name: "赛博领航员",
       english_short_name: "Systems Goal Operator",
-      punchline: "我不写代码，我只给 Agent 指明进军路线。",
-      tags: ["#高阶指挥官", "#路线拆解", "#Agent舵手"],
-      share_subtitle: "擅长把大目标转成 Agent 可以一站到底连续推进的路线图。",
+      punchline: "我不替 Agent 搬砖，我只给它们指明进军路线。",
+      tags: ["#高阶指挥官", "#路线拆解大师", "#Agent舵手"],
+      share_subtitle: "擅长规划严密的任务路径与依赖图谱，让 Agent 大军指哪打哪，无痛执行。",
       strength_sentence: "强项为复杂任务建立目标顺序、依赖关系和执行节奏。",
-      risk_sentence: "如果缺少人工复核节点，路径清晰也可能放大错误方向。"
+      risk_sentence: "在错误的道路上踩油门，跑得越快死得越惨。别因为路线图画得太完美，就漏掉了人工复核。"
     },
     copy_en: {
       name: "Systems Goal Operator",
@@ -205,13 +205,13 @@ const BASE_ARCHETYPES = {
     code: "SRDC",
     theme_id: "dossier",
     copy_zh: {
-      name: "交付质检官",
+      name: "交付质检大师",
       english_short_name: "Systems Delivery Reviewer",
-      punchline: "能交付，也要能解释为什么可以交付。",
-      tags: ["#没有Bug能活", "#交付质检", "#安全第一"],
-      share_subtitle: "把系统交付、证据和上下文边界合成一份无可挑剔的可审计记录。",
+      punchline: "能上线是基本功，能说清楚为什么可以上线才是真底气。",
+      tags: ["#没有Bug能活", "#交付终极把关人", "#安全防线"],
+      share_subtitle: "将系统交付、上下文边界和可追溯证据熔炼为一份教科书式的可审计档案。",
       strength_sentence: "强项是在交付前后保留判断依据和可复跑证据。",
-      risk_sentence: "对外部用户价值的证据仍需和本地交付证据分开看。"
+      risk_sentence: "交付文档和审计痕迹堪称艺术品，但仍需提防‘说明书写得极其完美，产品本身却没人想用’的尴尬。"
     },
     copy_en: {
       name: "Systems Delivery Reviewer",
@@ -229,11 +229,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "标尺守望者",
       english_short_name: "Systems Delivery Calibrator",
-      punchline: "你管这叫 Done？对不起，重新跑。",
-      tags: ["#无情验收机器", "#完美主义者", "#交付铁律"],
-      share_subtitle: "用冰冷的目标标尺，无情地碾碎大模型编造的“已完成”幻觉。",
+      punchline: "你管这叫 Done？对不起，回去重新跑。",
+      tags: ["#交付铁律", "#无情验收机", "#完美主义判官"],
+      share_subtitle: "用最冰冷的目标标尺，无情戳破大模型在任务列表里编造的‘已完成’自嗨。",
       strength_sentence: "强项是让执行完成、验收条件和风险说明保持一致。",
-      risk_sentence: "缺少真实发布或用户反馈时，交付信号仍然偏本地。"
+      risk_sentence: "本地编译和单元测试全绿，不代表能经受真实世界的大风大浪，别让你的‘Done’只停留在本地沙盒里。"
     },
     copy_en: {
       name: "Systems Delivery Calibrator",
@@ -251,11 +251,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "流水线厂长",
       english_short_name: "Systems Delivery Operator",
-      punchline: "别扯什么情怀，到点必须给我出货。",
-      tags: ["#无情出货机器", "#流水线调度", "#极客催单"],
-      share_subtitle: "高频且极其稳定地将多会话、多模块的杂乱痕迹揉进标准交付节奏。",
+      punchline: "别跟我扯什么宏大情怀，到点必须按时出货。",
+      tags: ["#无情出货机器", "#流水线调度狂", "#极客催单员"],
+      share_subtitle: "高频且极度稳定地将多会话、多模块的杂乱痕迹揉进标准的发布节拍。",
       strength_sentence: "强项是把上下文交接、命令结果和输出目录边界串起来。",
-      risk_sentence: "如果外部验收较少，交付卫生不能替代产品判断。"
+      risk_sentence: "地扫得再干净，饭难吃还是没客来。本地代码格式再优雅、流水线再顺，也替代不了对产品本身真实价值的判断。"
     },
     copy_en: {
       name: "Systems Delivery Operator",
@@ -271,13 +271,13 @@ const BASE_ARCHETYPES = {
     code: "SODG",
     theme_id: "route_map",
     copy_zh: {
-      name: "赛博总包商",
+      name: "赛博包工头",
       english_short_name: "Systems Delivery Navigator",
-      punchline: "大方向已定，剩下的交给我的 Agent 军团。",
-      tags: ["#一人顶一队", "#大总包商", "#流水线总装"],
-      share_subtitle: "从大目标出发，规划好每一个依赖节点，让 Agent 像小弟一样听话交付。",
+      punchline: "大方向我已经画好，剩下的交给 Agent 砖窑满负荷开工。",
+      tags: ["#一人顶一队", "#赛博包工头", "#流水线总装工"],
+      share_subtitle: "精准锁定大任务的交付节点与依赖关系，把大目标层层剥离，强力推进到底。",
       strength_sentence: "强项是让大任务在多轮 Agent 执行中不丢方向。",
-      risk_sentence: "路线证据强时，仍需补充真实结果和用户侧反馈。"
+      risk_sentence: "任务排期和依赖链条画得天衣无缝，但小心落入‘PPT式交付’的自嗨，真正的包工头还是要到工地看看砖搬得对不对。"
     },
     copy_en: {
       name: "Systems Delivery Navigator",
@@ -293,13 +293,13 @@ const BASE_ARCHETYPES = {
     code: "PRVC",
     theme_id: "product_lens",
     copy_zh: {
-      name: "像素级纠错怪",
+      name: "像素级找茬家",
       english_short_name: "Product Proof Reviewer",
-      punchline: "用户能看到的东西，每一像素都要有证据支撑。",
-      tags: ["#像素级细节控", "#体验至上", "#证据截图党"],
-      share_subtitle: "执着于用户可见的体验细节，并把它们统统变成无可置疑的截图和存证。",
+      punchline: "用户能看到的东西，连一像素的调整都必须有证据支撑。",
+      tags: ["#像素级细节控", "#体验至上主义", "#证据截图狂"],
+      share_subtitle: "极度执着于用户能感知的体验细节，并用无可置疑的截图和运行日志将它们统统铁证化。",
       strength_sentence: "强项是把可见体验、能力信号和证据等级一起审查。",
-      risk_sentence: "产品判断需要真实用户结果支撑，不能只靠本地截图。"
+      risk_sentence: "本地截图和视觉微调近乎完美，但小心陷入‘自嗨型完美主义’，别忘了真实用户的吐槽才是最硬核的验收标准。"
     },
     copy_en: {
       name: "Product Proof Reviewer",
@@ -317,11 +317,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "用户意图侦探",
       english_short_name: "Product Goal Reviewer",
-      punchline: "先搞清楚用户为什么要点，再让 AI 写第一行代码。",
-      tags: ["#痛点追踪", "#体验复核", "#需求解构"],
-      share_subtitle: "在 AI 瞎敲键盘之前，先把最真实的用户意图和体验细节按在放大镜下。",
+      punchline: "先搞清楚用户到底为什么想点这个按钮，再让 AI 敲第一行代码。",
+      tags: ["#痛点狙击手", "#体验复盘大师", "#需求终极解构"],
+      share_subtitle: "在 AI 盲目输出之前，先把用户真实的痛点、场景和心智模型拆解得一清二楚。",
       strength_sentence: "强项是把需求愿望改写为可被检查的用户目标。",
-      risk_sentence: "缺少真实漏斗或用户反馈时，结论应保持保守。"
+      risk_sentence: "心智推导逻辑严密，但在拿到真实业务漏斗前，小心掉进‘自己假设的用户痛点’里，那只是闭门造车。"
     },
     copy_en: {
       name: "Product Goal Reviewer",
@@ -339,11 +339,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "赛博制片人",
       english_short_name: "Product Context Operator",
-      punchline: "给 Agent 搭好戏台，剩下的让它自己演。",
-      tags: ["#场景导演", "#体验掌控", "#顺滑调度"],
-      share_subtitle: "不只给大模型文件路径，而是把用户真实的场景和意图打包喂给它。",
+      punchline: "给 Agent 搭好最顺滑的戏台，剩下的让它自己本色出演。",
+      tags: ["#场景好导演", "#产品意图打包者", "#顺滑协作大师"],
+      share_subtitle: "绝不只给大模型丢冷冰冰的代码路径，而是将用户真实的场景和产品意图打包塞进它的脑子里。",
       strength_sentence: "强项是把产品意图、上下文和验证项放进同一轮协作。",
-      risk_sentence: "上下文完整不等于需求正确，仍需外部用户证据。"
+      risk_sentence: "戏台搭得四平八稳，剧本也塞得极满，但如果需求本身是伪需求，台本写得再好也是空忙活。"
     },
     copy_en: {
       name: "Product Context Operator",
@@ -361,11 +361,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "草台班子总导演",
       english_short_name: "Product Goal Operator",
-      punchline: "不管过程多草台，能跑通的产品就是神作。",
-      tags: ["#草台美学", "#野生创始人", "#先跑起来再说"],
-      share_subtitle: "擅长在混乱的依赖中快速拆解出能小步快跑的 MVP。",
+      punchline: "不管过程多草台，能跑通并解决用户痛点的产品就是神作。",
+      tags: ["#草台美学信徒", "#野生创始人", "#MVP狂魔"],
+      share_subtitle: "深谙草台美学，擅长在混乱的依赖中迅速剔除杂音，以极限速度交付能跑的 MVP。",
       strength_sentence: "强项是让产品方向在多轮 Agent 执行中保持可见。",
-      risk_sentence: "推进速度需要与验证质量一起看，不能单独解释成能力。"
+      risk_sentence: "‘能跑通’不等于‘能跑得稳’。追求速度的同时，小心地基太虚，给后续埋下一地不知何时爆炸的暗雷。"
     },
     copy_en: {
       name: "Product Goal Operator",
@@ -383,11 +383,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "买家秀鉴定师",
       english_short_name: "Product Delivery Reviewer",
-      punchline: "别光顾着上线，用户真正爽到了才算数。",
-      tags: ["#真实体验狂", "#拒绝画饼", "#复核闭盘"],
-      share_subtitle: "严防死守大模型的“自嗨型交付”，只对真实世界中的交互质量妥协。",
+      punchline: "别光顾着说‘已上线’，用户真正爽到了才算交付成功。",
+      tags: ["#真实体验控", "#拒绝画饼", "#交互质量把关人"],
+      share_subtitle: "铁面无私地严防死守大模型的‘自嗨型交付’，一切没有落实到真实交互质量的产出都不能通关。",
       strength_sentence: "强项是用证据复核交付是否真的服务产品目标。",
-      risk_sentence: "缺少真实使用数据时，仍只能称为交付证据而非市场证据。"
+      risk_sentence: "对‘买家秀’的挑剔几近苛刻，但在拿到真实留存和使用数据前，你以为的‘用户爽点’可能只是自欺欺人的幻想。"
     },
     copy_en: {
       name: "Product Delivery Reviewer",
@@ -403,13 +403,13 @@ const BASE_ARCHETYPES = {
     code: "PRDG",
     theme_id: "release_stamp",
     copy_zh: {
-      name: "痛点收割机",
+      name: "伪需求终结者",
       english_short_name: "Product Delivery Calibrator",
-      punchline: "干掉伪需求，把完成度锁死在用户价值上。",
-      tags: ["#伪需求终结者", "#价值对齐", "#硬核验收"],
-      share_subtitle: "用最硬核的用户目标死磕到底，任何偏离核心价值的无用功在它这里都是 0 分。",
+      punchline: "干掉所有自嗨的伪需求，把完成度锁死在最真实的用户价值上。",
+      tags: ["#伪需求天敌", "#核心价值对齐", "#硬核验收机器"],
+      share_subtitle: "用最硬核的用户目标死磕交付范围，任何偏离核心体验的无用功，在它这里统统零分。",
       strength_sentence: "强项是用产品目标约束交付范围和验收口径。",
-      risk_sentence: "如果缺少用户侧反馈，校准结论仍停留在本地证据层。"
+      risk_sentence: "粉碎伪需求的刀法很准，但千万别把‘自己的直觉’当成‘用户的呼声’。没有数据佐证，刀法再好也是盲打。"
     },
     copy_en: {
       name: "Product Delivery Calibrator",
@@ -427,11 +427,11 @@ const BASE_ARCHETYPES = {
     copy_zh: {
       name: "快手造物主",
       english_short_name: "Product Delivery Operator",
-      punchline: "从创意到落地，距离只有一轮 Prompt。",
-      tags: ["#MVP狂魔", "#造物游戏", "#顺滑推进"],
-      share_subtitle: "享受无情推进产品的快感，同时能优雅地留存每一次高频互动的存证。",
+      punchline: "从一个闪现的创意到硬核落地，距离只有一轮 Prompt。",
+      tags: ["#造物游戏痴迷者", "#MVP急速雕刻", "#动作派创客"],
+      share_subtitle: "享受那种把脑中灵感无情推进到具体产品的造物快感，并顺手留存下每一次高频互动的铁证。",
       strength_sentence: "强项是让多轮 Agent 产品工作保持可追溯和可复查。",
-      risk_sentence: "原型交付不能自动证明用户价值，需要后续验证。"
+      risk_sentence: "一句话起高楼固然爽快，但‘原型造得快’不代表‘用户留得下’。别让你的高频造物沦为一次性的赛博垃圾。"
     },
     copy_en: {
       name: "Product Delivery Operator",
@@ -450,10 +450,10 @@ const BASE_ARCHETYPES = {
       name: "全栈独行侠",
       english_short_name: "Product Delivery Navigator",
       punchline: "用最野的路子，交最硬的产品。",
-      tags: ["#全栈孤勇者", "#硬核出货", "#野路子创客"],
-      share_subtitle: "独立开发者灵魂拥有者，把复杂的交付路径和用户目标一手拉到终点线。",
+      tags: ["#全栈孤勇者", "#硬核出货人", "#野生全栈创客"],
+      share_subtitle: "身怀独立开发者的硬核灵魂，一个人就是一支军队，把繁杂的交互路径和产品目标一手拉到终点线。",
       strength_sentence: "强项是保持产品目标、执行路线和交付状态同步。",
-      risk_sentence: "路线完成后，仍需要真实用户反馈来确认方向。"
+      risk_sentence: "走完最野的路、交出最硬的产品确实硬核，但如果在一开始产品方向就偏了，全军覆没的也只有你一个人。"
     },
     copy_en: {
       name: "Product Delivery Navigator",

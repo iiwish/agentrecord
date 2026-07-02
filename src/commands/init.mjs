@@ -25,6 +25,13 @@ export async function runInit({ options }) {
 
   if (typeof options.accountUsage === "boolean") config.codex.account_usage.enabled = options.accountUsage;
   if (options.accountUsageTimeoutMs) config.codex.account_usage.timeout_ms = Number(options.accountUsageTimeoutMs);
+  if (typeof options.opencode === "boolean") config.opencode.enabled = options.opencode;
+  if (options.opencodeDataDir) config.opencode.data_dir = options.opencodeDataDir;
+  if (options.opencodeDb || options.opencodeDatabase) config.opencode.database_path = options.opencodeDb || options.opencodeDatabase;
+  if (typeof options.claudeCode === "boolean") config.claude_code.enabled = options.claudeCode;
+  if (options.claudeCodeProjectsDir || options.claudeProjectsDir) {
+    config.claude_code.projects_dir = options.claudeCodeProjectsDir || options.claudeProjectsDir;
+  }
 
   if (options.publicProjectPaths === true) config.privacy.public_project_paths = true;
   if (options.publicProjectPaths === false) config.privacy.public_project_paths = false;

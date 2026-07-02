@@ -21,7 +21,7 @@
 
 AgentRecord 应先做本地 npm CLI，而不是先做招聘评分产品或托管 Web 产品。
 
-第一阶段目标是把 `/Users/iiwish/self/runmark-profile` 的可用原型迁移为 `agentrecord` 包，先跑通 Codex 本地数据，生成用户自己的 AI 工作画像和可分享报告。
+第一阶段目标是把 `/Users/iiwish/self/runmark-profile` 的可用原型迁移为 `agentrecord` 包，跑通 Codex 本地数据、opencode 聚合元数据和 Claude Code 项目会话元数据，生成用户自己的 AI 工作画像和可分享报告。
 
 ## 项目边界
 

@@ -32,7 +32,7 @@ AgentRecord 的画像模型要服务三个场景：
 
 `owner.id` 是稳定 path/id，用于 `profiles/<owner>/`，只能包含安全路径字符。
 
-`owner.display_name` 是展示名，用于 HTML、Markdown、profile JSON 和可选 agent context。展示名可以通过 config 的 `owner_display_name` 或 CLI 的 `--display-name` 修正。展示名变化不改变 `owner.id` 和输出目录。HTML 只展示静态名称和修正说明，不提供会让用户误以为直接编辑即可保存的交互。
+`owner.display_name` 是展示名，用于 HTML、Markdown、profile JSON 和可选 agent context。展示名可以通过 config 的 `owner_display_name` 或 CLI 的 `--display-name` 修正。展示名变化不改变 `owner.id` 和输出目录。HTML 首页展示名可以直接点击临时编辑，服务于改名后截图分享；该编辑不写回 profile 文件。
 
 配置示例：
 
@@ -83,11 +83,11 @@ AgentRecord 的画像模型要服务三个场景：
   },
   "chinese_name": "代码判官",
   "english_short_name": "Systems Proof Reviewer",
-  "punchline": "代码可以乱，但证据链必须闭环。",
-  "social_tags": ["#代码洁癖", "#证据闭环", "#脱敏存证"],
-  "share_subtitle": "把 AI 写的每行代码都当成呈堂证供来严密复核。",
+  "punchline": "口说无凭，把你和 AI 协作的证据链呈上来。",
+  "social_tags": ["#代码洁癖", "#证据链闭环", "#零信任玩家"],
+  "share_subtitle": "把 AI 写的每行代码都当成呈堂证供，绝不放过任何一个未核验的疑点。",
   "strength_sentence": "强项是把 role signal、能力维度和证据等级放在同一张图里校准。",
-  "risk_sentence": "外部结果证据不足时，本地验证不能被解读为真实世界影响。",
+  "risk_sentence": "本地验证无懈可击，但要是缺了真实世界反馈，完美闭环也只是一场高墙内的赛博自嗨。",
   "visual_theme_id": "proof_seal",
   "variant_badges": ["证据已成型", "验证强信号"],
   "stat_rows": []
@@ -100,6 +100,8 @@ AgentRecord 的画像模型要服务三个场景：
 - execution: reviewer / operator，由 `technical_reviewer`、`agent_operator`、`review_judgment`、`agent_delegation` 等信号加权。
 - quality: verification / delivery，由 `verification_discipline`、`failure_recovery`、`shipping_owner`、`shipping_hygiene` 等信号加权。
 - scope: context / goal，由 `context_packaging`、`collaboration_handoff`、`goal_framing`、`product_judgment` 等信号加权。
+
+首页第一屏的轻量证据摘要显示状态、所有已测量智能体的聚合 Token 活跃度，以及基于所有已测量智能体 trace window 的使用跨度。Codex 有 account usage 时使用账号级 lifetime tokens；账号级数据不可用时回退本地 trace 汇总。opencode 使用本地 SQLite session 元数据中的 token 汇总。Claude Code 使用本地项目 JSONL 的 usage 字段汇总。Token 只表示 activity density，不等同于能力分。使用跨度只表示本地可见记录的最早到最晚区间，不等同于每天连续使用。Evidence count 和 session count 保留在后续详情区。
 
 变体来自证据和活动数据：
 
@@ -263,8 +265,20 @@ Evidence 是系统可信度的核心。
       "evidence_count": 24
     },
     {
+      "client_id": "opencode",
+      "status": "measured",
+      "sessions": 32,
+      "token_usage": {},
+      "trace_window": {},
+      "usage_source": "local_opencode_sqlite"
+    },
+    {
       "client_id": "claude_code",
-      "status": "not_configured"
+      "status": "measured",
+      "sessions": 4,
+      "token_usage": {},
+      "trace_window": {},
+      "usage_source": "local_claude_code_projects"
     }
   ]
 }

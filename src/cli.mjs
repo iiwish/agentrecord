@@ -22,8 +22,8 @@ Usage:
   agentrecord --version
   agentrecord doctor
   agentrecord init [--dry-run] [--owner <id>] [--display-name <name>] [--profiles-dir <dir>] [--output <dir>]
-  agentrecord scan [--config <file>] [--sessions-dir <dir>]
-  agentrecord build [--config <file>] [--display-name <name>] [--agent-context] [--no-account-usage]
+  agentrecord scan [--config <file>] [--sessions-dir <dir>] [--opencode-db <file>] [--claude-code-projects-dir <dir>]
+  agentrecord build [--config <file>] [--display-name <name>] [--agent-context] [--no-account-usage] [--opencode-db <file>] [--claude-code-projects-dir <dir>]
   agentrecord validate [--config <file>]
   agentrecord open [--config <file>] [--owner <owner>]
 
@@ -39,6 +39,10 @@ Build options:
   --display-name <name>                 Override owner display name without changing owner id/path
   --no-account-usage                    Skip Codex CLI account usage lookup
   --account-usage-timeout-ms <ms>       Timeout for Codex CLI account usage lookup
+  --opencode-db <file>                  Read opencode aggregate metadata from a local opencode.db
+  --no-opencode                         Disable opencode local database scanning
+  --claude-code-projects-dir <dir>      Read Claude Code aggregate metadata from local project JSONL logs
+  --no-claude-code                      Disable Claude Code local project scanning
 `;
 
 const { options, positional } = parseArgs(process.argv.slice(2));

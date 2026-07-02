@@ -252,7 +252,7 @@ function checkSingleEvidenceRef(ref, evidenceId, config, errors) {
     return;
   }
 
-  if (ref.type === "metadata" && ref.source === "codex_session_metadata") return;
+  if (ref.type === "metadata" && ["codex_session_metadata", "opencode_session_metadata", "claude_code_session_metadata", "agent_activity_metadata"].includes(ref.source)) return;
 
   if (ref.type === "memory") {
     if (!ref.source || !Number.isInteger(ref.start_line) || !Number.isInteger(ref.end_line) || ref.start_line <= 0 || ref.end_line < ref.start_line) {
@@ -343,22 +343,28 @@ function checkSingleFileHtmlBoundary(file, content, errors) {
     { id: "html_no_link", pattern: /<link\b/i, message: "index.html must not include link tags." },
     { id: "html_no_http", pattern: /https?:\/\//i, message: "index.html must not include http or https URLs." },
     { id: "html_no_css_url", pattern: /url\s*\(/i, message: "index.html must not include CSS url(...)." },
-    { id: "html_no_import", pattern: /@import\b/i, message: "index.html must not include CSS imports." },
-    { id: "html_no_contenteditable", pattern: /contenteditable\b/i, message: "index.html must not include inline-editable display-name controls." }
+    { id: "html_no_import", pattern: /@import\b/i, message: "index.html must not include CSS imports." }
   ];
   for (const rule of rules) {
     if (rule.pattern.test(content)) addError(errors, file, rule.id, rule.message);
   }
-  if (!hasDisplayNameCorrectionGuidance(content)) {
-    addError(errors, file, "html_display_name_guidance", "index.html must explain how to correct the display name with owner_display_name or --display-name.");
-  }
+  checkDisplayNameEditing(file, content, errors);
 }
 
-function hasDisplayNameCorrectionGuidance(content) {
-  return (
-    /owner_display_name/.test(content)
-    || (/--display-name/.test(content) && /agentrecord\.config\.json/.test(content) && /Your Name/.test(content))
-  );
+function checkDisplayNameEditing(file, content, errors) {
+  const editableTags = content.match(/<[^>]+\bcontenteditable\b[^>]*>/gi) || [];
+  if (!editableTags.length) {
+    addError(errors, file, "html_display_name_editable", "index.html must allow direct display-name editing for screenshot sharing.");
+    return;
+  }
+  if (editableTags.length > 1) {
+    addError(errors, file, "html_contenteditable_scope", "index.html must only use contenteditable on the display name.");
+  }
+  for (const tag of editableTags) {
+    if (!/\bclass="[^"]*\bholder-name\b[^"]*"/i.test(tag)) {
+      addError(errors, file, "html_contenteditable_scope", "contenteditable is only allowed on .holder-name.");
+    }
+  }
 }
 
 function privacyRules() {
@@ -372,6 +378,16 @@ function privacyRules() {
       id: "codex_session_path",
       pattern: /\/\.codex\/sessions\//,
       message: "Public artifact contains a raw Codex session path."
+    },
+    {
+      id: "opencode_data_path",
+      pattern: /\/\.local\/share\/opencode\/|opencode\.db/,
+      message: "Public artifact contains a raw opencode data path."
+    },
+    {
+      id: "claude_code_project_path",
+      pattern: /\/\.claude\/projects\//,
+      message: "Public artifact contains a raw Claude Code project transcript path."
     },
     {
       id: "raw_user_role",

@@ -46,7 +46,7 @@ Finds local agent sources.
 
 Responsibilities:
 
-- detect Codex, Claude Code, opencode, OpenClaw, Hermes
+- detect Codex, opencode, Claude Code, OpenClaw, Hermes
 - report adapter capability and trace availability
 - avoid reading raw content unless needed for configured extraction
 

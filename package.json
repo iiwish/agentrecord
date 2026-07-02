@@ -1,6 +1,6 @@
 {
   "name": "@iiwish/agentrecord",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Local-first, auditable AI work profiles from agent traces.",
   "type": "module",
   "publishConfig": {
@@ -19,8 +19,10 @@
     "locales",
     "references",
     "schemas",
-    "scripts",
-    "README.md"
+    "docs",
+    "ROADMAP.md",
+    "README.md",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "check": "node --check src/cli.mjs && node src/cli.mjs --help",

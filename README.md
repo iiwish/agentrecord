@@ -24,6 +24,60 @@ It is **not** a hiring score, a competitive leaderboard, an arbitrary certificat
 
 ---
 
+## 🚀 Quickstart
+
+Get up and running locally in under 2 minutes.
+
+### 🤖 Agent-Native Quickstart (Let Your Agent Do the Work!)
+
+Since you are using an AI agent right now (such as Claude Code, opencode, Codex, etc.), you don't even need to type the commands yourself. Copy and paste the prompt below into your agent's chat window, and it will handle the setup, scanning, building, validation, and opening loop:
+
+```text
+You are an expert AI assistant with terminal/command-execution capabilities. I want to generate my AgentRecord work profile. Please perform the following steps autonomously:
+1. Detect my git username using `git config user.name` (fallback to my OS username if empty).
+2. Install the `@iiwish/agentrecord` package globally (using npm/pnpm/yarn) or run via `npx` if global installation is restricted.
+3. Run `agentrecord init --owner local_developer --display-name "[DETECTED_NAME]"` (replace [DETECTED_NAME] with the detected git name).
+4. Run `agentrecord scan` to detect all local agent sessions (Codex, Claude Code, opencode, etc.).
+5. Run `agentrecord build --no-account-usage` to compile the profile.
+6. Run `agentrecord validate` to audit privacy and schemas.
+7. Run `agentrecord open` to open my interactive work passport in the default browser.
+Once complete, output a brief summary of the generated artifacts.
+```
+
+### Manual CLI Quickstart
+
+#### 1. Global NPM Installation
+```bash
+npm install -g @iiwish/agentrecord
+```
+*(Or run directly from the source repository by invoking `node src/cli.mjs`)*
+
+#### 2. Initialize Config
+```bash
+agentrecord init --owner <owner_id> --display-name "Your Name"
+```
+This generates a baseline `agentrecord.config.json` containing output destinations, privacy options, and adapter setups.
+
+#### 3. Scan & Build
+```bash
+# Scan for local agent data sources
+agentrecord scan --config ./agentrecord.config.json
+
+# Build your public-safe profile artifacts
+agentrecord build --config ./agentrecord.config.json --no-account-usage
+```
+
+#### 4. Validate & Open
+```bash
+# Verify integrity, schema structure, and privacy boundaries
+agentrecord validate --config ./agentrecord.config.json
+
+# Launch the human-readable passport report in your default browser
+agentrecord open --config ./agentrecord.config.json
+```
+
+---
+
 ## ⚖️ The Shift: AI-Native Developer Identity
 
 In a software world where AI agents generate a massive portion of pure code lines, the developer's core value is undergoing a fundamental paradigm shift. Your professional excellence is no longer measured solely by keystroke count, but by high-order orchestrational abilities:
@@ -87,67 +141,15 @@ AgentRecord compiles and normalizes your private agent sessions (Codex, opencode
 
 ---
 
-## 🚀 Quickstart
-
-Get up and running locally in under 2 minutes.
-
-### 1. Global NPM Installation
-```bash
-npm install -g @iiwish/agentrecord
-```
-*(Or run directly from the source repository by invoking `node src/cli.mjs`)*
-
-### 2. Initialize Config
-```bash
-agentrecord init --owner <owner_id> --display-name "Your Name"
-```
-This generates a baseline `agentrecord.config.json` containing output destinations, privacy options, and adapter setups.
-
-### 3. Scan & Build
-```bash
-# Scan for local agent data sources
-agentrecord scan --config ./agentrecord.config.json
-
-# Build your public-safe profile artifacts
-agentrecord build --config ./agentrecord.config.json --no-account-usage
-```
-
-### 4. Validate & Open
-```bash
-# Verify integrity, schema structure, and privacy boundaries
-agentrecord validate --config ./agentrecord.config.json
-
-# Launch the human-readable passport report in your default browser
-agentrecord open --config ./agentrecord.config.json
-```
-
-### 🤖 Agent-Native Quickstart (Let Your Agent Do the Work!)
-
-Since you are using an AI agent right now (such as Claude Code, opencode, Codex, etc.), you don't even need to type the commands yourself! Simply copy and paste the prompt below into your agent's chat window, and it will automatically handle the entire setup, scanning, building, validation, and opening loop for you:
-
-```text
-You are an expert AI assistant with terminal/command-execution capabilities. I want to generate my AgentRecord work profile. Please perform the following steps autonomously:
-1. Detect my git username using `git config user.name` (fallback to my OS username if empty).
-2. Install the `@iiwish/agentrecord` package globally (using npm/pnpm/yarn) or run via `npx` if global installation is restricted.
-3. Run `agentrecord init --owner local_developer --display-name "[DETECTED_NAME]"` (replace [DETECTED_NAME] with the detected git name).
-4. Run `agentrecord scan` to detect all local agent sessions (Codex, Claude Code, opencode, etc.).
-5. Run `agentrecord build --no-account-usage` to compile the profile.
-6. Run `agentrecord validate` to audit privacy and schemas.
-7. Run `agentrecord open` to open my interactive work passport in the default browser.
-Once complete, output a brief summary of the generated artifacts.
-```
-
----
-
 ## 🛠️ CLI Commands & Overrides
 
 | Command | Description | Key Overrides / Examples |
 | :--- | :--- | :--- |
-| `init` | Initializes the local configuration schema. | `--owner <id> --display-name "Name" --dry-run` |
-| `scan` | Detects supported agent tools and local databases. | `--sessions-dir ~/.codex/sessions` |
-| `build` | Generates structured JSON, MD, and HTML profiles. | `--owner <id> --locale zh-CN --agent-context` |
+| `init` | Initializes the local configuration schema. | `--dry-run --owner <id> --display-name "Name" --profiles-dir <dir> --output <dir>` |
+| `scan` | Detects supported agent tools and local databases. | `--config <file> --sessions-dir <dir> --opencode-db <file> --claude-code-projects-dir <dir>` |
+| `build` | Generates structured JSON, MD, and HTML profiles. | `--config <file> --owner <id> --locale zh-CN --display-name "Name" --agent-context --no-account-usage --account-usage-timeout-ms <ms> --sessions-dir <dir> --opencode-db <file> --opencode-data-dir <dir> --no-opencode --claude-code-projects-dir <dir> --no-claude-code` |
 | `validate` | Validates privacy, schemas, and locale completeness. | `--config ./agentrecord.config.json` |
-| `open` | Opens the output HTML report safely in your browser. | Opens `profiles/<owner>/index.html` |
+| `open` | Opens the output HTML report safely in your browser. | `--config <file> --owner <owner>` |
 | `doctor` | Checks environment, Node version, and database access. | `agentrecord doctor` |
 
 ---
@@ -217,8 +219,9 @@ npm run check
 npm run pack:dry
 
 # Run smoke tests
-node scripts/smoke-install.mjs
-node scripts/smoke-share-card.mjs
+npm run smoke:install
+npm run smoke:share-card
+npm run smoke:card-diversity
 ```
 
 Before contributing, please read the [Docs Architecture](./docs/architecture.md) and [Privacy and Trust Specifications](./docs/privacy-and-trust.zh-CN.md).

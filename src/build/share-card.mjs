@@ -1,8 +1,64 @@
+import { hashObject } from "./utils.mjs";
+
 const AXIS_CODES = {
   focus: { systems: "S", product: "P" },
   execution: { reviewer: "R", operator: "O" },
   quality: { verification: "V", delivery: "D" },
   scope: { context: "C", goal: "G" }
+};
+
+const AXIS_VALUES = {
+  focus: ["systems", "product"],
+  execution: ["reviewer", "operator"],
+  quality: ["verification", "delivery"],
+  scope: ["context", "goal"]
+};
+
+const AXIS_NEAR_TIE_MARGIN = 0;
+
+const AXIS_CATEGORY_WEIGHTS = {
+  shipping_hygiene: {
+    focus: { systems: 1 },
+    execution: { reviewer: 1 },
+    quality: { delivery: 4 },
+    scope: { context: 1 }
+  },
+  evidence_governance: {
+    focus: { systems: 1 },
+    execution: { reviewer: 3, operator: 1 },
+    quality: { verification: 3 },
+    scope: { context: 3 }
+  },
+  reliability_recovery: {
+    focus: { systems: 3 },
+    execution: { reviewer: 3 },
+    quality: { verification: 4 },
+    scope: { context: 1 }
+  },
+  product_validation: {
+    focus: { product: 6 },
+    execution: { reviewer: 1 },
+    quality: { verification: 3 },
+    scope: { goal: 4 }
+  },
+  agent_workflow: {
+    focus: { product: 1 },
+    execution: { operator: 4 },
+    quality: { delivery: 4 },
+    scope: { context: 5, goal: 1 }
+  },
+  platform_contract: {
+    focus: { systems: 3 },
+    execution: { reviewer: 1 },
+    quality: { delivery: 2 },
+    scope: { context: 5 }
+  },
+  agent_usage: {
+    focus: { systems: 1 },
+    execution: { operator: 3 },
+    quality: { delivery: 1 },
+    scope: { context: 2 }
+  }
 };
 
 const THEMES = {
@@ -109,6 +165,55 @@ const THEMES = {
     stripGradient: "linear-gradient(180deg, #412943 0%, #6c466f 36%, #3f8979 70%, #151018 100%)",
     chipGradient: "linear-gradient(135deg, #c9a6d2 0%, #6c466f 100%)",
     bannerPattern: "repeating-linear-gradient(135deg, rgba(255,255,255,0.09) 0 4px, transparent 4px 14px)"
+  }
+};
+
+const BASELINE_CARDS = {
+  no_data: {
+    code: "NO_DATA",
+    state: "baseline/no_data",
+    theme_id: "context_map",
+    copy_zh: {
+      name: "数据不足画像",
+      english_short_name: "No-data baseline",
+      punchline: "未发现本地 Agent 记录，先跑几轮真实协作再生成画像。",
+      tags: ["#数据不足", "#本地记录待生成", "#先使用Agent"],
+      share_subtitle: "AgentRecord 没有发现可测量的本地 Codex、opencode 或 Claude Code 记录，因此不会给出强人格判断。",
+      strength_sentence: "当前可确认的是本机尚未形成可审计的 Agent 协作记录。",
+      risk_sentence: "这不是人格画像、排行榜或能力认证，只是一个保守的空数据提示。"
+    },
+    copy_en: {
+      name: "No-data baseline",
+      english_short_name: "NDB",
+      punchline: "No local agent record was found yet.",
+      tags: ["#not-enough-data", "#local-record-needed", "#baseline-only"],
+      share_subtitle: "AgentRecord did not find measurable local Codex, opencode, or Claude Code records, so no strong archetype is assigned.",
+      strength_sentence: "The only defensible statement is that no auditable local agent record is available yet.",
+      risk_sentence: "This is not an archetype, ranking, certification, or capability claim."
+    }
+  },
+  activity_only: {
+    code: "ACTIVITY",
+    state: "baseline/activity_only",
+    theme_id: "terminal",
+    copy_zh: {
+      name: "活动度基线",
+      english_short_name: "Activity baseline",
+      punchline: "已发现本地 Agent 使用痕迹，但证据还不足以生成强画像。",
+      tags: ["#活动度基线", "#能力结论待补", "#本地证据优先"],
+      share_subtitle: "当前只有聚合会话与 Token 活动度，能说明使用过 Agent，但不能证明工作质量或人格类型。",
+      strength_sentence: "可确认的是本地 AI Agent 协作活动已被记录，后续需要更强的事实证据来校准画像。",
+      risk_sentence: "高频对话不等于高质量交付；请补充验证、交付、产品或协同证据后再分享强结论。"
+    },
+    copy_en: {
+      name: "Activity baseline",
+      english_short_name: "ACT",
+      punchline: "Local agent activity exists, but strong profiling is not justified yet.",
+      tags: ["#activity-baseline", "#claims-pending", "#local-proof-first"],
+      share_subtitle: "Only aggregate session and token activity is available, which proves usage but not work quality or archetype.",
+      strength_sentence: "The defensible signal is recorded local AI-agent activity; stronger work evidence is needed for calibration.",
+      risk_sentence: "High conversation volume is not the same thing as verified delivery quality."
+    }
   }
 };
 
@@ -469,9 +574,18 @@ const BASE_ARCHETYPES = {
 
 export const SHARE_CARD_ARCHETYPES = Object.freeze(BASE_ARCHETYPES);
 
-export function buildShareCard({ roleSignals, abilityModel, stats, identityConfidence, evidenceCards, locale }) {
+export function buildShareCard({
+  roleSignals,
+  abilityModel,
+  stats,
+  identityConfidence,
+  evidenceCards,
+  locale,
+  tieBreakerSeed = "agentrecord"
+}) {
   const roleScore = scoreReader(roleSignals, "role_id");
   const abilityScore = scoreReader(abilityModel, "dimension_id");
+  const dataState = classifyShareCardData({ stats, evidenceCards });
 
   const axisScores = {
     systems: weightedAverage([
@@ -516,19 +630,28 @@ export function buildShareCard({ roleSignals, abilityModel, stats, identityConfi
     ])
   };
 
-  const axes = {
-    focus: axisScores.systems >= axisScores.product ? "systems" : "product",
-    execution: axisScores.reviewer >= axisScores.operator ? "reviewer" : "operator",
-    quality: axisScores.verification >= axisScores.delivery ? "verification" : "delivery",
-    scope: axisScores.context >= axisScores.goal ? "context" : "goal"
-  };
+  if (dataState === "baseline/no_data" || dataState === "baseline/activity_only") {
+    return buildBaselineShareCard({ dataState, axisScores, stats, evidenceCards, locale });
+  }
+
+  const categoryScores = buildCategoryAxisScores(evidenceCards);
+  const signalScores = buildSignalAxisScores({ roleScore, abilityScore });
+  const statsScores = buildStatsAxisScores(stats);
+  const axes = selectAxes({
+    axisScores,
+    categoryScores,
+    signalScores,
+    statsScores,
+    tieBreakerSeed,
+    evidenceCards
+  });
   const code = `${AXIS_CODES.focus[axes.focus]}${AXIS_CODES.execution[axes.execution]}${AXIS_CODES.quality[axes.quality]}${AXIS_CODES.scope[axes.scope]}`;
   const base = BASE_ARCHETYPES[code] || BASE_ARCHETYPES.SRVC;
   const copy = locale === "zh-CN" ? base.copy_zh : base.copy_en;
   const zhCopy = base.copy_zh;
   const enCopy = base.copy_en;
   const theme = THEMES[base.theme_id] || THEMES.proof_seal;
-  const variants = buildVariants({ evidenceCards, stats, identityConfidence, axisScores, locale });
+  const variants = buildVariants({ evidenceCards, stats, identityConfidence, axisScores, axes, locale });
   const statRows = buildStatRows({ axes, axisScores, abilityModel, locale });
   const traceDays = countTraceDays(stats.trace_window);
   const dominantRole = roleSignals[0] || null;
@@ -537,6 +660,7 @@ export function buildShareCard({ roleSignals, abilityModel, stats, identityConfi
 
   return {
     code,
+    state: "archetype/evidence_backed",
     axes,
     axis_scores: axisScores,
     name: copy.name,
@@ -575,6 +699,269 @@ export function buildShareCard({ roleSignals, abilityModel, stats, identityConfi
   };
 }
 
+export function classifyShareCardData({ stats = {}, evidenceCards = [] }) {
+  const sessionsScanned = Number(stats.files || stats.sessions_scanned || 0);
+  const measuredClientsKnown = Array.isArray(stats.measured_clients);
+  const measuredClients = measuredClientsKnown ? stats.measured_clients.filter(Boolean) : [];
+  const hasMeasuredClient = measuredClientsKnown ? measuredClients.length > 0 : sessionsScanned > 0;
+  const onlyActivityBaseline = evidenceCards.length > 0
+    && evidenceCards.every((card) => card.id === "EV-ACTIVITY-METADATA" || card.category === "agent_usage");
+
+  if (!hasMeasuredClient || sessionsScanned <= 0) return "baseline/no_data";
+  if (onlyActivityBaseline) return "baseline/activity_only";
+  return "archetype/evidence_backed";
+}
+
+function buildBaselineShareCard({ dataState, axisScores, stats, evidenceCards, locale }) {
+  const key = dataState === "baseline/no_data" ? "no_data" : "activity_only";
+  const base = BASELINE_CARDS[key];
+  const copy = locale === "zh-CN" ? base.copy_zh : base.copy_en;
+  const zhCopy = base.copy_zh;
+  const enCopy = base.copy_en;
+  const theme = THEMES[base.theme_id] || THEMES.context_map;
+  const traceDays = dataState === "baseline/no_data" ? 0 : countTraceDays(stats.trace_window);
+  const statRows = buildBaselineStatRows({ dataState, stats, evidenceCards, locale });
+  const variants = buildBaselineVariants({ dataState, stats, locale });
+
+  return {
+    code: base.code,
+    state: base.state,
+    axes: {
+      focus: "baseline",
+      execution: "baseline",
+      quality: "baseline",
+      scope: "baseline"
+    },
+    axis_scores: axisScores,
+    name: copy.name,
+    chinese_name: zhCopy.name,
+    english_name: enCopy.name,
+    english_short_name: enCopy.english_short_name,
+    enName: locale === "zh-CN" ? zhCopy.english_short_name : enCopy.english_short_name,
+    punchline: copy.punchline,
+    tagline: copy.punchline,
+    enTagline: enCopy.punchline,
+    share_subtitle: copy.share_subtitle,
+    signature: copy.share_subtitle,
+    strength_sentence: copy.strength_sentence,
+    risk_sentence: copy.risk_sentence,
+    tags: copy.tags,
+    social_tags: copy.tags,
+    visual_theme_id: theme.id,
+    card_theme: theme,
+    variants,
+    variant_badges: variants.map((variant) => variant.label),
+    variant_note: variants[0]?.sentence || copy.strength_sentence,
+    stat_rows: statRows,
+    ability_order: [],
+    traceDays,
+    activeStatus: variants[0]?.label || copy.name,
+    rigor: dataState === "baseline/no_data" ? 10 : 28,
+    control: dataState === "baseline/no_data" ? 10 : 32,
+    strategic: dataState === "baseline/no_data" ? 10 : 30,
+    closedLoop: dataState === "baseline/no_data" ? 10 : 26,
+    dominant: {
+      role_id: null,
+      role_label: null,
+      ability_id: null,
+      ability_label: null
+    }
+  };
+}
+
+function buildBaselineVariants({ dataState, stats, locale }) {
+  const isZh = locale === "zh-CN";
+  if (dataState === "baseline/no_data") {
+    return [
+      {
+        id: "no_data",
+        label: isZh ? "数据不足" : "Not enough data",
+        sentence: isZh ? "未发现可测量的本地 Agent 记录。" : "No measurable local agent records were found."
+      },
+      {
+        id: "setup_needed",
+        label: isZh ? "先使用再生成" : "Use agents first",
+        sentence: isZh ? "先使用 Codex、opencode 或 Claude Code 后再重新生成。" : "Use Codex, opencode, or Claude Code first, then rebuild."
+      }
+    ];
+  }
+
+  const totalTokens = stats.total_token_usage?.total_tokens || 0;
+  return [
+    {
+      id: "activity_only",
+      label: isZh ? "活动度基线" : "Activity-only",
+      sentence: isZh ? "当前只有聚合活动元数据，不生成强人格判断。" : "Only aggregate activity metadata is available; no strong archetype is assigned."
+    },
+    {
+      id: totalTokens >= 1_000_000 ? "token_density" : "claims_pending",
+      label: totalTokens >= 1_000_000
+        ? (isZh ? "Token 密度较高" : "Token density")
+        : (isZh ? "能力结论待补" : "Claims pending"),
+      sentence: totalTokens >= 1_000_000
+        ? (isZh ? "Token 活动较高，但仍只代表协作密度。" : "Token activity is high, but still only indicates collaboration density.")
+        : (isZh ? "需要补充验证、交付、产品或协同证据。" : "Verification, delivery, product, or collaboration evidence is still needed.")
+    }
+  ];
+}
+
+function buildBaselineStatRows({ dataState, stats, evidenceCards, locale }) {
+  const isZh = locale === "zh-CN";
+  const sessions = Number(stats.files || stats.sessions_scanned || 0);
+  const measuredClients = Array.isArray(stats.measured_clients) ? stats.measured_clients.length : sessions > 0 ? 1 : 0;
+  const totalTokens = stats.total_token_usage?.total_tokens || 0;
+  if (dataState === "baseline/no_data") {
+    return [
+      { id: "local_records", label: isZh ? "本地记录" : "Local records", score: 10 },
+      { id: "measured_clients", label: isZh ? "已测客户端" : "Measured clients", score: 10 },
+      { id: "evidence_ready", label: isZh ? "证据可用" : "Evidence ready", score: 10 },
+      { id: "claim_strength", label: isZh ? "结论强度" : "Claim strength", score: 10 }
+    ];
+  }
+
+  return [
+    { id: "local_sessions", label: isZh ? "本地会话" : "Local sessions", score: clampPercent(Math.min(70, 20 + sessions * 4)) },
+    { id: "measured_clients", label: isZh ? "已测客户端" : "Measured clients", score: clampPercent(20 + measuredClients * 18) },
+    { id: "token_density", label: isZh ? "Token 密度" : "Token density", score: clampPercent(Math.min(76, 20 + Math.log10(Math.max(1, totalTokens)) * 7)) },
+    { id: "claim_strength", label: isZh ? "结论强度" : "Claim strength", score: evidenceCards.length ? 28 : 15 }
+  ];
+}
+
+function buildCategoryAxisScores(evidenceCards = []) {
+  const scores = emptyAxisGroupScores();
+  for (const card of evidenceCards) {
+    const categoryWeights = AXIS_CATEGORY_WEIGHTS[card.category] || null;
+    if (!categoryWeights) continue;
+    const weight = evidenceLevelWeight(card.level);
+    for (const [axis, choices] of Object.entries(categoryWeights)) {
+      for (const [choice, value] of Object.entries(choices)) {
+        scores[axis][choice] += value * weight;
+      }
+    }
+  }
+  return scores;
+}
+
+function buildSignalAxisScores({ roleScore, abilityScore }) {
+  return {
+    focus: {
+      systems: roleScore("systems_thinker") + abilityScore("context_packaging") + abilityScore("scope_control"),
+      product: roleScore("product_builder") + abilityScore("product_judgment") + abilityScore("goal_framing")
+    },
+    execution: {
+      reviewer: roleScore("technical_reviewer") + abilityScore("review_judgment") + abilityScore("failure_recovery"),
+      operator: roleScore("agent_operator") + abilityScore("agent_delegation") + abilityScore("collaboration_handoff")
+    },
+    quality: {
+      verification: abilityScore("verification_discipline") + abilityScore("failure_recovery") + roleScore("technical_reviewer"),
+      delivery: roleScore("shipping_owner") + abilityScore("shipping_hygiene") + abilityScore("scope_control")
+    },
+    scope: {
+      context: abilityScore("context_packaging") + abilityScore("collaboration_handoff") + roleScore("collaboration_handoff"),
+      goal: abilityScore("goal_framing") + abilityScore("product_judgment") + roleScore("product_builder")
+    }
+  };
+}
+
+function buildStatsAxisScores(stats = {}) {
+  const measuredClients = new Set(stats.measured_clients || []);
+  const totalTokens = Number(stats.total_token_usage?.total_tokens || 0);
+  const sessions = Number(stats.files || stats.sessions_scanned || 0);
+  const traceDays = countTraceDays(stats.trace_window);
+  return {
+    focus: {
+      systems: measuredClients.has("codex") || measuredClients.has("claude_code") ? 1 : 0,
+      product: measuredClients.has("opencode") ? 1 : 0
+    },
+    execution: {
+      reviewer: traceDays >= 14 ? 1 : 0,
+      operator: measuredClients.size > 1 || sessions >= 20 ? 1 : 0
+    },
+    quality: {
+      verification: traceDays >= 14 ? 1 : 0,
+      delivery: totalTokens >= 1_000_000 || sessions >= 20 ? 1 : 0
+    },
+    scope: {
+      context: measuredClients.size > 1 || totalTokens >= 1_000_000 ? 1 : 0,
+      goal: traceDays >= 30 ? 1 : 0
+    }
+  };
+}
+
+function selectAxes({ axisScores, categoryScores, signalScores, statsScores, tieBreakerSeed, evidenceCards }) {
+  const categorySet = new Set(evidenceCards.map((card) => card.category).filter(Boolean));
+  return Object.fromEntries(Object.entries(AXIS_VALUES).map(([axis, [left, right]]) => {
+    const rawDiff = (axisScores[left] || 0) - (axisScores[right] || 0);
+    const categoryOverride = targetedCategoryChoice({ axis, axisScores, categorySet });
+    if (categoryOverride) return [axis, categoryOverride];
+
+    if (Math.abs(rawDiff) > AXIS_NEAR_TIE_MARGIN) {
+      return [axis, rawDiff >= 0 ? left : right];
+    }
+
+    const categoryDiff = (categoryScores[axis][left] || 0) - (categoryScores[axis][right] || 0);
+    if (categoryDiff !== 0) return [axis, categoryDiff > 0 ? left : right];
+
+    const signalDiff = (signalScores[axis][left] || 0) - (signalScores[axis][right] || 0);
+    if (signalDiff !== 0) return [axis, signalDiff > 0 ? left : right];
+
+    const statsDiff = (statsScores[axis][left] || 0) - (statsScores[axis][right] || 0);
+    if (statsDiff !== 0) return [axis, statsDiff > 0 ? left : right];
+
+    return [
+      axis,
+      stableAxisChoice({
+        axis,
+        left,
+        right,
+        tieBreakerSeed,
+        evidenceCards
+      })
+    ];
+  }));
+}
+
+function targetedCategoryChoice({ axis, axisScores, categorySet }) {
+  const releaseProductPlatform = categorySet.has("shipping_hygiene")
+    && categorySet.has("product_validation")
+    && categorySet.has("platform_contract")
+    && !categorySet.has("agent_workflow")
+    && !categorySet.has("reliability_recovery");
+  if (!releaseProductPlatform) return null;
+
+  if (axis === "focus" && Math.abs((axisScores.systems || 0) - (axisScores.product || 0)) <= 10) {
+    return "product";
+  }
+  if (axis === "scope" && Math.abs((axisScores.context || 0) - (axisScores.goal || 0)) <= 8) {
+    return "context";
+  }
+  return null;
+}
+
+function emptyAxisGroupScores() {
+  return Object.fromEntries(Object.entries(AXIS_VALUES).map(([axis, values]) => [
+    axis,
+    Object.fromEntries(values.map((value) => [value, 0]))
+  ]));
+}
+
+function evidenceLevelWeight(levels = []) {
+  if (levels.includes("E1")) return 1.15;
+  if (levels.includes("E2")) return 1;
+  if (levels.includes("E3")) return 0.9;
+  if (levels.includes("E4")) return 0.75;
+  return 1;
+}
+
+function stableAxisChoice({ axis, left, right, tieBreakerSeed, evidenceCards }) {
+  const fingerprint = evidenceCards
+    .map((card) => `${card.id}:${card.category}:${(card.level || []).join(",")}`)
+    .sort()
+    .join("|");
+  const hash = hashObject({ axis, left, right, tieBreakerSeed, fingerprint });
+  return Number.parseInt(hash.slice(0, 8), 16) % 2 === 0 ? left : right;
+}
+
 function scoreReader(items, key) {
   return (id) => items.find((item) => item[key] === id)?.score || 40;
 }
@@ -596,24 +983,59 @@ function countTraceDays(traceWindow = {}) {
   return Math.max(1, Math.round((end - start) / 86_400_000) + 1);
 }
 
-function buildVariants({ evidenceCards, stats, identityConfidence, axisScores, locale }) {
+function buildVariants({ evidenceCards, stats, identityConfidence, axisScores, axes, locale }) {
   const isZh = locale === "zh-CN";
   const levels = new Set(evidenceCards.flatMap((card) => card.level || []));
+  const categories = new Set(evidenceCards.map((card) => card.category).filter(Boolean));
+  const onlyActivityBaseline = evidenceCards.length > 0
+    && evidenceCards.every((card) => card.id === "EV-ACTIVITY-METADATA" || card.category === "agent_usage");
   const variants = [];
+
+  if (onlyActivityBaseline) {
+    variants.push({
+      id: "activity_only",
+      label: isZh ? "活动度基线" : "Activity-only",
+      sentence: isZh ? "活动元数据只说明协作密度，不直接代表能力结论。" : "Activity metadata indicates collaboration density, not a direct ability claim."
+    });
+  }
+
+  if (categories.has("shipping_hygiene") || axisScores.delivery - axisScores.verification >= 6 || axes.quality === "delivery") {
+    variants.push({
+      id: "high_delivery",
+      label: isZh ? "交付强信号" : "Delivery signal",
+      sentence: isZh ? "交付、版本、构建或输出边界在当前证据中更突出。" : "Delivery, version, build, or output-boundary evidence is prominent."
+    });
+  }
+
+  if (levels.has("E1") || categories.has("evidence_governance") || axisScores.verification - axisScores.delivery >= 6 || axes.quality === "verification") {
+    variants.push({
+      id: "high_verification",
+      label: isZh ? "验证强信号" : "Verification signal",
+      sentence: isZh ? "验证、审计或失败恢复信号在当前证据中更突出。" : "Verification, audit, or failure-recovery evidence is prominent."
+    });
+  }
+
+  if (categories.has("product_validation") || axisScores.product - axisScores.systems >= 6 || axes.focus === "product") {
+    variants.push({
+      id: "product_heavy",
+      label: isZh ? "产品判断偏重" : "Product-heavy",
+      sentence: isZh ? "产品目标、用户价值或可用性判断在证据中占比较高。" : "Product goals, user value, or readiness judgment have a larger evidence share."
+    });
+  }
+
+  if (categories.has("agent_workflow") || axisScores.operator - axisScores.reviewer >= 6 || axes.execution === "operator") {
+    variants.push({
+      id: "agent_operator_heavy",
+      label: isZh ? "Agent 调度偏重" : "Agent-operator",
+      sentence: isZh ? "多轮调度、交接或执行包信号在证据中占比较高。" : "Delegation, handoff, or execution-packet signals have a larger evidence share."
+    });
+  }
 
   if (identityConfidence === "high" || identityConfidence === "medium") {
     variants.push({
       id: "confidence_ready",
       label: isZh ? "证据已成型" : "Evidence ready",
       sentence: isZh ? "当前分享文案来自已匹配的公开安全证据卡。" : "Share copy is backed by matched public-safe evidence cards."
-    });
-  }
-
-  if (levels.has("E1") || axisScores.verification >= 68) {
-    variants.push({
-      id: "strong_verification",
-      label: isZh ? "验证强信号" : "Verification signal",
-      sentence: isZh ? "验证相关能力在当前证据中排位靠前。" : "Verification-related ability ranks high in this evidence set."
     });
   }
 
@@ -626,7 +1048,7 @@ function buildVariants({ evidenceCards, stats, identityConfidence, axisScores, l
     });
   }
 
-  if (!levels.has("E1")) {
+  if (!levels.has("E1") && variants.length < 3) {
     variants.push({
       id: "low_external_outcome",
       label: isZh ? "外部结果待补" : "Outcome proof pending",
@@ -634,7 +1056,12 @@ function buildVariants({ evidenceCards, stats, identityConfidence, axisScores, l
     });
   }
 
-  return variants.slice(0, 3);
+  const seen = new Set();
+  return variants.filter((variant) => {
+    if (seen.has(variant.id)) return false;
+    seen.add(variant.id);
+    return true;
+  }).slice(0, 3);
 }
 
 function buildStatRows({ axes, axisScores, abilityModel, locale }) {

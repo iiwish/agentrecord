@@ -252,6 +252,8 @@ try {
   assert(!html.includes("npm @iiwish/agentrecord"), "HTML share card must keep a single source entry.");
   assert(!existsSync(path.join(tempRoot, "profiles", "Visible-Name")), "--display-name must not create a display-name output path.");
   assert(profile.share_card?.code && profile.share_card?.share_subtitle, "profile.share_card must be generated.");
+  assert(profile.share_card?.state === "baseline/activity_only", "metadata-only CLI build must produce an activity-only baseline state.");
+  assert(profile.share_card?.code === "ACTIVITY", "metadata-only CLI build must not produce a strong archetype code.");
   const opencodeClient = profile.agent_ledger?.clients?.find((client) => client.client_id === "opencode");
   assert(opencodeClient?.status === "measured", "profile.agent_ledger must mark opencode as measured when a local opencode database is configured.");
   assert(opencodeClient.sessions === 2, "opencode ledger must include local opencode session count.");
@@ -278,8 +280,52 @@ try {
   const archetypeCodes = Object.keys(SHARE_CARD_ARCHETYPES);
   assert(archetypeCodes.length === 16, "share-card system must define 16 base archetypes.");
 
+  const noDataEvidence = [{
+    id: "EV-ACTIVITY-METADATA",
+    level: ["E2"],
+    category: "agent_usage",
+    role_signals: ["agent_operator"],
+    dimensions: ["agent_delegation", "context_packaging"]
+  }];
+  const noDataCard = buildShareCard({
+    roleSignals: syntheticRoles({}),
+    abilityModel: syntheticAbilities({}),
+    stats: {
+      files: 0,
+      measured_clients: [],
+      trace_window: { start: "unknown", end: "unknown" },
+      total_token_usage: { total_tokens: 0 }
+    },
+    identityConfidence: "no_data",
+    evidenceCards: noDataEvidence,
+    locale: "zh-CN",
+    tieBreakerSeed: "share-smoke-no-data"
+  });
+  assert(noDataCard.code === "NO_DATA", "zero-data share card must use the explicit NO_DATA code.");
+  assert(noDataCard.state === "baseline/no_data", "zero-data share card must expose baseline/no_data state.");
+  assert(!/代码判官|proof reviewer/i.test(`${noDataCard.name} ${noDataCard.share_subtitle} ${noDataCard.strength_sentence} ${noDataCard.risk_sentence}`), "zero-data card must not use strong archetype copy.");
+
+  const activityOnlyCard = buildShareCard({
+    roleSignals: syntheticRoles({ agent_operator: 58 }),
+    abilityModel: syntheticAbilities({ agent_delegation: 58, context_packaging: 58 }),
+    stats: {
+      files: 4,
+      measured_clients: ["codex"],
+      trace_window: { start: "2026-06-01", end: "2026-06-02" },
+      total_token_usage: { total_tokens: 250_000 }
+    },
+    identityConfidence: "activity_baseline",
+    evidenceCards: noDataEvidence,
+    locale: "zh-CN",
+    tieBreakerSeed: "share-smoke-activity"
+  });
+  assert(activityOnlyCard.code === "ACTIVITY", "activity-only share card must use the explicit ACTIVITY code.");
+  assert(activityOnlyCard.state === "baseline/activity_only", "activity-only share card must expose baseline/activity_only state.");
+  assert(activityOnlyCard.variant_badges.some((badge) => badge.includes("活动度")), "activity-only card must have a distinct activity badge.");
+
   const stats = {
     files: 128,
+    measured_clients: ["codex"],
     trace_window: { start: "2026-06-01", end: "2026-06-30" },
     total_token_usage: { total_tokens: 12_000_000 }
   };

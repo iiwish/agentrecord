@@ -185,6 +185,7 @@ function checkShareCardStructure(profile, errors) {
   }
   const requiredKeys = [
     "code",
+    "state",
     "chinese_name",
     "english_short_name",
     "punchline",
@@ -197,8 +198,10 @@ function checkShareCardStructure(profile, errors) {
   for (const key of requiredKeys) {
     if (!Object.hasOwn(shareCard, key)) addError(errors, file, "share_card", `share_card missing required key: ${key}`);
   }
-  if (!/^[SP][RO][VD][CG]$/.test(shareCard.code || "")) {
-    addError(errors, file, "share_card", "share_card.code must encode focus/execution/quality/scope axes.");
+  const baselineCodeAllowed = (shareCard.state === "baseline/no_data" && shareCard.code === "NO_DATA")
+    || (shareCard.state === "baseline/activity_only" && shareCard.code === "ACTIVITY");
+  if (!baselineCodeAllowed && !/^[SP][RO][VD][CG]$/.test(shareCard.code || "")) {
+    addError(errors, file, "share_card", "share_card.code must encode focus/execution/quality/scope axes or an explicit baseline state.");
   }
   if (!Array.isArray(shareCard.social_tags) || shareCard.social_tags.length < 3) {
     addError(errors, file, "share_card", "share_card.social_tags must contain at least 3 tags.");

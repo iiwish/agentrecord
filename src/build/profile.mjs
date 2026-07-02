@@ -1,6 +1,6 @@
 import { safePathSegment } from "../core/config.mjs";
 import { dimensions, roles } from "./catalog.mjs";
-import { buildShareCard } from "./share-card.mjs";
+import { buildShareCard, classifyShareCardData } from "./share-card.mjs";
 import { unique } from "./utils.mjs";
 
 export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, report, localeBundle, runMetadata, agentContextEnabled }) {
@@ -11,14 +11,20 @@ export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, 
   const roleSignals = buildRoleSignals(evidenceCards, localeBundle);
   const abilityModel = buildAbilityModel(evidenceCards, localeBundle);
   const hasCuratedEvidence = evidenceCards.some((card) => card.id !== "EV-ACTIVITY-METADATA");
-  const identityConfidence = hasCuratedEvidence ? "medium" : stats.files > 0 ? "low-medium" : "low";
+  const evidenceState = classifyShareCardData({ stats, evidenceCards });
+  const identityConfidence = evidenceState === "baseline/no_data"
+    ? "no_data"
+    : evidenceState === "baseline/activity_only"
+      ? "activity_baseline"
+      : hasCuratedEvidence ? "medium" : "low-medium";
   const shareCard = buildShareCard({
     roleSignals,
     abilityModel,
     stats,
     identityConfidence,
     evidenceCards,
-    locale: report.locale
+    locale: report.locale,
+    tieBreakerSeed: `${config.resolved.owner}:${report.locale}:${config.resolved.profileDir}`
   });
   const topRole = roleSignals[0] || roleSignals.find((item) => item.role_id === "agent_operator");
   const topAbility = abilityModel[0] || abilityModel.find((item) => item.dimension_id === "agent_delegation");
@@ -35,15 +41,19 @@ export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, 
     share_card: shareCard,
     archetype: shareCard,
     work_identity: {
-      primary_label: hasCuratedEvidence ? "Evidence-bound AI work operator" : "Local AI-agent activity baseline",
-      localized_label: report.locale === "zh-CN" ? (hasCuratedEvidence ? "证据约束的 AI 工作操作者" : "本地 AI Agent 活跃度基线") : null,
-      summary: hasCuratedEvidence
-        ? `AgentRecord found ${evidenceCards.length} public-safe evidence cards for how this owner frames, delegates, reviews, verifies, and hands off AI-agent work.`
-        : `AgentRecord found local AI-agent activity and generated a conservative baseline profile without curated memory evidence.`,
-      strongest_claim: hasCuratedEvidence
-        ? `Strongest current signal: ${topRole?.label || "agent operation"} with ${topRole?.confidence || identityConfidence} confidence, supported by ${topRoleEvidence.join(", ") || evidenceIds.slice(0, 2).join(", ")}.`
-        : "The defensible claim is repeated local AI-agent usage, not calibrated work quality.",
+      primary_label: workIdentityPrimaryLabel({ hasCuratedEvidence, evidenceState }),
+      localized_label: report.locale === "zh-CN" ? workIdentityLocalizedLabel({ hasCuratedEvidence, evidenceState }) : null,
+      summary: workIdentitySummary({ hasCuratedEvidence, evidenceState, evidenceCards, stats }),
+      strongest_claim: workIdentityStrongestClaim({
+        hasCuratedEvidence,
+        evidenceState,
+        topRole,
+        topRoleEvidence,
+        evidenceIds,
+        identityConfidence
+      }),
       confidence: identityConfidence,
+      evidence_state: evidenceState,
       evidence_ids: evidenceIds.slice(0, 6)
     },
     work_role_signals: roleSignals,
@@ -98,6 +108,44 @@ export function buildProfile({ config, stats, codexAccountUsage, evidenceCards, 
     },
     run_metadata: runMetadata
   };
+}
+
+function workIdentityPrimaryLabel({ hasCuratedEvidence, evidenceState }) {
+  if (evidenceState === "baseline/no_data") return "No local AI-agent record found";
+  if (evidenceState === "baseline/activity_only") return "Local AI-agent activity baseline";
+  return hasCuratedEvidence ? "Evidence-bound AI work operator" : "Local AI-agent activity baseline";
+}
+
+function workIdentityLocalizedLabel({ hasCuratedEvidence, evidenceState }) {
+  if (evidenceState === "baseline/no_data") return "未发现本地 AI Agent 记录";
+  if (evidenceState === "baseline/activity_only") return "本地 AI Agent 活动度基线";
+  return hasCuratedEvidence ? "证据约束的 AI 工作操作者" : "本地 AI Agent 活动度基线";
+}
+
+function workIdentitySummary({ hasCuratedEvidence, evidenceState, evidenceCards, stats }) {
+  if (evidenceState === "baseline/no_data") {
+    return "AgentRecord did not find measurable local Codex, opencode, or Claude Code records. The generated profile is a no-data baseline, not a personality or ability judgment.";
+  }
+  if (evidenceState === "baseline/activity_only") {
+    return `AgentRecord found ${stats.files || 0} local AI-agent sessions, but only aggregate activity metadata is available. The profile stays at activity-baseline strength until stronger work evidence is present.`;
+  }
+  if (hasCuratedEvidence) {
+    return `AgentRecord found ${evidenceCards.length} public-safe evidence cards for how this owner frames, delegates, reviews, verifies, and hands off AI-agent work.`;
+  }
+  return "AgentRecord found local AI-agent activity and generated a conservative baseline profile without curated memory evidence.";
+}
+
+function workIdentityStrongestClaim({ hasCuratedEvidence, evidenceState, topRole, topRoleEvidence, evidenceIds, identityConfidence }) {
+  if (evidenceState === "baseline/no_data") {
+    return "No archetype or calibrated ability claim is made because no measurable local agent record was found.";
+  }
+  if (evidenceState === "baseline/activity_only") {
+    return "The defensible claim is local AI-agent activity, not calibrated work quality or a strong personality type.";
+  }
+  if (hasCuratedEvidence) {
+    return `Strongest current signal: ${topRole?.label || "agent operation"} with ${topRole?.confidence || identityConfidence} confidence, supported by ${topRoleEvidence.join(", ") || evidenceIds.slice(0, 2).join(", ")}.`;
+  }
+  return "The defensible claim is repeated local AI-agent usage, not calibrated work quality.";
 }
 
 function buildCodexClient({ stats, codexAccountUsage, evidenceCards }) {
@@ -223,7 +271,7 @@ function buildCodexDisplayUsage(stats, codexAccountUsage) {
   };
 }
 
-function buildRoleSignals(evidenceCards, localeBundle) {
+export function buildRoleSignals(evidenceCards, localeBundle) {
   return roles.map((role) => {
     const cards = evidenceCards.filter((card) => card.role_signals.includes(role.id));
     const evidenceLevelMix = countEvidenceLevels(cards);
@@ -244,7 +292,7 @@ function buildRoleSignals(evidenceCards, localeBundle) {
   }).sort((a, b) => b.score - a.score);
 }
 
-function buildAbilityModel(evidenceCards, localeBundle) {
+export function buildAbilityModel(evidenceCards, localeBundle) {
   return dimensions.map((dimension) => {
     const cards = evidenceCards.filter((card) => card.dimensions.includes(dimension.id));
     const evidenceLevelMix = countEvidenceLevels(cards);

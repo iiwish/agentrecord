@@ -1,6 +1,6 @@
 {
   "name": "@iiwish/agentrecord",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Local-first, auditable AI work profiles from agent traces.",
   "type": "module",
   "publishConfig": {
@@ -28,7 +28,8 @@
     "check": "node --check src/cli.mjs && node src/cli.mjs --help",
     "pack:dry": "npm pack --dry-run --json",
     "smoke:install": "node scripts/smoke-install.mjs",
-    "smoke:share-card": "node scripts/smoke-share-card.mjs"
+    "smoke:share-card": "node scripts/smoke-share-card.mjs",
+    "smoke:card-diversity": "node scripts/smoke-card-diversity.mjs"
   },
   "engines": {
     "node": ">=20"

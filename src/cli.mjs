@@ -23,7 +23,7 @@ Usage:
   agentrecord doctor
   agentrecord init [--dry-run] [--owner <id>] [--display-name <name>] [--profiles-dir <dir>] [--output <dir>]
   agentrecord scan [--config <file>] [--sessions-dir <dir>] [--opencode-db <file>] [--claude-code-projects-dir <dir>]
-  agentrecord build [--config <file>] [--display-name <name>] [--agent-context] [--no-account-usage] [--opencode-db <file>] [--claude-code-projects-dir <dir>]
+  agentrecord build [--config <file>] [--owner <id>] [--locale <locale>] [--display-name <name>] [--agent-context] [--no-account-usage] [--account-usage-timeout-ms <ms>] [--sessions-dir <dir>] [--opencode-db <file>] [--opencode-data-dir <dir>] [--no-opencode] [--claude-code-projects-dir <dir>] [--no-claude-code]
   agentrecord validate [--config <file>]
   agentrecord open [--config <file>] [--owner <owner>]
 
@@ -36,10 +36,16 @@ Commands:
   agentrecord open       Open profiles/<owner>/index.html
 
 Build options:
+  --config <file>                       Read a specific agentrecord.config.json
+  --owner <id>                          Override stable owner id and output path
+  --locale <locale>                     Override report locale (en-US, zh-CN, auto)
   --display-name <name>                 Override owner display name without changing owner id/path
+  --agent-context                       Also write agent-context.md and agent-context.json
   --no-account-usage                    Skip Codex CLI account usage lookup
   --account-usage-timeout-ms <ms>       Timeout for Codex CLI account usage lookup
+  --sessions-dir <dir>                  Read Codex session rollouts from this directory
   --opencode-db <file>                  Read opencode aggregate metadata from a local opencode.db
+  --opencode-data-dir <dir>             Read opencode data from a custom data directory
   --no-opencode                         Disable opencode local database scanning
   --claude-code-projects-dir <dir>      Read Claude Code aggregate metadata from local project JSONL logs
   --no-claude-code                      Disable Claude Code local project scanning

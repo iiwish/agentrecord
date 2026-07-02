@@ -27,6 +27,7 @@
       "type": "object",
       "required": [
         "code",
+        "state",
         "chinese_name",
         "english_short_name",
         "punchline",

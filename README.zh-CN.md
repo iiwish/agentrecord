@@ -24,6 +24,16 @@
 
 ---
 
+## 🖼 预览
+
+<p align="center">
+  <img src="./docs/assets/agentrecord-card-preview.png" alt="AgentRecord 生成的 AI 工作画像预览" width="860">
+</p>
+
+<p align="center"><em>截图由本地脱敏聚合信号生成。公开产物不包含原始对话、私有路径或密钥。</em></p>
+
+---
+
 ## 🚀 快速上手
 
 只需两分钟，即可在本地跑通完整流程。

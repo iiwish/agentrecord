@@ -24,6 +24,16 @@ It is **not** a hiring score, a competitive leaderboard, an arbitrary certificat
 
 ---
 
+## 🖼 Preview
+
+<p align="center">
+  <img src="./docs/assets/agentrecord-card-preview.png" alt="AgentRecord generated AI work profile preview" width="860">
+</p>
+
+<p align="center"><em>Generated locally from redacted aggregate signals. Raw conversations, private paths, and secrets are not included in the public artifact.</em></p>
+
+---
+
 ## 🚀 Quickstart
 
 Get up and running locally in under 2 minutes.

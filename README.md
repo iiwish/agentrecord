@@ -30,18 +30,21 @@ Get up and running locally in under 2 minutes.
 
 ### 🤖 Agent-Native Quickstart (Let Your Agent Do the Work!)
 
-Since you are using an AI agent right now (such as Claude Code, opencode, Codex, etc.), you don't even need to type the commands yourself. Copy and paste the prompt below into your agent's chat window, and it will handle the setup, scanning, building, validation, and opening loop:
+Since you are using an AI agent right now (such as Claude Code, opencode, Codex, etc.), you don't need to type the commands yourself. Copy and paste the prompt below into your agent's chat window, and it will run the local setup, scan, build, validation, and open loop:
 
 ```text
-You are an expert AI assistant with terminal/command-execution capabilities. I want to generate my AgentRecord work profile. Please perform the following steps autonomously:
-1. Detect my git username using `git config user.name` (fallback to my OS username if empty).
-2. Install the `@iiwish/agentrecord` package globally (using npm/pnpm/yarn) or run via `npx` if global installation is restricted.
-3. Run `agentrecord init --owner local_developer --display-name "[DETECTED_NAME]"` (replace [DETECTED_NAME] with the detected git name).
-4. Run `agentrecord scan` to detect all local agent sessions (Codex, Claude Code, opencode, etc.).
-5. Run `agentrecord build --no-account-usage` to compile the profile.
-6. Run `agentrecord validate` to audit privacy and schemas.
-7. Run `agentrecord open` to open my interactive work passport in the default browser.
-Once complete, output a brief summary of the generated artifacts.
+You are an AI assistant with terminal command execution. Please generate my local AgentRecord work profile.
+
+Run these commands in order:
+1. `npx -y @iiwish/agentrecord@latest init`
+2. `npx -y @iiwish/agentrecord@latest scan`
+3. `npx -y @iiwish/agentrecord@latest build --no-account-usage`
+4. `npx -y @iiwish/agentrecord@latest validate`
+5. `npx -y @iiwish/agentrecord@latest open`
+
+Do not upload raw conversations, code, secrets, or local trace files. When finished, tell me whether validation passed and where the generated `index.html` file is.
+
+Optional: if I provide a display name, add `--display-name "<name>"` to the `init` command. Otherwise use the default display name.
 ```
 
 ### Manual CLI Quickstart

@@ -30,18 +30,21 @@
 
 ### 🤖 Agent 原生快速上手（让您的 Agent 代劳！）
 
-既然您当前正在使用 AI Agent（如 Claude Code、opencode、Codex 等），您甚至不需要自己手动敲击任何命令。只需将以下提示词（Prompt）复制并发送给您当前的 Agent，它就会自动帮您完成安装、扫描、构建、校验并打开工作护照的完整闭环：
+既然您当前正在使用 AI Agent（如 Claude Code、opencode、Codex 等），您不需要自己手动敲击命令。只需将以下提示词复制并发送给当前 Agent，它会自动完成本地初始化、扫描、构建、校验并打开工作护照：
 
 ```text
-你是一个具备终端命令行执行能力的专家级 AI 助手。我想在本地生成我的 AgentRecord 工作画像。请自主、完整地执行以下步骤：
-1. 通过 `git config user.name` 获取我的 Git 用户名（如果为空，则降级使用系统用户名）。
-2. 在全局安装 `@iiwish/agentrecord`（使用 npm/pnpm/yarn），如果全局安装受限，则自动降级为使用 `npx` 运行。
-3. 运行 `agentrecord init --owner local_developer --display-name "[获取到的用户名]"`。
-4. 运行 `agentrecord scan` 扫描探测我本地所有的 Agent 会话踪迹（Codex, Claude Code, opencode 等）。
-5. 运行 `agentrecord build --no-account-usage` 编译并生成画像产物。
-6. 运行 `agentrecord validate` 审计隐私安全与 Schema 架构。
-7. 运行 `agentrecord open` 在默认浏览器中打开生成的工作护照 HTML 页面。
-执行完成后，请向我简要汇报生成的画像文件列表和总结。
+你是一个可以执行终端命令的 AI 助手。请帮我在本机生成 AgentRecord 工作画像。
+
+按顺序执行这些命令：
+1. `npx -y @iiwish/agentrecord@latest init`
+2. `npx -y @iiwish/agentrecord@latest scan`
+3. `npx -y @iiwish/agentrecord@latest build --no-account-usage`
+4. `npx -y @iiwish/agentrecord@latest validate`
+5. `npx -y @iiwish/agentrecord@latest open`
+
+不要上传原始对话、代码、密钥或本地 trace 文件。完成后告诉我 validate 是否通过，以及生成的 `index.html` 在哪里。
+
+可选：如果我提供了展示名，就在 `init` 命令后加上 `--display-name "<展示名>"`；否则直接使用默认展示名。
 ```
 
 ### 手动 CLI 快速上手
